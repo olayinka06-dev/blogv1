@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import BackButton from "@/components/buttons/BackButton";
@@ -7,6 +7,7 @@ import FormPost from "@/components/formpost/FormPost";
 
 const page = () => {
   const router = useRouter();
+  const [imagePreviewUrl, setImagePreviewUrl] = useState("");
   const [formPost, setformPost] = useState({
     title: "",
     content: "",
@@ -19,6 +20,24 @@ const page = () => {
     message: "",
     loading: false,
   });
+
+  const selectedFile = formPost.media;
+
+  useEffect(() => {
+    if (selectedFile) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreviewUrl(reader.result);
+      };
+      reader.readAsDataURL(selectedFile);
+    } else {
+      setImagePreviewUrl("");
+    }
+  }, [selectedFile]);
+  
+  
+  
+
   // Add this function inside your FormPost component
   const handleMediaChange = (e) => {
     const file = e.target.files[0];
@@ -80,6 +99,7 @@ const page = () => {
         info={info}
         formPost={formPost}
         handleMediaChange={handleMediaChange}
+        imagePreviewUrl={imagePreviewUrl}
       />
     </section>
   );

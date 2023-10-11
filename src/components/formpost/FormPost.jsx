@@ -9,7 +9,8 @@ const FormPost = ({
   handleSubmitPost,
   formPost,
   info,
-  handleMediaChange
+  handleMediaChange,
+  imagePreviewUrl,
 }) => {
   useEffect(() => {
     const availableTags = async () => {
@@ -30,6 +31,10 @@ const FormPost = ({
     const { name, value } = e.target;
     setformPost((prev) => ({ ...prev, [name]: value }));
   };
+
+
+  const isImage = imagePreviewUrl && imagePreviewUrl.startsWith("image/");
+  const isVideo = imagePreviewUrl && imagePreviewUrl.startsWith("video/");
 
   return (
     <form onSubmit={handleSubmitPost} className="">
@@ -94,17 +99,85 @@ const FormPost = ({
         </select>
       </div>
       <div className="relative mb-4">
-        <label htmlFor="media" className="leading-7 text-sm text-gray-600">
-          Media (Image/Video)
+      {/* <label htmlFor="media" className="text-lg font-semibold leading-10">
+          {isImage ? "Image" : isVideo ? "Video" : "Media"}
         </label>
-        <input
-          type="file"
-          accept="image/*,video/*"
-          onChange={handleMediaChange}
-          id="media"
-          name="media"
-          className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
-        />
+        {imagePreviewUrl && (
+          <figure className="max-w-lg mb-2 ">
+            {isImage ? (
+              <img
+                className="max-h-[200px] max-w-full rounded-lg"
+                src={imagePreviewUrl}
+                alt="Image Preview"
+              />
+            ) : isVideo ? (
+              <video
+                controls
+                src={imagePreviewUrl}
+                className="max-h-[200px] max-w-full rounded-lg"
+              >
+                
+              </video>
+            ) : null}
+          </figure>
+        )} */}
+        <label htmlFor="media" className="text-lg font-semibold leading-10">
+          {imagePreviewUrl && imagePreviewUrl.startsWith("image/")
+            ? "Image"
+            : "Video"}
+        </label>
+        {imagePreviewUrl && (
+          <figure className="max-w-lg mb-2 ">
+            {imagePreviewUrl && (
+              <img
+                className="max-h-[200px] max-w-full rounded-lg"
+                src={imagePreviewUrl}
+                alt="Image Preview"
+              />
+            )}
+            {imagePreviewUrl && (
+              <video
+                controls
+                className="max-h-[200px] max-w-full rounded-lg"
+                src={imagePreviewUrl}
+              ></video>
+            )}
+          </figure>
+        )}
+        <label htmlFor="media" className="leading-7 text-sm text-gray-600">
+          <div className="flex flex-col items-center justify-center  pt-5 pb-6">
+            <svg
+              className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 20 16"
+            >
+              <path
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+              />
+            </svg>
+            <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+              <span className="font-semibold">Click to upload</span> or drag and
+              drop
+            </p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              PNG, JPG or JPEG (MAX. 1mb)
+            </p>
+          </div>
+          <input
+            type="file"
+            accept="image/*,video/*"
+            onChange={handleMediaChange}
+            id="media"
+            name="media"
+            className="w-full hidden bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+          />
+        </label>
       </div>
       <div className="relative mb-4">
         <button

@@ -65,6 +65,7 @@ export async function GET(request) {
       },
       include: {
         tag: true,
+        Media: true
       },
     });
 
