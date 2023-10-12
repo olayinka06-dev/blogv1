@@ -4,13 +4,51 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import BackButton from "@/components/buttons/BackButton";
 import FormPost from "@/components/formpost/FormPost";
+import { firebaseConfig } from "@/utils";
+import { initializeApp } from "firebase/app";
+import {
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+} from "firebase/storage";
+
+const app = initializeApp(firebaseConfig);
+const storage = getStorage(app, "gs://blog-website-a3ed3.appspot.com"); // Corrected a typo: "stroage" to "storage"
+
+function createUniqueFileName(fileName) {
+  const timeStamp = Date.now();
+  const randomString = Math.random().toString(36).substring(2, 12);
+
+  return `${fileName}-${timeStamp}-${randomString}`;
+}
+
+async function handleImageSaveToFireBase(file) {
+  const extractUniqueFileName = createUniqueFileName(file?.name);
+  const storageRef = ref(storage, `blog/${extractUniqueFileName}`);
+  const uploadImg = uploadBytesResumable(storageRef, file);
+
+  return new Promise((resolve, reject) => {
+    uploadImg.on(
+      "state_changed",
+      (snapshot) => {},
+      (error) => reject(error),
+      () => {
+        getDownloadURL(uploadImg.snapshot.ref)
+          .then((url) => resolve(url))
+          .catch((error) => reject(error));
+      }
+    );
+  });
+}
 
 const page = () => {
   const router = useRouter();
   const [imagePreviewUrl, setImagePreviewUrl] = useState("");
+  const [imageLoading, setImageLoading] = useState(false);
   const [formPost, setformPost] = useState({
     title: "",
-    content: "",
+    description: "",
     tagId: "",
     media: null, // Initialize the media field as null
   });
@@ -21,57 +59,57 @@ const page = () => {
     loading: false,
   });
 
-  const selectedFile = formPost.media;
+  // const selectedFile = formPost.media;
 
-  useEffect(() => {
-    if (selectedFile) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreviewUrl(reader.result);
-      };
-      reader.readAsDataURL(selectedFile);
-    } else {
-      setImagePreviewUrl("");
+  // useEffect(() => {
+  //   if (selectedFile) {
+  //     const reader = new FileReader();
+  //     reader.onloadend = () => {
+  //       setImagePreviewUrl(reader.result);
+  //     };
+  //     reader.readAsDataURL(selectedFile);
+  //   } else {
+  //     setImagePreviewUrl("");
+  //   }
+  // }, [selectedFile]);
+  
+  
+  
+
+  async function handleBlogImageChange(event) {
+    // Removed type annotation for event
+    if (!event.target.files) return;
+    setImageLoading(true);
+    const saveImageToFirebase = await handleImageSaveToFireBase(
+      event.target.files[0]
+    );
+
+    if (saveImageToFirebase !== "") {
+      setImageLoading(false);
+      console.log(saveImageToFirebase, "saveImageToFirebase");
+      setformPost({
+        ...formPost,
+        media: saveImageToFirebase,
+      });
     }
-  }, [selectedFile]);
-  
-  
-  
-
-  // Add this function inside your FormPost component
-  const handleMediaChange = (e) => {
-    const file = e.target.files[0];
-    setformPost((prev) => ({ ...prev, media: file }));
-  };
+  }
 
   const handleSubmitPost = async (e) => {
     e.preventDefault();
     setInfo({ ...info, loading: true });
-    // console.log(formPost);
 
     try {
       const BASE_URL = "/api/post/create";
+      console.log(formPost);
 
-      const formData = new FormData();
-      formData.append("title", formPost.title);
-      formData.append("content", formPost.content);
-      formData.append("tagId", formPost.tagId);
-      formData.append("media", formPost.media); // Append the media file
-
-      console.log(formData);
-
-      const resp = await axios.post(BASE_URL, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data", // Set the content type to form data
-        },
-      });
+      const resp = await axios.post(BASE_URL, formPost);
       console.log(resp);
       const result = await resp.data;
       console.log(result);
 
       if (resp.status === 200) {
-        router.push("/");
-        router.refresh();
+        // router.push("/");
+        // router.refresh();
         setInfo({ ...info, message: result.message });
         setInfo({ ...info, loading: false });
       } else {
@@ -98,8 +136,8 @@ const page = () => {
         handleSubmitPost={handleSubmitPost}
         info={info}
         formPost={formPost}
-        handleMediaChange={handleMediaChange}
-        imagePreviewUrl={imagePreviewUrl}
+        handleBlogImageChange={handleBlogImageChange}
+        imageLoading={imageLoading}
       />
     </section>
   );

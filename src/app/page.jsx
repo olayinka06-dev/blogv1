@@ -11,7 +11,7 @@ async function getPosts() {
         title: true,
         content: true,
         tag: true,
-        Media: true
+        media: true
       },
       orderBy: {
         createdAt: "desc",

@@ -23,14 +23,8 @@ model Post {
   createdAt DateTime @default(now())
   updateAt  DateTime @updatedAt
   tagId     String
+  media     String
   tag       Tag      @relation(fields: [tagId], references: [id])
-  Media     Media[]
 }
 
-model Media {
-  id     String @id @default(cuid())
-  url    String
-  type   String // 'image' or 'video'
-  postId String
-  post   Post   @relation(fields: [postId], references: [id])
-}
+

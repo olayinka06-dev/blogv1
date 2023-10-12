@@ -3,41 +3,46 @@ import { HiOutlineArrowNarrowRight } from "react-icons/hi";
 import { AiFillEye, AiOutlineMessage } from "react-icons/ai";
 
 const BlogCards = ({ post }) => {
-  const { id, tag, title, content, Media: media } = post;
+  const { id, tag, title, content, media } = post;
   // console.log(post);
 
   // Function to render media based on type (image or video)
-  const renderMedia = () => {
-    if (media && media.length > 0) {
-      return media.map((mediaItem, index) => {
-        if (mediaItem.type.startsWith("image")) {
-          // Render image
-          return (
-            <img
-              key={index}
-              className="lg:h-48 md:h-36 w-full object-cover object-center"
-              src={mediaItem.url}
-              alt={title}
-            />
-          );
-        } else if (mediaItem.type.startsWith("video")) {
-          // Render video
-          return (
-            <video controls key={index} className="w-full">
-              <source src={mediaItem.url} type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
-          );
-        }
-      });
-    }
-    return null; // No media to display
-  };
+  // const renderMedia = () => {
+  //   if (media && media.length > 0) {
+  //     return media.map((mediaItem, index) => {
+  //       if (mediaItem.type.startsWith("image")) {
+  //         // Render image
+  //         return (
+  //           <img
+  //             key={index}
+  //             className="lg:h-48 md:h-36 w-full object-cover object-center"
+  //             src={`${`http://localhost:3000`}${mediaItem.url}`}
+  //             alt={title}
+  //           />
+  //         );
+  //       } else if (mediaItem.type.startsWith("video")) {
+  //         // Render video
+  //         return (
+  //           <video controls key={index} className="w-full">
+  //             <source src={mediaItem.url} type="video/mp4" />
+  //             Your browser does not support the video tag.
+  //           </video>
+  //         );
+  //       }
+  //     });
+  //   }
+  //   return null; // No media to display
+  // };
 
   return (
     <div className="p-4 w-full">
       <div className="h-full border-2 border-gray-200 border-opacity-60 rounded-lg overflow-hidden">
-        {renderMedia()} {/* Call the renderMedia function */}
+        {/* {renderMedia()} Call the renderMedia function */}
+        <img
+          className="lg:h-48 md:h-36 w-full object-cover object-center"
+          src={media}
+          alt={media}
+        />
         <div className="p-6">
           <h2 className="tracking-widest text-xs title-font font-medium text-gray-400 mb-1">
             {tag.name}
