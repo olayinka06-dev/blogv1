@@ -1,7 +1,6 @@
 import "./globals.css";
-import { AppWrapper } from "../components/AppWrapper";
-import Navbar from "../components/navbar/Navbar"
-
+import Navbar from "../components/navbar/Navbar";
+import { AppWrapper } from "@/provider/AppWrapper";
 
 export const metadata = {
   title: "Create Next App",
@@ -11,12 +10,11 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body
-       >
-        <Navbar/>
-        {children}
-        {/* <AppWrapper>
-        </AppWrapper> */}
+      <body>
+        <AppWrapper>
+          <Navbar />
+          {children}
+        </AppWrapper>
       </body>
     </html>
   );
