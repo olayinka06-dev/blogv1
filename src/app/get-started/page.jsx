@@ -15,7 +15,6 @@ const Getstarted = () => {
     setErrors,
     step,
     setStep,
-    AccountValidationSchema,
     errors,
   } = blogData;
   const [imagePreviewUrl, setImagePreviewUrl] = useState("");
@@ -82,17 +81,35 @@ const Getstarted = () => {
     }
   };
 
-  const nextStep = () => {
-    AccountValidationSchema();
-  };
-
   const prevStep = () => {
     setStep(step - 1);
   };
 
-  const submitForm = () => {
-    // You can handle form submission logic here, e.g., sending data to the server.
-    console.log("Form Data:", formData);
+  const submitForm = async () => {
+    console.log("formdata", formData);
+    try {
+      const BASE_URL = "/api/get-started";
+      const resp = await fetch(BASE_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(formData)
+      });
+      const result = await resp.json();
+        const { message, status } = result;
+  
+        if (resp.ok) {
+          alert(message);
+          // setMessage(message);
+          // router.push("/login")
+        } else {
+          alert(message);
+          console.log({ message, status });
+        }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
