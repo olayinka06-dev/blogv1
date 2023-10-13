@@ -10,7 +10,7 @@ const Navbar = () => {
           <Link href="/">LOGO</Link>
         </div>
         <div className="">
-          <Link className="variant" href={"/create-post"}>
+          <Link className="btn btn-accent text-white" href={"/create-post"}>
             Create Post
           </Link>
         </div>
