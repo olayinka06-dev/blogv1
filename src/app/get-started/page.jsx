@@ -6,19 +6,49 @@ import StepOne from "./StepOne";
 import StepTwo from "./StepTwo";
 import StepThree from "./StepThree";
 import StepFour from "./StepFour";
+import { firebaseConfig } from "@/utils";
+import { initializeApp } from "firebase/app";
+import {
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+} from "firebase/storage";
+
+const app = initializeApp(firebaseConfig);
+const storage = getStorage(app, "gs://blog-website-a3ed3.appspot.com"); // Corrected a typo: "stroage" to "storage"
+
+function createUniqueFileName(fileName) {
+  const timeStamp = Date.now();
+  const randomString = Math.random().toString(36).substring(2, 12);
+
+  return `${fileName}-${timeStamp}-${randomString}`;
+}
+
+async function handleImageSaveToFireBase(file) {
+  const extractUniqueFileName = createUniqueFileName(file?.name);
+  const storageRef = ref(storage, `blog/${extractUniqueFileName}`);
+  const uploadImg = uploadBytesResumable(storageRef, file);
+
+  return new Promise((resolve, reject) => {
+    uploadImg.on(
+      "state_changed",
+      (snapshot) => {},
+      (error) => reject(error),
+      () => {
+        getDownloadURL(uploadImg.snapshot.ref)
+          .then((url) => resolve(url))
+          .catch((error) => reject(error));
+      }
+    );
+  });
+}
 
 const Getstarted = () => {
   const { blogData } = useBlogContext();
-  const {
-    formData,
-    setFormData,
-    setErrors,
-    step,
-    setStep,
-    errors,
-  } = blogData;
+  const { formData, setFormData, setErrors, step, setStep, errors } = blogData;
   const [imagePreviewUrl, setImagePreviewUrl] = useState("");
-  const [urlError, seturlError] = useState("");
+  const [imageLoading, setImageLoading] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -43,15 +73,13 @@ const Getstarted = () => {
     }));
   };
 
-  const handleFileChange = (e) => {
+  const handleFileChange = async (e) => {
     const { name } = e.target;
+    if (!e.target.files) return;
     const file = e.target.files[0];
-
-    setFormData({ ...formData, profilePicture: file });
-
     const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
     const maxSize = 500 * 1024;
-    
+
     if (!allowedTypes.includes(file?.type)) {
       setErrors((prev) => ({
         ...prev,
@@ -63,17 +91,22 @@ const Getstarted = () => {
         [name]:
           name === "profilePicture" && "File size exceeds the limit (500 KB)",
       }));
-    } else if (file) {
+    } else if (allowedTypes.includes(file?.type) && file?.size < maxSize) {
+      setImageLoading(true);
+      const saveImageToFirebase = await handleImageSaveToFireBase(file);
+      setImageLoading(false);
+      console.log(saveImageToFirebase, "saveImageToFirebase");
+      saveImageToFirebase !== "" &&
+        setFormData({ ...formData, profilePicture: saveImageToFirebase });
+
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreviewUrl(reader.result);
-        console.log("Image Url", e.target.files);
       };
       reader.readAsDataURL(file);
       setErrors((prev) => ({
         ...prev,
-        [name]:
-          name === "profilePicture" && "",
+        [name]: name === "profilePicture" && "",
       }));
     } else {
       setImagePreviewUrl("");
@@ -92,21 +125,21 @@ const Getstarted = () => {
       const resp = await fetch(BASE_URL, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(formData),
       });
       const result = await resp.json();
-        const { message, status } = result;
-  
-        if (resp.ok) {
-          alert(message);
-          // setMessage(message);
-          // router.push("/login")
-        } else {
-          alert(message);
-          console.log({ message, status });
-        }
+      const { message, status } = result;
+
+      if (resp.ok) {
+        alert(message);
+        // setMessage(message);
+        // router.push("/login")
+      } else {
+        alert(message);
+        console.log({ message, status });
+      }
     } catch (error) {
       console.log(error);
     }
@@ -132,10 +165,10 @@ const Getstarted = () => {
               imagePreviewUrl={imagePreviewUrl}
               handleInputChange={handleInputChange}
               handleFileChange={handleFileChange}
-              urlError={urlError}
+              imageLoading={imageLoading}
             />
           )}
-          {step === 4 && <StepFour handleInputChange={handleInputChange}/>}
+          {step === 4 && <StepFour handleInputChange={handleInputChange} />}
 
           {step === 5 && (
             <div>

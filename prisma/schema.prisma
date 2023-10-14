@@ -10,6 +10,29 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id            String   @id @default(cuid())
+  firstName String
+  lastName String
+  phoneNumber String
+  username      String   @unique
+  email         String   @unique
+  password String
+  profilePicture String?
+  bio           String
+  interests     String[]
+  connectWith   String[]
+  updates       String[]
+  userExperience String
+  certificates  String
+  challenges    String
+  placeOfWork    String
+  userRole      String[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  posts         Post[]
+}
+
 model Tag {
   id   String @id @default(cuid())
   name String @db.VarChar(100)
@@ -21,10 +44,10 @@ model Post {
   title     String   @db.VarChar(225)
   content   String
   createdAt DateTime @default(now())
-  updateAt  DateTime @updatedAt
+  updatedAt DateTime @updatedAt
   tagId     String
   media     String
   tag       Tag      @relation(fields: [tagId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
 }
-
-

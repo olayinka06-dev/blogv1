@@ -64,26 +64,5 @@ export const interests = [
   "Other",
 ];
 
-// [
-//   ("Web Development",
-//   "Mobile App Development",
-//   "Artificial Intelligence",
-//   "Machine Learning",
-//   "Data Science",
-//   "Front-End Development",
-//   "Back-End Development",
-//   "DevOps",
-//   "Blockchain",
-//   "Game Development",
-//   "UI/UX Design",
-//   "Cloud Computing",
-//   "Cybersecurity",
-//   "Embedded Systems",
-//   "Database Management",
-//   "Programming Languages",
-//   "IoT",
-//   "Big Data",
-//   "Robotics",
-//   "Software Development",
-//   "Other")
-// ];
+
+

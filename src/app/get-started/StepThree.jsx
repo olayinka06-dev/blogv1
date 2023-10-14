@@ -7,6 +7,7 @@ const StepThree = ({
   handleInputChange,
   handleFileChange,
   imagePreviewUrl,
+  imageLoading
 }) => {
   const { blogData } = useBlogContext();
   const { formData, errors, prevStep, setStep, step } = blogData;
@@ -19,29 +20,32 @@ const StepThree = ({
   const handleBioChange = (event) => {
     const bioText = event.target.value;
     setCounter(bioText.length); // Update the character count
-    // Update the form data
     handleInputChange(event);
   };
   return (
     <div className="flex flex-col gap-2">
       <h3 className="text-lg mb-2">Step 3: About You</h3>
-      <div className="mb-4">
+      <div className="mb-4 relative">
+        {
+          imageLoading&&(
+            <div className="absolute rounded p-2 z-[500] bg-black text-white">
+              <div className="flex items-center gap-1">
+                <span className="loading loading-spinner loading-md"></span>
+                <span>loading...</span>
+              </div>
+            </div>
+          )
+        }
         {imagePreviewUrl ? (
           <label htmlFor="profilePicture">
             <figure className="max-w-lg mb-2 ">
-              {imagePreviewUrl.includes("image") ? (
+              {imagePreviewUrl ? (
                 <img
                   className="max-h-[200px] max-w-full rounded-lg"
                   src={imagePreviewUrl}
                   alt="Image Preview"
                 />
-              ) : (
-                <video
-                  controls
-                  className="max-h-[200px] max-w-full rounded-lg"
-                  src={imagePreviewUrl}
-                ></video>
-              )}
+              ) : null}
             </figure>
           </label>
         ) : (

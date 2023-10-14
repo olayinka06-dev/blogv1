@@ -1,16 +1,34 @@
+import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
 
-export async function POST(request){
+export async function POST(request) {
+  try {
     const payload = await request.json();
-    const { confirmPassword: newconfirmPassword, ...rest } = payload;
-    console.log(rest);
-    try {
-        if (payload) {
-            return NextResponse.json({rest, message: "User Profile Successfully Created"}, {status: 200})
-        } else {
-            return NextResponse.json({message: "Registeration failed"}, {status: 400})
-        }
-    } catch (error) {
-        return NextResponse.json({message: "Internal server error"}, {status: 500})
+    const { confirmPassword: newconfirmPassword, ...userData } = payload;
+    console.log(userData);
+    const newlyCreatedUserProfileData = await db.user.create({
+      data: {
+        userData,
+      },
+    });
+    if (newlyCreatedUserProfileData) {
+      return NextResponse.json(
+        {
+          newlyCreatedUserProfileData,
+          message: "User Profile Successfully Created",
+        },
+        { status: 200 }
+      );
+    } else {
+      return NextResponse.json(
+        { message: "Registeration failed" },
+        { status: 400 }
+      );
     }
+  } catch (error) {
+    return NextResponse.json(
+      { message: "Internal server error" },
+      { status: 500 }
+    );
+  }
 }
