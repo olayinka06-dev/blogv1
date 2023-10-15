@@ -4,9 +4,9 @@ import { InputForm, InputSelect } from "@/components/formgroup/Forms";
 import { useBlogContext } from "@/provider/Context";
 import React from "react";
 
-const StepFour = ({ handleInputChange }) => {
+const StepFour = () => {
   const { blogData } = useBlogContext();
-  const { formData, errors, setStep, step, prevStep } = blogData;
+  const { errors, setStep, step, prevStep } = blogData;
   const nextStep = () => {
     setStep(step + 1);
   };

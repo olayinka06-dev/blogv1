@@ -2,6 +2,7 @@
 import { useBlogContext } from "@/provider/Context";
 import React, { useEffect, useState } from "react";
 import { MdArrowDropDown } from "react-icons/md";
+import { BsEyeSlash, BsEye } from "react-icons/bs";
 
 export const InputSelect = ({ placeholder, roles, payload }) => {
   const { blogData } = useBlogContext();
@@ -121,19 +122,31 @@ export const InputForm = ({
   placeholder,
   className,
   error,
+  toggleVisibility,
 }) => {
+  const [visibility, setVisibility] = useState(false);
   return (
     <div className="mb-4 flex flex-col">
       <label htmlFor={htmlFor}>{labelValue}</label>
-      <input
-        type={type}
-        id={id}
-        name={name}
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-        className={className}
-      />
+      <div className="w-full relative">
+        <input
+          type={toggleVisibility && (visibility ? "text" : type)}
+          id={id}
+          name={name}
+          value={value}
+          onChange={onChange}
+          placeholder={placeholder}
+          className={`${className} relative`}
+        />
+        {toggleVisibility && (
+          <span
+            onClick={() => setVisibility(!visibility)}
+            className="absolute right-3 opacity-60 top-[14px] cursor-pointer"
+          >
+            {visibility ? <BsEye /> : <BsEyeSlash />}
+          </span>
+        )}
+      </div>
       {error && (
         <span className="text-[hsl(354,84%,57%)] text-[12px] mt-2">
           {error}

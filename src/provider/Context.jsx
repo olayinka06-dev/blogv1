@@ -24,17 +24,19 @@ export const BlogContext = createContext({
       userRole: [],
     },
     errors: {
-        firstName: "",
-        lastName: "",
-        email: "",
-        phoneNumber: "",
-        username: "",
-        password: "",
-        confirmPassword: "",
-        userRole: "",
-        profilePicture: null,
+      firstName: "",
+      lastName: "",
+      email: "",
+      phoneNumber: "",
+      username: "",
+      password: "",
+      confirmPassword: "",
+      userRole: "",
+      profilePicture: null,
     },
     step: 1,
+    enableCredentials: true,
+    setEnableCredentials: () => {},
     setStep: () => {},
     setFormData: () => {},
     setErrors: () => {},
@@ -44,6 +46,4 @@ export const BlogContext = createContext({
   },
 });
 
-export const useBlogContext = () => (
-    useContext(BlogContext)
-)
+export const useBlogContext = () => useContext(BlogContext);

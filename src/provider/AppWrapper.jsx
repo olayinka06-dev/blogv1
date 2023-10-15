@@ -5,23 +5,23 @@ import { BlogContext } from "./Context";
 export const AppWrapper = ({ children }) => {
   const [formData, setFormData] = useState({
     firstName: "",
-      lastName: "",
-      email: "",
-      phoneNumber: "",
-      username: "",
-      password: "",
-      confirmPassword: "",
-      profilePicture: null,
-      termsAgreed: false,
-      bio: "",
-      interests: [],
-      connectWith: [],
-      updates: [],
-      userExperience: "",
-      certificates: "",
-      challenges: "",
-      placeOfWork: "",
-      userRole: [],
+    lastName: "",
+    email: "",
+    phoneNumber: "",
+    username: "",
+    password: "",
+    confirmPassword: "",
+    profilePicture: null,
+    termsAgreed: false,
+    bio: "",
+    interests: [],
+    connectWith: [],
+    updates: [],
+    userExperience: "",
+    certificates: "",
+    challenges: "",
+    placeOfWork: "",
+    userRole: [],
   });
   const [errors, setErrors] = useState({
     firstName: "",
@@ -35,6 +35,7 @@ export const AppWrapper = ({ children }) => {
     profilePicture: null,
   });
   const [step, setStep] = useState(1);
+  const [enableCredentials, setEnableCredentials] = useState(true);
 
   const scrollUp = () => {
     window.scrollTo({
@@ -90,6 +91,8 @@ export const AppWrapper = ({ children }) => {
     setStep,
     AccountValidationSchema,
     prevStep,
+    setEnableCredentials,
+    enableCredentials,
     step,
     formData,
     errors,

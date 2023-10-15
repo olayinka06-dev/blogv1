@@ -148,7 +148,7 @@ const Getstarted = () => {
   return (
     <div>
       <div className="flex justify-center w-full min-h-screen items-center">
-        <div className="w-2/3 bg-white p-8 rounded shadow-lg">
+        <div className="w-[50%] bg-white p-8 rounded shadow-lg">
           <h2 className="text-2xl text-center mb-4">Get Started</h2>
           <div className="bg-gray-100 p-4 rounded mb-4">
             <div className="radial-progress" style={{ "--value": step * 20 }}>
@@ -156,9 +156,9 @@ const Getstarted = () => {
             </div>
           </div>
 
-          {step === 1 && <StepOne handleInputChange={handleInputChange} />}
+          {step === 1 && <StepTwo handleInputChange={handleInputChange} />}
 
-          {step === 2 && <StepTwo handleInputChange={handleInputChange} />}
+          {step === 2 && <StepOne handleInputChange={handleInputChange} />}
 
           {step === 3 && (
             <StepThree

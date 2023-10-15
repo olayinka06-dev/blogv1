@@ -4,13 +4,14 @@ import { NextResponse } from "next/server";
 export async function POST(request) {
   try {
     const payload = await request.json();
-    const { confirmPassword: newconfirmPassword, ...userData } = payload;
+    const { confirmPassword: newconfirmPassword, termsAgreed: newTermsAgree, ...userData } = payload;
     console.log(userData);
     const newlyCreatedUserProfileData = await db.user.create({
       data: {
-        userData,
+        ...userData,
       },
     });
+    console.log(newlyCreatedUserProfileData);
     if (newlyCreatedUserProfileData) {
       return NextResponse.json(
         {
@@ -26,6 +27,7 @@ export async function POST(request) {
       );
     }
   } catch (error) {
+    console.log("Error", error);
     return NextResponse.json(
       { message: "Internal server error" },
       { status: 500 }

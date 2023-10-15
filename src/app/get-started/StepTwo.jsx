@@ -1,15 +1,15 @@
 "use client";
 import { InputForm } from "@/components/formgroup/Forms";
+import GithubSignInForm from "@/components/formgroup/GithubSignInForm";
 import { useBlogContext } from "@/provider/Context";
 import React from "react";
 
 const StepTwo = ({ handleInputChange }) => {
   const { blogData } = useBlogContext();
-  const { formData, errors, AccountValidationSchema, prevStep } = blogData;
+  const { formData, errors, AccountValidationSchema } = blogData;
   return (
     <div className="flex flex-col gap-2">
-      <h3 className="text-lg mb-2">Step 2: Account Information</h3>
-      {/* <InputSelect /> */}
+      <h3 className="text-lg mb-2"><div className="badge badge-accent text-white">Step 1:</div> Account Information</h3>
       <InputForm
         htmlFor="username"
         labelValue="Username"
@@ -33,6 +33,7 @@ const StepTwo = ({ handleInputChange }) => {
         onChange={handleInputChange}
         placeholder="Password"
         className="input input-bordered input-md w-full"
+        toggleVisibility={true}
       />
       <InputForm
         htmlFor="confirmPassword"
@@ -44,6 +45,7 @@ const StepTwo = ({ handleInputChange }) => {
         onChange={handleInputChange}
         placeholder="Confirm Password"
         className="input input-bordered input-md w-full"
+        toggleVisibility={true}
       />
 
       <div className="mb-4">
@@ -58,10 +60,7 @@ const StepTwo = ({ handleInputChange }) => {
           I agree to the Terms of Service and Privacy Policy
         </label>
       </div>
-      <div className="flex flex-row items-center gap-2">
-        <button onClick={prevStep} className="btn w-1/2">
-          Previous
-        </button>
+      <div className="flex flex-col w-full lg:flex-row">
         <button
           onClick={AccountValidationSchema}
           disabled={!formData.termsAgreed}
@@ -71,6 +70,8 @@ const StepTwo = ({ handleInputChange }) => {
         >
           Next
         </button>
+        <div className="divider lg:divider-horizontal">OR</div>
+        <GithubSignInForm/>
       </div>
     </div>
   );
