@@ -1,6 +1,7 @@
 import "./globals.css";
 import Navbar from "../components/navbar/Navbar";
 import { AppWrapper } from "@/provider/AppWrapper";
+import {NextAuthProvider} from "@/auth-provider/NextAuthProvider";
 
 export const metadata = {
   title: "Create Next App",
@@ -11,10 +12,12 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
+        <NextAuthProvider>
         <AppWrapper>
           <Navbar />
           {children}
         </AppWrapper>
+        </NextAuthProvider>
       </body>
     </html>
   );

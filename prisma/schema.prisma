@@ -12,9 +12,6 @@ model User {
   id       String   @id @default(cuid())
   username String   @unique
   password String
-  // You can keep the following fields if they're relevant for authentication.
-  userid    String?
-  userimage String?
   // Define a relation to the Post model for user's posts.
   posts     Post[]
   // Define a relation to the Profile model for user profiles.

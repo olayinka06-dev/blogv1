@@ -1,43 +1,14 @@
+// import { getServerSession } from "next-auth";
 import React from "react";
-import BlogCards from "../components/BlogCards";
-import { db } from "../lib/db";
-import { NetworkError } from "@/components/NetworkError";
+// import {authOptions} from "../"
 
-async function getPosts() {
-  try {
-    const response = await db.post.findMany({
-      select: {
-        id: true,
-        title: true,
-        content: true,
-        tag: true,
-        media: true
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
-    return response;
-  } catch (error) {
-    console.log(error);
-  }
-}
+
 
 const Home = async () => {
-  const posts = await getPosts();
-  console.log(posts);
-
+  // const session = await getServerSession(authOptions)
   return (
     <section>
-      {posts ? (
-        <div className="grid grid-cols-3 items-center justify-center">
-          {posts.map((post) => (
-            <BlogCards key={post} post={post} />
-          ))}
-        </div>
-      ) : (
-        <NetworkError/>
-      )}
+      Welcome to Home Page
     </section>
   );
 };

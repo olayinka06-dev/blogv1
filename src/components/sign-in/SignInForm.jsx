@@ -4,6 +4,8 @@ import GithubSignInForm from "@/components/formgroup/GithubSignInForm";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const SignInForm = () => {
   const router = useRouter();
@@ -12,13 +14,11 @@ const SignInForm = () => {
     password: "",
     termsAgreed: "",
   });
-
+  const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({
     username: "",
     password: "",
   });
-
-  const [message, setMessage] = useState("");
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -37,6 +37,7 @@ const SignInForm = () => {
     }));
   };
   const handleSubmit = async () => {
+    setLoading(true);
     const hasErrors = Object.values(errors).some((error) => error);
 
     if (!formData.username) {
@@ -45,35 +46,38 @@ const SignInForm = () => {
       setErrors((prev) => ({ ...prev, password: "This Field is Required" }));
     } else if (!hasErrors) {
       try {
+        console.log("formData", formData);
         const signInData = await signIn("credentials", {
           username: formData.username,
           password: formData.password,
           redirect: false,
-
           // callbackUrl: "/dsahboard"
         });
 
         if (signInData.error) {
-          if (signInData.error === "Invalid credentials") {
-            setMessage("Invalid email or password");
-          }
-
-          if (signInData.error === "Account is locked") {
-            setMessage("Account is locked. Please contact support.");
-          }
-
-          if (signInData.error === "User not found") {
-            setMessage("User not found. Please check your username.");
-          }
+          setLoading(false);
+          toast.error("Invalid Credentials, Please check your username and password", {
+            position: "top-right",
+            autoClose: 3000, 
+          });
 
           console.error(signInData.error);
         } else {
+          setLoading(false);
+          toast.success("Login Successfull", {
+            position: "top-right",
+            autoClose: 1000, 
+          });
+          toast.success("Redirecting to Profile page", {
+            position: "top-right",
+            autoClose: 2000, 
+          });
           router.refresh();
           router.push("/get-started");
         }
       } catch (error) {
+        setLoading(false);
         console.error("Network error:", error);
-        setMessage("Network error. Please try again later.");
       }
     }
   };
@@ -82,7 +86,6 @@ const SignInForm = () => {
       <h3 className="text-lg mb-2">
         <div className="badge badge-accent text-white">Account Information</div>
       </h3>
-      {message && <p>{message}</p>}
       <InputForm
         htmlFor="username"
         labelValue="Username"
@@ -120,7 +123,7 @@ const SignInForm = () => {
           I agree to the Terms of Service and Privacy Policy
         </label>
       </div>
-
+      <ToastContainer />
       <div className="flex flex-col w-full lg:flex-row">
         <button
           onClick={handleSubmit}
@@ -129,7 +132,16 @@ const SignInForm = () => {
             formData.termsAgreed ? "" : "bg-gray-400 cursor-not-allowed"
           } btn btn-accent text-white w-1/2`}
         >
-          Sign In
+          <div>
+              {loading && (
+                <span className="loading absolute ml-6 bottom-[12px] loading-spinner loading-md">
+                  Signing Up...
+                </span>
+              )}
+              <span className="">
+                {loading ? "Signing Up..." : "Sign Up"}
+              </span>
+            </div>
         </button>
         <div className="divider lg:divider-horizontal">OR</div>
         <GithubSignInForm />
