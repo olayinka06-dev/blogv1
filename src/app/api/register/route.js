@@ -1,28 +1,43 @@
 import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
+import { hash } from "bcrypt";
 
 export async function POST(request) {
+  const payload = await request.json();
+  const { username, password } = payload;
   try {
-    const payload = await request.json();
-    // const { confirmPassword: newconfirmPassword, termsAgreed: newTermsAgree, ...userData } = payload;
-    console.log(payload);
-    // const newlyCreatedUserProfileData = await db.user.create({
-    //   data: {
-    //     ...userData,
-    //   },
-    // });
-    // console.log(newlyCreatedUserProfileData);
-    if (payload) {
+    const usernameExist = await db.user.findUnique({
+      where: { username: username },
+    });
+
+    if (usernameExist) {
       return NextResponse.json(
         {
-          payload,
+          user: null,
+          message: "User with this username already exist",
+        },
+        { status: 409 }
+      );
+    }
+    const hashPassword = await hash(password, 10);
+    const newlyCreatedUser = await db.user.create({
+      data: {
+        username: username,
+        password: hashPassword,
+      },
+    });
+    if (newlyCreatedUser) {
+      const { password: newUserPassword, ...rest } = newlyCreatedUser;
+      return NextResponse.json(
+        {
+          user: rest,
           message: "User Profile Successfully Created",
         },
         { status: 200 }
       );
     } else {
       return NextResponse.json(
-        { message: "Registeration failed" },
+        { user: null, message: "Registeration failed" },
         { status: 400 }
       );
     }

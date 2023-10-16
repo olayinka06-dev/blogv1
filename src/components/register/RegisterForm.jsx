@@ -3,6 +3,8 @@ import { InputForm } from "@/components/formgroup/Forms";
 import GithubSignInForm from "@/components/formgroup/GithubSignInForm";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const RegisterForm = () => {
   const router = useRouter();
@@ -12,6 +14,7 @@ const RegisterForm = () => {
     confirmPassword: "",
     termsAgreed: "",
   });
+  const [loading, setLoading] = useState(false);
 
   const [errors, setErrors] = useState({
     username: "",
@@ -56,7 +59,7 @@ const RegisterForm = () => {
     }));
   };
   const handleSubmit = async () => {
-    console.log("formData Submitted", formData);
+    setLoading(true);
     if (validationSchema) {
       try {
         const BASE_URL = "/api/register";
@@ -71,15 +74,27 @@ const RegisterForm = () => {
         const { message, status } = result;
 
         if (resp.ok) {
-          alert(message);
-          // setMessage(message);
-          router.push("/sign-in")
+          setLoading(false);
+          toast.success(message, {
+            position: "top-right",
+            autoClose: 3000, 
+          });
+          router.push("/sign-in");
         } else {
-          alert(message);
+          setLoading(false);
+          toast.error(message, {
+            position: "top-right",
+            autoClose: 3000, 
+          });
           console.log({ message, status });
         }
       } catch (error) {
+        setLoading(false);
         console.log(error);
+        toast.error(error, {
+          position: "top-right",
+          autoClose: 3000, 
+        });
       }
     }
   };
@@ -139,16 +154,25 @@ const RegisterForm = () => {
           I agree to the Terms of Service and Privacy Policy
         </label>
       </div>
-
+      <ToastContainer />
       <div className="flex flex-col w-full lg:flex-row">
         <button
           onClick={handleSubmit}
           disabled={!formData.termsAgreed}
           className={`${
             formData.termsAgreed ? "" : "bg-gray-400 cursor-not-allowed"
-          } btn btn-accent text-white w-1/2`}
+          } btn btn-accent text-white relative w-1/2`}
         >
-          Next
+          <div>
+              {loading && (
+                <span className="loading absolute ml-6 bottom-[12px] loading-spinner loading-md">
+                  Signing Up...
+                </span>
+              )}
+              <span className="">
+                {loading ? "Signing Up..." : "Sign Up"}
+              </span>
+            </div>
         </button>
         <div className="divider lg:divider-horizontal">OR</div>
         <GithubSignInForm />
