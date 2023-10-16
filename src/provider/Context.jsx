@@ -22,6 +22,7 @@ export const BlogContext = createContext({
       challenges: "",
       placeOfWork: "",
       userRole: [],
+      username: "",
     },
     errors: {
       firstName: "",
@@ -37,6 +38,7 @@ export const BlogContext = createContext({
     step: 1,
     enableCredentials: false,
     enableProfileSection: false,
+    session: null,
     setEnableProfileSection: () => {},
     setEnableCredentials: () => {},
     setStep: () => {},

@@ -1,8 +1,11 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BlogContext } from "./Context";
+import { useSession } from "next-auth/react";
 
 export const AppWrapper = ({ children }) => {
+  const {data} = useSession();
+  const session = data?.user.username;
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -19,6 +22,7 @@ export const AppWrapper = ({ children }) => {
     challenges: "",
     placeOfWork: "",
     userRole: [],
+    username: data?.user.username,
   });
   const [errors, setErrors] = useState({
     firstName: "",
@@ -34,8 +38,6 @@ export const AppWrapper = ({ children }) => {
   const [step, setStep] = useState(1);
   const [enableCredentials, setEnableCredentials] = useState(false);
   const [enableProfileSection, setEnableProfileSection] = useState(false);
-
- 
 
   const scrollUp = () => {
     window.scrollTo({
@@ -99,6 +101,7 @@ export const AppWrapper = ({ children }) => {
     step,
     formData,
     errors,
+    session
   };
   return (
     <BlogContext.Provider value={{ blogData }}>{children}</BlogContext.Provider>

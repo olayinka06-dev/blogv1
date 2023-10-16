@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url = env("DATABASE_URL")
+  url      = env("DATABASE_URL")
 }
 
 // User model for user authentication
@@ -13,9 +13,9 @@ model User {
   username String   @unique
   password String
   // Define a relation to the Post model for user's posts.
-  posts     Post[]
+  posts    Post[]
   // Define a relation to the Profile model for user profiles.
-  profile   Profile?
+  profile  Profile?
 }
 
 // Profile model for user profiles
@@ -24,6 +24,7 @@ model Profile {
   firstName      String
   lastName       String
   phoneNumber    String
+  username       String   @unique
   email          String   @unique
   profilePicture String?
   bio            String
@@ -38,7 +39,7 @@ model Profile {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
   // Define a relation to the User model for user profiles.
-  user           User     @relation(fields: [email], references: [id])
+  user           User     @relation(fields: [username], references: [username])
 }
 
 // Post model for user posts
@@ -49,7 +50,7 @@ model Post {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   // Define a relation to the User model for the post author.
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [username])
   userId    String
   // Define a relation to the Tag model for categorizing posts.
   tag       Tag      @relation(fields: [tagId], references: [id])
@@ -59,8 +60,8 @@ model Post {
 
 // Tag model for categorizing posts
 model Tag {
-  id   String   @id @default(cuid())
-  name String   @unique
+  id    String @id @default(cuid())
+  name  String @unique
   // Define a relation to the Post model for tags associated with posts.
   posts Post[]
 }
