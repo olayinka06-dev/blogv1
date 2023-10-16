@@ -13,6 +13,8 @@ import {
   uploadBytesResumable,
   getDownloadURL,
 } from "firebase/storage";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const app = initializeApp(firebaseConfig);
 const storage = getStorage(app, "gs://blog-website-a3ed3.appspot.com"); // Corrected a typo: "stroage" to "storage"
@@ -125,15 +127,24 @@ const Getstarted = () => {
       const { message, status } = result;
 
       if (resp.ok) {
-        alert(message);
-        // setMessage(message);
-        // router.push("/login")
+        toast.success(message, {
+          position: "top-right",
+          autoClose: 3000,
+        });
+        router.push("/blog");
       } else {
-        alert(message);
+        toast.error(message, {
+          position: "top-right",
+          autoClose: 3000,
+        });
         console.log({ message, status });
       }
     } catch (error) {
       console.log(error);
+      toast.error(error, {
+        position: "top-right",
+        autoClose: 3000,
+      });
     }
   };
 
@@ -170,9 +181,6 @@ const Getstarted = () => {
                 >
                   Complete Registration
                 </button>
-                {/* <div className="alert alert-success">
-                  <span>Message sent successfully.</span>
-                </div> */}
               </div>
               <button onClick={prevStep} className="btn w-1/2">
                 Previous
@@ -181,6 +189,7 @@ const Getstarted = () => {
           )}
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };

@@ -7,31 +7,32 @@ const GithubSignInForm = () => {
   const { blogData } = useBlogContext();
   const { enableCredentials, setStep, setEnableCredentials } = blogData;
   const handleLogin = async () => {
-    await signIn("github")
-    setStep(2)
+    signIn("github", {callbackUrl: "/blog"})
   };
   return (
+    <>
     <button
       onClick={handleLogin}
       type="submit"
       className="btn w-auto bg-[#fff] text-[#000]"
     >
-      <img
+      {/* <img
         loading="lazy"
         height="24"
         width="24"
         id="provider-logo"
         src="https://authjs.dev/img/providers/github.svg"
-      />
-      {/* <img
+      /> */}
+      <img
         loading="lazy"
         height="24"
         width="24"
         id="provider-logo-dark"
         src="https://authjs.dev/img/providers/github-dark.svg"
-      /> */}
+      />
       <span>Sign in with GitHub</span>
     </button>
+  </>
   );
 };
 
