@@ -40,6 +40,7 @@ const StepTwo = ({ handleInputChange }) => {
         labelValue="Confirm Password"
         type="password"
         name="confirmPassword"
+        id={"confirmPassword"}
         value={formData.confirmPassword}
         error={errors.confirmPassword}
         onChange={handleInputChange}

@@ -8,7 +8,10 @@ const StepOne = ({ handleInputChange }) => {
   const { formData, errors, validationSchema, prevStep } = blogData;
   return (
     <div className="flex flex-col gap-2">
-      <h3 className="text-lg mb-2">Step 2: Personal Information</h3>
+      <h3 className="text-lg mb-2">
+        <div className="badge badge-accent text-white"> Step 1:</div>
+        Personal Information
+      </h3>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <InputForm
           htmlFor="firstName"
@@ -59,18 +62,14 @@ const StepOne = ({ handleInputChange }) => {
         placeholder="Phone Number"
         className="input input-bordered input-md w-full"
       />
-      <div className="flex flex-row items-center gap-2">
-        <button onClick={prevStep} className="btn w-1/2">
-          Previous
-        </button>
+        
         <button
           onClick={validationSchema}
-          className="btn btn-accent text-white w-1/2"
+          className="btn btn-accent text-white w-full"
         >
           Next
         </button>
       </div>
-    </div>
   );
 };
 

@@ -3,7 +3,6 @@
 import { useBlogContext } from "@/provider/Context";
 import React, { useState } from "react";
 import StepOne from "./StepOne";
-import StepTwo from "./StepTwo";
 import StepThree from "./StepThree";
 import StepFour from "./StepFour";
 import { firebaseConfig } from "@/utils";
@@ -46,13 +45,12 @@ async function handleImageSaveToFireBase(file) {
 
 const Getstarted = () => {
   const { blogData } = useBlogContext();
-  const { formData, setFormData, setErrors, step, setStep, errors } = blogData;
+  const { formData, setFormData, setErrors, step, setStep } = blogData;
   const [imagePreviewUrl, setImagePreviewUrl] = useState("");
   const [imageLoading, setImageLoading] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-    // Handling input change for text and checkbox fields
     setFormData({
       ...formData,
       [name]: type === "checkbox" ? checked : value,
@@ -63,12 +61,6 @@ const Getstarted = () => {
       [name]:
         name === "email" && value.length > 0 && !/\S+@\S+\.\S+/.test(value)
           ? "Invalid Email Address"
-          : name === "password" &&
-            !/^(?=.*\d)(?=.*[@#$%^&+=!])(?!.*\s).{5,11}$/.test(value)
-          ? "Password should contain both numbers and special characters and have a length between 5 and 11 characters."
-          : name === "confirmPassword" &&
-            formData.password !== formData.confirmPassword
-          ? "Password do not match!"
           : "",
     }));
   };
@@ -149,18 +141,16 @@ const Getstarted = () => {
     <div>
       <div className="flex justify-center w-full min-h-screen items-center">
         <div className="w-[50%] bg-white p-8 rounded shadow-lg">
-          <h2 className="text-2xl text-center mb-4">Get Started</h2>
+          <h2 className="text-2xl text-center mb-4">Profile Section</h2>
           <div className="bg-gray-100 p-4 rounded mb-4">
-            <div className="radial-progress" style={{ "--value": step * 20 }}>
-              {step * 20}%
+            <div className="radial-progress" style={{ "--value": step * 25 }}>
+              {step * 25}%
             </div>
           </div>
 
-          {step === 1 && <StepTwo handleInputChange={handleInputChange} />}
+          {step === 1 && <StepOne handleInputChange={handleInputChange} />}
 
-          {step === 2 && <StepOne handleInputChange={handleInputChange} />}
-
-          {step === 3 && (
+          {step === 2 && (
             <StepThree
               imagePreviewUrl={imagePreviewUrl}
               handleInputChange={handleInputChange}
@@ -168,9 +158,9 @@ const Getstarted = () => {
               imageLoading={imageLoading}
             />
           )}
-          {step === 4 && <StepFour handleInputChange={handleInputChange} />}
+          {step === 3 && <StepFour handleInputChange={handleInputChange} />}
 
-          {step === 5 && (
+          {step === 4 && (
             <div>
               <h3 className="text-lg mb-2">Step 5: Complete Registration</h3>
               <div className="mb-4">

@@ -4,18 +4,18 @@ import { NextResponse } from "next/server";
 export async function POST(request) {
   try {
     const payload = await request.json();
-    const { termsAgreed: newTermsAgree, ...userData } = payload;
-    console.log(userData);
-    const newlyCreatedUserProfileData = await db.user.create({
-      data: {
-        ...userData,
-      },
-    });
-    console.log(newlyCreatedUserProfileData);
-    if (newlyCreatedUserProfileData) {
+    // const { confirmPassword: newconfirmPassword, termsAgreed: newTermsAgree, ...userData } = payload;
+    console.log(payload);
+    // const newlyCreatedUserProfileData = await db.user.create({
+    //   data: {
+    //     ...userData,
+    //   },
+    // });
+    // console.log(newlyCreatedUserProfileData);
+    if (payload) {
       return NextResponse.json(
         {
-          newlyCreatedUserProfileData,
+          payload,
           message: "User Profile Successfully Created",
         },
         { status: 200 }

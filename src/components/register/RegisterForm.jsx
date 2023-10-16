@@ -1,24 +1,40 @@
 "use client";
 import { InputForm } from "@/components/formgroup/Forms";
 import GithubSignInForm from "@/components/formgroup/GithubSignInForm";
-import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
-const SignInForm = () => {
+const RegisterForm = () => {
   const router = useRouter();
   const [formData, setFormData] = useState({
     username: "",
     password: "",
+    confirmPassword: "",
     termsAgreed: "",
   });
 
   const [errors, setErrors] = useState({
     username: "",
     password: "",
+    confirmPassword: "",
   });
 
-  const [message, setMessage] = useState("");
+  const validationSchema = () => {
+    const hasErrors = Object.values(errors).some((error) => error);
+
+    if (!formData.username) {
+      setErrors((prev) => ({ ...prev, username: "This Field is Required" }));
+    } else if (!formData.password) {
+      setErrors((prev) => ({ ...prev, password: "This Field is Required" }));
+    } else if (!formData.confirmPassword) {
+      setErrors((prev) => ({
+        ...prev,
+        confirmPassword: "This Field is Required",
+      }));
+    } else if (!hasErrors) {
+      setErrors("");
+    }
+  };
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -31,49 +47,39 @@ const SignInForm = () => {
       ...prev,
       [name]:
         name === "password" &&
-        !/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{8,}$/.test(value)
+        !/^(?=.*\d)(?=.*[@#$%^&+=!])(?!.*\s).{5,11}$/.test(value)
           ? "Password should contain both numbers and special characters and have a length between 5 and 11 characters."
+          : name === "confirmPassword" &&
+            formData.password !== formData.confirmPassword
+          ? "Password do not match!"
           : "",
     }));
   };
   const handleSubmit = async () => {
-    const hasErrors = Object.values(errors).some((error) => error);
-
-    if (!formData.username) {
-      setErrors((prev) => ({ ...prev, username: "This Field is Required" }));
-    } else if (!formData.password) {
-      setErrors((prev) => ({ ...prev, password: "This Field is Required" }));
-    } else if (!hasErrors) {
+    console.log("formData Submitted", formData);
+    if (validationSchema) {
       try {
-        const signInData = await signIn("credentials", {
-          username: formData.username,
-          password: formData.password,
-          redirect: false,
-
-          // callbackUrl: "/dsahboard"
+        const BASE_URL = "/api/register";
+        const resp = await fetch(BASE_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
         });
+        const result = await resp.json();
+        const { message, status } = result;
 
-        if (signInData.error) {
-          if (signInData.error === "Invalid credentials") {
-            setMessage("Invalid email or password");
-          }
-
-          if (signInData.error === "Account is locked") {
-            setMessage("Account is locked. Please contact support.");
-          }
-
-          if (signInData.error === "User not found") {
-            setMessage("User not found. Please check your username.");
-          }
-
-          console.error(signInData.error);
+        if (resp.ok) {
+          alert(message);
+          // setMessage(message);
+          router.push("/sign-in")
         } else {
-          router.refresh();
-          router.push("/get-started");
+          alert(message);
+          console.log({ message, status });
         }
       } catch (error) {
-        console.error("Network error:", error);
-        setMessage("Network error. Please try again later.");
+        console.log(error);
       }
     }
   };
@@ -82,7 +88,6 @@ const SignInForm = () => {
       <h3 className="text-lg mb-2">
         <div className="badge badge-accent text-white">Account Information</div>
       </h3>
-      {message && <p>{message}</p>}
       <InputForm
         htmlFor="username"
         labelValue="Username"
@@ -108,6 +113,20 @@ const SignInForm = () => {
         className="input input-bordered input-md w-full"
         toggleVisibility={true}
       />
+      <InputForm
+        htmlFor="confirmPassword"
+        labelValue="Confirm Password"
+        type="password"
+        name="confirmPassword"
+        id={"confirmPassword"}
+        value={formData.confirmPassword}
+        error={errors.confirmPassword}
+        onChange={handleInputChange}
+        placeholder="Confirm Password"
+        className="input input-bordered input-md w-full"
+        toggleVisibility={true}
+      />
+
       <div className="mb-4">
         <label className="flex items-center">
           <input
@@ -129,17 +148,16 @@ const SignInForm = () => {
             formData.termsAgreed ? "" : "bg-gray-400 cursor-not-allowed"
           } btn btn-accent text-white w-1/2`}
         >
-          Sign In
+          Next
         </button>
         <div className="divider lg:divider-horizontal">OR</div>
         <GithubSignInForm />
       </div>
-
       <div className="mb-4 flex justify-end">
         <span>
-          Don't have an Account{" "}
-          <a className="text-accent underline" href="/register">
-            Register
+          Already have an Account{" "}
+          <a className="text-accent underline" href="/sign-in">
+            Sign In
           </a>
         </span>
       </div>
@@ -147,4 +165,4 @@ const SignInForm = () => {
   );
 };
 
-export default SignInForm;
+export default RegisterForm;

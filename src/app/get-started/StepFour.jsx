@@ -12,7 +12,10 @@ const StepFour = () => {
   };
   return (
     <div className="flex flex-col gap-2">
-      <h3 className="text-lg mb-2">Step 4: Your interest</h3>
+      <h3 className="text-lg mb-2">
+        <div className="badge badge-accent text-white"> Step 3:</div>
+        Your interest
+      </h3>
       <div className="mb-4">
         <label htmlFor="interests" className="block text-sm font-semibold">
           Interests

@@ -1,13 +1,14 @@
 "use client";
 import React from "react";
 import { useBlogContext } from "@/provider/Context";
+import { signIn } from "next-auth/react";
 
 const GithubSignInForm = () => {
   const { blogData } = useBlogContext();
-  const { enableCredentials, setEnableCredentials } = blogData;
-  // signIn("github")
-  const handleLogin = () => {
-    setEnableCredentials(false)
+  const { enableCredentials, setStep, setEnableCredentials } = blogData;
+  const handleLogin = async () => {
+    await signIn("github")
+    setStep(2)
   };
   return (
     <button

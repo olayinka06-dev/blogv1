@@ -24,7 +24,10 @@ const StepThree = ({
   };
   return (
     <div className="flex flex-col gap-2">
-      <h3 className="text-lg mb-2">Step 3: About You</h3>
+      <h3 className="text-lg mb-2">
+        <div className="badge badge-accent text-white"> Step 2:</div>
+        About You
+      </h3>
       <div className="mb-4 relative">
         {
           imageLoading&&(

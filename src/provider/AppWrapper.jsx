@@ -8,9 +8,6 @@ export const AppWrapper = ({ children }) => {
     lastName: "",
     email: "",
     phoneNumber: "",
-    username: "",
-    password: "",
-    confirmPassword: "",
     profilePicture: null,
     termsAgreed: false,
     bio: "",
@@ -35,7 +32,10 @@ export const AppWrapper = ({ children }) => {
     profilePicture: null,
   });
   const [step, setStep] = useState(1);
-  const [enableCredentials, setEnableCredentials] = useState(true);
+  const [enableCredentials, setEnableCredentials] = useState(false);
+  const [enableProfileSection, setEnableProfileSection] = useState(false);
+
+ 
 
   const scrollUp = () => {
     window.scrollTo({
@@ -79,7 +79,8 @@ export const AppWrapper = ({ children }) => {
       }));
     } else if (!hasErrors) {
       setErrors("");
-      setStep(step + 1);
+      // setStep(step + 1);
+      setEnableCredentials(true)
       scrollUp();
     }
   };
@@ -92,6 +93,8 @@ export const AppWrapper = ({ children }) => {
     AccountValidationSchema,
     prevStep,
     setEnableCredentials,
+    setEnableProfileSection,
+    enableProfileSection, 
     enableCredentials,
     step,
     formData,
