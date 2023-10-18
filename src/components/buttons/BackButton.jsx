@@ -6,7 +6,7 @@ import { BsChevronLeft } from "react-icons/bs";
 const BackButton = () => {
   const router = useRouter();
   return (
-    <button className="variant flex flex-row items-center gap-2" onClick={() => router.back()}>
+    <button className="btn btn-accent text-white flex flex-row items-center gap-2" onClick={() => router.back()}>
       <span><BsChevronLeft/></span>
       Back
     </button>

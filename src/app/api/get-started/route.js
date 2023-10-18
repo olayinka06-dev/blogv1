@@ -1,17 +1,25 @@
+import { authOptions } from "@/lib/auth";
 import { db } from "../../../lib/db";
 import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
 
 export async function POST(request) {
+  const session = await getServerSession(authOptions);
   try {
     const payload = await request.json();
+    const username = session?.user?.username;
     const { termsAgreed: newTermsAgree, ...userData } = payload;
-    console.log(userData);
+    const profileData = { ...userData, username };
+    console.log("profileData", profileData);
+
     const newlyCreatedUserProfileData = await db.profile.create({
       data: {
-        ...userData,
+        ...profileData,
       },
     });
+
     console.log("newlyCreatedUserProfileData", newlyCreatedUserProfileData);
+
     if (newlyCreatedUserProfileData) {
       return NextResponse.json(
         {
@@ -35,12 +43,12 @@ export async function POST(request) {
   }
 }
 
-export async function GET(){
+export async function GET() {
   try {
     const allData = await db.profile.findMany();
-    return NextResponse.json({allData, message: "success"}, {status: 200})
+    return NextResponse.json({ allData, message: "success" }, { status: 200 });
   } catch (error) {
     console.log(error);
-    return NextResponse.json({message: "error"}, {status: 500})
+    return NextResponse.json({ message: "error" }, { status: 500 });
   }
 }
