@@ -102,8 +102,8 @@ const page = () => {
       console.log(result);
 
       if (resp.status === 200) {
-        router.push("/blog");
         router.refresh();
+        router.push("/blog");
         setInfo({ ...info, message: result.message });
         setInfo({ ...info, loading: false });
       } else {

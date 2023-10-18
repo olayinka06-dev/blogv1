@@ -39,9 +39,9 @@ const BlogPage = async () => {
   const posts = await getPosts();
 
   return (
-    <section>
+    <section className="container">
       {posts ? (
-        <div className="grid grid-cols-3 items-center justify-center">
+        <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 items-center justify-center">
           {posts.length === 0 ? (
             <p>No Data returned</p>
           ) : (
