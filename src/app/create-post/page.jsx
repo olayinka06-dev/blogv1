@@ -12,35 +12,36 @@ import {
   uploadBytesResumable,
   getDownloadURL,
 } from "firebase/storage";
+import { handleImageSaveToFireBase } from "@/lib/__hs";
 
-const app = initializeApp(firebaseConfig);
-const storage = getStorage(app, "gs://blog-website-a3ed3.appspot.com"); // Corrected a typo: "stroage" to "storage"
+// const app = initializeApp(firebaseConfig);
+// const storage = getStorage(app, "gs://blog-website-a3ed3.appspot.com"); // Corrected a typo: "stroage" to "storage"
 
-function createUniqueFileName(fileName) {
-  const timeStamp = Date.now();
-  const randomString = Math.random().toString(36).substring(2, 12);
+// function createUniqueFileName(fileName) {
+//   const timeStamp = Date.now();
+//   const randomString = Math.random().toString(36).substring(2, 12);
 
-  return `${fileName}-${timeStamp}-${randomString}`;
-}
+//   return `${fileName}-${timeStamp}-${randomString}`;
+// }
 
-async function handleImageSaveToFireBase(file) {
-  const extractUniqueFileName = createUniqueFileName(file?.name);
-  const storageRef = ref(storage, `blog/${extractUniqueFileName}`);
-  const uploadImg = uploadBytesResumable(storageRef, file);
+// async function handleImageSaveToFireBase(file) {
+//   const extractUniqueFileName = createUniqueFileName(file?.name);
+//   const storageRef = ref(storage, `blog/${extractUniqueFileName}`);
+//   const uploadImg = uploadBytesResumable(storageRef, file);
 
-  return new Promise((resolve, reject) => {
-    uploadImg.on(
-      "state_changed",
-      (snapshot) => {},
-      (error) => reject(error),
-      () => {
-        getDownloadURL(uploadImg.snapshot.ref)
-          .then((url) => resolve(url))
-          .catch((error) => reject(error));
-      }
-    );
-  });
-}
+//   return new Promise((resolve, reject) => {
+//     uploadImg.on(
+//       "state_changed",
+//       (snapshot) => {},
+//       (error) => reject(error),
+//       () => {
+//         getDownloadURL(uploadImg.snapshot.ref)
+//           .then((url) => resolve(url))
+//           .catch((error) => reject(error));
+//       }
+//     );
+//   });
+// }
 
 const page = () => {
   const router = useRouter();
@@ -59,25 +60,9 @@ const page = () => {
     loading: false,
   });
 
-  // const selectedFile = formPost.media;
-
-  // useEffect(() => {
-  //   if (selectedFile) {
-  //     const reader = new FileReader();
-  //     reader.onloadend = () => {
-  //       setImagePreviewUrl(reader.result);
-  //     };
-  //     reader.readAsDataURL(selectedFile);
-  //   } else {
-  //     setImagePreviewUrl("");
-  //   }
-  // }, [selectedFile]);
-  
-  
-  
-
   async function handleBlogImageChange(event) {
     // Removed type annotation for event
+    const file = event.target.files[0];
     if (!event.target.files) return;
     setImageLoading(true);
     const saveImageToFirebase = await handleImageSaveToFireBase(
@@ -91,6 +76,15 @@ const page = () => {
         ...formPost,
         media: saveImageToFirebase,
       });
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreviewUrl(reader.result);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setImagePreviewUrl("");
+      return true;
     }
   }
 
@@ -124,11 +118,11 @@ const page = () => {
     }
   };
   return (
-    <section className="container px-10">
+    <section className="container px-10 py-3">
       <div className="">
         <BackButton />
       </div>
-      <h2 className="mx-auto text-center">Add New Post</h2>
+      <h2 className="mx-auto text-center mb-2">Add New Post</h2>
       <FormPost
         isEdit={false}
         setInfo={setInfo}
@@ -138,6 +132,7 @@ const page = () => {
         formPost={formPost}
         handleBlogImageChange={handleBlogImageChange}
         imageLoading={imageLoading}
+        imagePreviewUrl={imagePreviewUrl}
       />
     </section>
   );

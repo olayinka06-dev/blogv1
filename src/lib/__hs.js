@@ -1,6 +1,16 @@
 "use client";
 import crypto from "crypto";
-import { useSession } from "next-auth/react";
+import { firebaseConfig } from "@/utils";
+import { initializeApp } from "firebase/app";
+import {
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+} from "firebase/storage";
+
+
+
 const algorithm = "aes-256-cbc"; //Using AES encryption
 const key = Buffer.from("9298987654565434567890987854329234567898c76564578909895467689789", "hex");
 const initVector = Buffer.from("c8767656787656781276589768909854", "hex"); //
@@ -39,8 +49,31 @@ export function _yY(text) {
   }
 }
 
-export function useUser() {
-  const {data: session} = useSession();
-  const userId = session?.user.id;
-  return userId;
+const app = initializeApp(firebaseConfig);
+const storage = getStorage(app, "gs://blog-website-a3ed3.appspot.com"); // Corrected a typo: "stroage" to "storage"
+
+function createUniqueFileName(fileName) {
+  const timeStamp = Date.now();
+  const randomString = Math.random().toString(36).substring(2, 12);
+
+  return `${fileName}-${timeStamp}-${randomString}`;
+}
+
+export const handleImageSaveToFireBase = async (file) => {
+  const extractUniqueFileName = createUniqueFileName(file?.name);
+  const storageRef = ref(storage, `blog/${extractUniqueFileName}`);
+  const uploadImg = uploadBytesResumable(storageRef, file);
+
+  return new Promise((resolve, reject) => {
+    uploadImg.on(
+      "state_changed",
+      (snapshot) => {},
+      (error) => reject(error),
+      () => {
+        getDownloadURL(uploadImg.snapshot.ref)
+          .then((url) => resolve(url))
+          .catch((error) => reject(error));
+      }
+    );
+  });
 }
