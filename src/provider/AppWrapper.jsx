@@ -6,6 +6,7 @@ import { useSession } from "next-auth/react";
 export const AppWrapper = ({ children }) => {
   const {data} = useSession();
   const session = data?.user.username;
+  console.log(session);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",

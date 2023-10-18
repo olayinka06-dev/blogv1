@@ -3,10 +3,12 @@ import { InputForm } from "@/components/formgroup/Forms";
 import GithubSignInForm from "@/components/formgroup/GithubSignInForm";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import { useSession } from "next-auth/react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const RegisterForm = () => {
+  const { data: session } = useSession()
   const router = useRouter();
   const [formData, setFormData] = useState({
     username: "",
@@ -21,6 +23,11 @@ const RegisterForm = () => {
     password: "",
     confirmPassword: "",
   });
+
+  if (session) {
+    router.back(); // Redirect back
+    return <div className="loading loading-spinner">Redirecting...</div>; // You can return null or any loading indicator while redirecting
+  }
 
   const validationSchema = () => {
     const hasErrors = Object.values(errors).some((error) => error);

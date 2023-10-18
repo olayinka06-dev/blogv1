@@ -37,12 +37,7 @@ export async function POST(request) {
 
 export async function GET(){
   try {
-    const allData = await db.user.findMany({
-      include: {
-        posts: true,
-        profile: true
-      }
-    });
+    const allData = await db.profile.findMany();
     return NextResponse.json({allData, message: "success"}, {status: 200})
   } catch (error) {
     console.log(error);

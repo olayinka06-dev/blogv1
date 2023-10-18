@@ -1,7 +1,7 @@
 "use client";
 import { InputForm } from "@/components/formgroup/Forms";
 import GithubSignInForm from "@/components/formgroup/GithubSignInForm";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
@@ -9,16 +9,23 @@ import "react-toastify/dist/ReactToastify.css";
 
 const SignInForm = () => {
   const router = useRouter();
+  const { data: session } = useSession()
   const [formData, setFormData] = useState({
     username: "",
     password: "",
     termsAgreed: "",
   });
   const [loading, setLoading] = useState(false);
+  const [, set] = useState();
   const [errors, setErrors] = useState({
     username: "",
     password: "",
   });
+
+  if (session) {
+    router.back(); // Redirect back
+    return <div className="loading loading-spinner">Redirecting...</div>; // You can return null or any loading indicator while redirecting
+  }
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;

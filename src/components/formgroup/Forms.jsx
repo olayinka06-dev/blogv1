@@ -58,7 +58,7 @@ export const InputSelect = ({ placeholder, roles, payload }) => {
 
   return (
     <div className="relative">
-      <div className="select relative flex flex-row gap-2 text-white items-center w-full select-bordered">
+      <div className="select relative flex flex-row flex-wrap gap-2 text-white items-center w-full select-bordered">
         {selectedDatas.length > 0 ? (
           selectedDatas.map((selectedData) => (
             <div
