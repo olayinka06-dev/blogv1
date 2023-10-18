@@ -50,7 +50,7 @@ model Post {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   // Define a relation to the User model for the post author.
-  user      User     @relation(fields: [userId], references: [username])
+  user      User     @relation(fields: [userId], references: [id])
   userId    String
   // Define a relation to the Tag model for categorizing posts.
   tag       Tag      @relation(fields: [tagId], references: [id])

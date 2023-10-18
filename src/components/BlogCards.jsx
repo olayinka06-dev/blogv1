@@ -3,36 +3,8 @@ import { HiOutlineArrowNarrowRight } from "react-icons/hi";
 import { AiFillEye, AiOutlineMessage } from "react-icons/ai";
 
 const BlogCards = ({ post }) => {
-  const { id, tag, title, content, media } = post;
-  // console.log(post);
-
-  // Function to render media based on type (image or video)
-  // const renderMedia = () => {
-  //   if (media && media.length > 0) {
-  //     return media.map((mediaItem, index) => {
-  //       if (mediaItem.type.startsWith("image")) {
-  //         // Render image
-  //         return (
-  //           <img
-  //             key={index}
-  //             className="lg:h-48 md:h-36 w-full object-cover object-center"
-  //             src={`${`http://localhost:3000`}${mediaItem.url}`}
-  //             alt={title}
-  //           />
-  //         );
-  //       } else if (mediaItem.type.startsWith("video")) {
-  //         // Render video
-  //         return (
-  //           <video controls key={index} className="w-full">
-  //             <source src={mediaItem.url} type="video/mp4" />
-  //             Your browser does not support the video tag.
-  //           </video>
-  //         );
-  //       }
-  //     });
-  //   }
-  //   return null; // No media to display
-  // };
+  const { id, tag, title, content, media, user } = post;
+  const profile = user?.profile;
 
   return (
     <div className="p-4 w-full">
@@ -43,6 +15,30 @@ const BlogCards = ({ post }) => {
           src={media}
           alt={media}
         />
+        <div className="flex items-center gap-2 px-6 mt-2">
+          <img
+            className="w-8 h-8 rounded-full"
+            src={profile?.profilePicture || "/next.svg"}
+            alt="author"
+          />
+          <div className="">
+            <span>{user?.username}</span>
+            <div className="">
+            {profile?.userRole ? (
+              <div>
+                {profile?.userRole.length > 2 ? (
+                  <>
+                    <span className="text-sm">{profile?.userRole.slice(0, 2).join(" | ")}</span>
+                    <span className="text-sm"> | ...</span>
+                  </>
+                ) : (
+                  <span>{profile?.userRole.join(" | ")}</span>
+                )}
+              </div>
+            ) : null}
+            </div>
+          </div>
+        </div>
         <div className="p-6">
           <h2 className="tracking-widest text-xs title-font font-medium text-gray-400 mb-1">
             {tag.name}

@@ -12,6 +12,17 @@ async function getPosts() {
         content: true,
         tag: true,
         media: true,
+        user: {
+          select: {
+            username: true,
+            profile: {
+              select: {
+                profilePicture: true,
+                userRole: true,
+              },
+            },
+          },
+        },
       },
       orderBy: {
         createdAt: "desc",
@@ -23,9 +34,9 @@ async function getPosts() {
   }
 }
 
+
 const BlogPage = async () => {
   const posts = await getPosts();
-  console.log(posts);
 
   return (
     <section>

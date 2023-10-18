@@ -1,14 +1,17 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 export async function POST(request) {
-  // Extract form fields from formData
+  const session = await getServerSession(authOptions);
   const payload = await request.json();
   const { title, description, tagId, media } = payload;
 
-  console.log("payload", payload); // Access the uploaded files through request.files
-
-  if (!title||!description||!tagId||!media) {
+  if (!session) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
+  else if (!title||!description||!tagId||!media) {
     return NextResponse.json({ message: "Title is required" }, { status: 400 });
   }
 
@@ -19,11 +22,12 @@ export async function POST(request) {
         content: description,
         tagId: tagId,
         media: media,
+        userId: session?.user.id,
       },
     });
 
     return NextResponse.json(
-      { post: payload, message: "User successfully created Post" },
+      { post: post, message: "User successfully created Post" },
       { status: 200 }
     );
   } catch (error) {
