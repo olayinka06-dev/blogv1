@@ -9,13 +9,14 @@ datasource db {
 
 // User model for user authentication
 model User {
-  id       String   @id @default(cuid())
-  username String   @unique
+  id       String    @id @default(cuid())
+  username String    @unique
   password String
   // Define a relation to the Post model for user's posts.
   posts    Post[]
   // Define a relation to the Profile model for user profiles.
   profile  Profile?
+  Comment  Comment[]
 }
 
 // Profile model for user profiles
@@ -42,20 +43,31 @@ model Profile {
   user           User     @relation(fields: [username], references: [username])
 }
 
+model Comment {
+  id     String @id @default(cuid())
+  text   String
+  post   Post   @relation(fields: [postId], references: [id])
+  postId String
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+  createdAt      DateTime @default(now())
+}
+
 // Post model for user posts
 model Post {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   title     String
   content   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   // Define a relation to the User model for the post author.
-  user      User     @relation(fields: [userId], references: [id])
+  user      User      @relation(fields: [userId], references: [id])
   userId    String
   // Define a relation to the Tag model for categorizing posts.
-  tag       Tag      @relation(fields: [tagId], references: [id])
+  tag       Tag       @relation(fields: [tagId], references: [id])
   tagId     String
   media     String?
+  Comment   Comment[]
 }
 
 // Tag model for categorizing posts

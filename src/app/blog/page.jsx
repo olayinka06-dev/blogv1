@@ -12,8 +12,10 @@ async function getPosts() {
         content: true,
         tag: true,
         media: true,
+        Comment: true,
         user: {
           select: {
+            id: true,
             username: true,
             profile: {
               select: {
@@ -37,6 +39,7 @@ async function getPosts() {
 
 const BlogPage = async () => {
   const posts = await getPosts();
+  console.log(posts);
 
   return (
     <section className="container">

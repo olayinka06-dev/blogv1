@@ -4,7 +4,7 @@ import { BsForward } from "react-icons/bs";
 import { MdPostAdd } from "react-icons/md";
 
 const BlogCards = ({ post }) => {
-  const { id, tag, title, content, media, user } = post;
+  const { id, tag, title, content, media, user, Comment } = post;
   const profile = user?.profile;
 
   const imageExtensions = ["jpeg", "jpg", "png", "gif", "webp", "svg"];
@@ -101,7 +101,7 @@ const BlogCards = ({ post }) => {
                 <span>
                   <AiOutlineMessage />
                 </span>
-                6
+                {Comment?.length}
               </span>
             </Link>
           </div>
