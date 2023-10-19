@@ -25,7 +25,7 @@ const Navbar = async () => {
   const profilePicture = user?.profile?.profilePicture;
 
   return (
-    <header className="w-full p-4 sticky top-0 bg-white">
+    <header className="w-full p-4 z-[1000] sticky top-0 bg-white">
       <nav className="flex container items-center justify-between">
         <div className="">
           <Link href="/">LOGO</Link>
