@@ -1,47 +1,11 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useRouter } from "next/navigation";
 import BackButton from "@/components/buttons/BackButton";
 import FormPost from "@/components/formpost/FormPost";
-import { firebaseConfig } from "@/utils";
-import { initializeApp } from "firebase/app";
-import {
-  getStorage,
-  ref,
-  uploadBytesResumable,
-  getDownloadURL,
-} from "firebase/storage";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { handleImageSaveToFireBase } from "@/lib/__hs";
-
-// const app = initializeApp(firebaseConfig);
-// const storage = getStorage(app, "gs://blog-website-a3ed3.appspot.com"); // Corrected a typo: "stroage" to "storage"
-
-// function createUniqueFileName(fileName) {
-//   const timeStamp = Date.now();
-//   const randomString = Math.random().toString(36).substring(2, 12);
-
-//   return `${fileName}-${timeStamp}-${randomString}`;
-// }
-
-// async function handleImageSaveToFireBase(file) {
-//   const extractUniqueFileName = createUniqueFileName(file?.name);
-//   const storageRef = ref(storage, `blog/${extractUniqueFileName}`);
-//   const uploadImg = uploadBytesResumable(storageRef, file);
-
-//   return new Promise((resolve, reject) => {
-//     uploadImg.on(
-//       "state_changed",
-//       (snapshot) => {},
-//       (error) => reject(error),
-//       () => {
-//         getDownloadURL(uploadImg.snapshot.ref)
-//           .then((url) => resolve(url))
-//           .catch((error) => reject(error));
-//       }
-//     );
-//   });
-// }
 
 const page = () => {
   const router = useRouter();
@@ -84,6 +48,11 @@ const page = () => {
       reader.readAsDataURL(file);
     } else {
       setImagePreviewUrl("");
+      setImageLoading(true);
+      toast.error("Unable to upload please check your network", {
+        position: "top-right",
+        autoClose: 3000,
+      });
       return true;
     }
   }
@@ -91,30 +60,41 @@ const page = () => {
   const handleSubmitPost = async (e) => {
     e.preventDefault();
     setInfo({ ...info, loading: true });
-
     try {
+      console.log("formPost", formPost);
       const BASE_URL = "/api/post/create";
-      console.log(formPost);
-
-      const resp = await axios.post(BASE_URL, formPost);
-      console.log(resp);
-      const result = await resp.data;
-      console.log(result);
-
-      if (resp.status === 200) {
+      const resp = await fetch(BASE_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formPost),
+      });
+      const result = await resp.json();
+        const { message } = result;
+      if (resp.ok) {
+        toast.success(message, {
+          position: "top-right",
+          autoClose: 3000,
+        });
         router.refresh();
         router.push("/blog");
-        setInfo({ ...info, message: result.message });
         setInfo({ ...info, loading: false });
       } else {
-        setInfo({ ...info, message: result.message });
+        toast.error(message, {
+          position: "top-right",
+          autoClose: 3000,
+        });
         setInfo({ ...info, loading: false });
       }
     } catch (error) {
-      console.log(error.message);
-      if (error.request) {
-        setInfo({ ...info, message: "Bad Network Could not create post" });
-      }
+      console.log(error);
+      toast.error(error, {
+        position: "top-right",
+        autoClose: 1000,
+      });
+      // "Bad Network Could not create post"
+      setInfo({ ...info, loading: false });
     }
   };
   return (
@@ -134,6 +114,7 @@ const page = () => {
         imageLoading={imageLoading}
         imagePreviewUrl={imagePreviewUrl}
       />
+      <ToastContainer />
     </section>
   );
 };

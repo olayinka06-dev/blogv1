@@ -2,6 +2,7 @@ import Link from "next/link";
 import { AiFillEye, AiFillLike, AiOutlineMessage } from "react-icons/ai";
 import { BsForward } from "react-icons/bs";
 import { MdPostAdd } from "react-icons/md";
+import LikeButton from "@/components/buttons/LikeButton";
 
 const BlogCards = ({ post }) => {
   const { id, tag, title, content, media, user, Comment } = post;
@@ -78,12 +79,7 @@ const BlogCards = ({ post }) => {
               </span>
               1.2K
             </span>
-            <span className="text-gray-400 mr-3 inline-flex items-center lg:ml-auto md:ml-0 ml-auto leading-none text-sm pr-3 py-1 border-r-2 border-gray-200">
-              <span>
-                <AiFillLike />
-              </span>
-              2K
-            </span>
+            <LikeButton postId={id}/>
             <span className="text-gray-400 mr-3 inline-flex items-center lg:ml-auto md:ml-0 ml-auto leading-none text-sm pr-3 py-1 border-r-2 border-gray-200">
               <span>
                 <BsForward />

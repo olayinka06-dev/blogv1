@@ -10,9 +10,18 @@ export async function POST(request) {
 
   if (!session) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-  }
-  else if (!title||!description||!tagId||!media) {
+  } else if (!title) {
     return NextResponse.json({ message: "Title is required" }, { status: 400 });
+  } else if (!description) {
+    return NextResponse.json(
+      { message: "Description is required" },
+      { status: 400 }
+    );
+  } else if (!tagId) {
+    return NextResponse.json(
+      { message: "Please select a Tag" },
+      { status: 400 }
+    );
   }
 
   try {

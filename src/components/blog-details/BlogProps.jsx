@@ -11,7 +11,6 @@ import { formatDate } from "@/lib/__hs";
 const BlogProps = ({ post, profile, session, comments }) => {
   const router = useRouter();
   const [comment, setComment] = useState("");
-  console.log(post);
   const postId = post?.id;
 
   const imageExtensions = ["jpeg", "jpg", "png", "gif", "webp", "svg"];
@@ -32,15 +31,18 @@ const BlogProps = ({ post, profile, session, comments }) => {
         },
         body: JSON.stringify({ comment, postId }),
       });
+      const result = await resp.json();
+        const { message } = result;
       if (resp.ok) {
-        toast.success(resp.message, {
+        toast.success(message, {
           position: "top-right",
-          autoClose: 1000,
+          autoClose: 3000,
         });
+        router.refresh();
       } else {
-        toast.error(resp.message, {
+        toast.error(message, {
           position: "top-right",
-          autoClose: 1000,
+          autoClose: 3000,
         });
       }
     } catch (error) {
@@ -60,7 +62,7 @@ const BlogProps = ({ post, profile, session, comments }) => {
     return () => {
       clearInterval(interval);
     };
-  }, []);
+  }, [comments]);
 
   return (
     <div className="-mx-4 flex flex-col gap-4 items-center justify-center">
@@ -117,14 +119,6 @@ const BlogProps = ({ post, profile, session, comments }) => {
                   controls
                 />
               )}
-              {/* <div className="relative aspect-[97/60] w-full sm:aspect-[97/44]">
-                <Image
-                  src={post?.media || ""}
-                  alt="Blog"
-                  className="object-cover object-center"
-                  fill
-                />
-              </div> */}
             </div>
             <p className="mb-8 leading-relaxed text-base font-medium text-body-color sm:text-lg lg:text-base xl:text-lg">
               {post?.content}
