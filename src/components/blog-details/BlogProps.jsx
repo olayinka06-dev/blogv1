@@ -14,6 +14,14 @@ const BlogProps = ({ post, profile, session, comments }) => {
   console.log(post);
   const postId = post?.id;
 
+  const imageExtensions = ["jpeg", "jpg", "png", "gif", "webp", "svg"];
+
+  // Function to determine if the media URL is an image
+  const isImage = (url) => {
+    const lowerCaseUrl = url.toLowerCase();
+    return imageExtensions.some((ext) => lowerCaseUrl.includes(`.${ext}`));
+  };
+
   const handleCommentSave = async () => {
     try {
       const BASE_URL = `/api/post/single-blog-details`;
@@ -93,15 +101,30 @@ const BlogProps = ({ post, profile, session, comments }) => {
             </div>
           </div>
           <div>
-            <div className="mb-10 w-full overflow-hidden rounded">
-              <div className="relative aspect-[97/60] w-full sm:aspect-[97/44]">
+          <div className="relative aspect-[97/60] w-full sm:aspect-[97/44]">
+              {isImage(post?.media) ? (
+                <Image
+                  className="object-cover object-center"
+                  src={post?.media}
+                  alt={post?.media}
+                  fill
+                />
+              ) : (
+                <video
+                  className="object-cover object-center"
+                  src={post?.media}
+                  alt={post?.media}
+                  controls
+                />
+              )}
+              {/* <div className="relative aspect-[97/60] w-full sm:aspect-[97/44]">
                 <Image
                   src={post?.media || ""}
                   alt="Blog"
                   className="object-cover object-center"
                   fill
                 />
-              </div>
+              </div> */}
             </div>
             <p className="mb-8 leading-relaxed text-base font-medium text-body-color sm:text-lg lg:text-base xl:text-lg">
               {post?.content}
