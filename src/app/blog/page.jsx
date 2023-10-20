@@ -13,6 +13,7 @@ async function getPosts() {
         tag: true,
         media: true,
         Comment: true,
+        Like: true,
         user: {
           select: {
             id: true,
@@ -39,7 +40,7 @@ async function getPosts() {
 
 const BlogPage = async () => {
   const posts = await getPosts();
-  console.log(posts);
+  // console.log("posts Liked", posts);
 
   return (
     <section className="container">

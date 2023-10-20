@@ -5,8 +5,10 @@ import { MdPostAdd } from "react-icons/md";
 import LikeButton from "@/components/buttons/LikeButton";
 
 const BlogCards = ({ post }) => {
-  const { id, tag, title, content, media, user, Comment } = post;
+  const { id, tag, title, content, media, user, Comment, Like: like } = post;
   const profile = user?.profile;
+
+  // console.log("like", like);
 
   const imageExtensions = ["jpeg", "jpg", "png", "gif", "webp", "svg"];
 
@@ -79,7 +81,7 @@ const BlogCards = ({ post }) => {
               </span>
               1.2K
             </span>
-            <LikeButton postId={id}/>
+            <LikeButton initialLikes={like} postId={id}/>
             <span className="text-gray-400 mr-3 inline-flex items-center lg:ml-auto md:ml-0 ml-auto leading-none text-sm pr-3 py-1 border-r-2 border-gray-200">
               <span>
                 <BsForward />

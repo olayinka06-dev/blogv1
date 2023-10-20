@@ -32,7 +32,7 @@ export async function POST(request) {
       });
       return NextResponse.json(
         { message: "Post unliked successfully", likes: existingLike.likes - 1 },
-        { status: 204 }
+        { status: 200 }
       );
     } else {
       // User has not liked the post, so create a new like record
@@ -56,3 +56,38 @@ export async function POST(request) {
     );
   }
 }
+
+
+// export async function GET(request) {
+//   const { searchParams } = new URL(request.url);
+//   const session = await getServerSession(authOptions);
+//   const postId = searchParams.get("id");
+
+
+//   if (!session) {
+//     return NextResponse.json({
+//       message: "You must be logged in to like/unlike a post.",
+//     });
+//   }
+
+//   try {
+//     const like = await db.like.findFirst({
+//       where: {
+//         postId: postId,
+//         userId: session.user.id,
+//       },
+//     });
+
+//     if (like) {
+//       // User has already liked the post
+//       return NextResponse.json({ liked: true });
+//     } else {
+//       // User has not liked the post
+//       return NextResponse.json({ liked: false });
+//     }
+//   } catch (error) {
+//     console.error("Error checking liked status:", error);
+//     return res.status(500).end(); // Internal Server Error
+//   }
+// }
+
