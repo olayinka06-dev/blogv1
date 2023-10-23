@@ -7,11 +7,15 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/navigation";
 import { formatDate } from "@/lib/__hs";
+import { fetchJson } from "../../lib/fetchJson";
+import { Success, Error } from "@/lib/entities";
 
 const BlogProps = ({ post, profile, session, comments }) => {
   const router = useRouter();
   const [comment, setComment] = useState("");
   const postId = post?.id;
+
+  console.log("comments", comments);
 
   const imageExtensions = ["jpeg", "jpg", "png", "gif", "webp", "svg"];
 
@@ -24,7 +28,7 @@ const BlogProps = ({ post, profile, session, comments }) => {
   const handleCommentSave = async () => {
     try {
       const BASE_URL = `/api/post/single-blog-details`;
-      const resp = await fetch(BASE_URL, {
+      const resp = await fetchJson(BASE_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -32,25 +36,38 @@ const BlogProps = ({ post, profile, session, comments }) => {
         body: JSON.stringify({ comment, postId }),
       });
       const result = await resp.json();
-        const { message } = result;
+      const { message } = result;
       if (resp.ok) {
-        toast.success(message, {
-          position: "top-right",
-          autoClose: 3000,
-        });
+        Success(message);
         router.refresh();
       } else {
-        toast.error(message, {
-          position: "top-right",
-          autoClose: 3000,
-        });
+        Error(message);
       }
     } catch (error) {
       console.log(error);
-      toast.error(error, {
-        position: "top-right",
-        autoClose: 1000,
+      Error(message);
+    }
+  };
+
+  const handleDeleteComment = async (commentId) => {
+    try {
+      const BASE_URL = `/api/post/single-blog-details?id=${commentId}`;
+      const resp = await fetch(BASE_URL, {
+        method: "DELETE",
       });
+
+      const result = await resp.json();
+      const { message } = result;
+
+      if (resp.ok) {
+        Success(message);
+        router.refresh();
+      } else {
+        Error(message);
+      }
+    } catch (error) {
+      console.log(error);
+      Error(message);
     }
   };
 
@@ -103,7 +120,7 @@ const BlogProps = ({ post, profile, session, comments }) => {
             </div>
           </div>
           <div>
-          <div className="relative aspect-[97/60] w-full sm:aspect-[97/44]">
+            <div className="relative aspect-[97/60] w-full sm:aspect-[97/44]">
               {isImage(post?.media) ? (
                 <Image
                   className="object-cover object-center"
@@ -151,7 +168,7 @@ const BlogProps = ({ post, profile, session, comments }) => {
       <section className="bg-[#f2f2f2] py-8 px-5 lg:py-16 w-full lg:w-8/12">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-lg lg:text-2xl font-bold text-black dark:text-white">
-            Discussion ({comments.length})
+            Discussion ({comments?.length})
           </h2>
         </div>
         <div className="flex flex-col gap-3">
@@ -175,6 +192,14 @@ const BlogProps = ({ post, profile, session, comments }) => {
                     {comment?.text}
                   </p>
                   <p>{formatDate(comment?.createdAt)}</p>
+                  <div className="flex justify-end">
+                    <button
+                      className="btn"
+                      onClick={() => handleDeleteComment(comment?.id)}
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </div>
               ))
             : null}

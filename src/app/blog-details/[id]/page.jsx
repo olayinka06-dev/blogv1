@@ -50,6 +50,7 @@ async function getAllComment(postId) {
     const comments = await db.comment.findMany({
       where: { postId: postId },
       select: {
+        id: true,
         text: true,
         user: {
           select: {
