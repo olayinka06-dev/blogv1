@@ -1,4 +1,5 @@
-import useSWR from "swr";
+import { useSWR } from "swr";
+
 export async function fetchJson(input, init) {
   
   const response = await fetch(input, init);

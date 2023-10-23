@@ -27,7 +27,7 @@ const BlogProps = ({ post, profile, session, comments }) => {
 
   const handleCommentSave = async () => {
     try {
-      const BASE_URL = `/api/post/single-blog-details`;
+      const BASE_URL = `/api/post/comments`;
       const resp = await fetchJson(BASE_URL, {
         method: "POST",
         headers: {
@@ -51,7 +51,7 @@ const BlogProps = ({ post, profile, session, comments }) => {
 
   const handleDeleteComment = async (commentId) => {
     try {
-      const BASE_URL = `/api/post/single-blog-details?id=${commentId}`;
+      const BASE_URL = `/api/post/comments?id=${commentId}`;
       const resp = await fetch(BASE_URL, {
         method: "DELETE",
       });
