@@ -11,7 +11,7 @@ const LikeButton = ({ postId, initialLikes }) => {
   const [likes, setLikes] = useState(initialLikes?.length);
   const [isLiked, setIsLiked] = useState(false);
   const router = useRouter();
-  console.log("<<<<<<<<id>>>>>>>>>>", initialLikes[0]?.id);
+  // console.log("<<<<<<<<id>>>>>>>>>>", initialLikes[0]?.id);
 
   const handleLike = async () => {
     if (!session) {

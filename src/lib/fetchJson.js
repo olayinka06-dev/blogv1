@@ -1,3 +1,5 @@
+"use client";
+
 import { useSWR } from "swr";
 
 export async function fetchJson(input, init) {

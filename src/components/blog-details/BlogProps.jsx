@@ -7,28 +7,36 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/navigation";
 import { formatDate } from "@/lib/__hs";
-import { fetchJson } from "../../lib/fetchJson";
 import { Success, Error } from "@/lib/entities";
+import { useData } from "@/app/practice/useData";
 
-const BlogProps = ({ post, profile, session, comments }) => {
+const BlogProps = ({ post, profile, session }) => {
   const router = useRouter();
   const [comment, setComment] = useState("");
   const postId = post?.id;
 
-  console.log("comments", comments);
+  // console.log("comments", comments);
+
+  const {
+    data,
+    isLoading,
+    isError,
+  } = useData(`/api/post/comments?id=${postId}`);
+
+  const comments = data?.reverse();
 
   const imageExtensions = ["jpeg", "jpg", "png", "gif", "webp", "svg"];
 
   // Function to determine if the media URL is an image
   const isImage = (url) => {
-    const lowerCaseUrl = url.toLowerCase();
-    return imageExtensions.some((ext) => lowerCaseUrl.includes(`.${ext}`));
+    const lowerCaseUrl = url?.toLowerCase();
+    return imageExtensions.some((ext) => lowerCaseUrl?.includes(`.${ext}`));
   };
 
   const handleCommentSave = async () => {
     try {
       const BASE_URL = `/api/post/comments`;
-      const resp = await fetchJson(BASE_URL, {
+      const resp = await fetch(BASE_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -39,13 +47,13 @@ const BlogProps = ({ post, profile, session, comments }) => {
       const { message } = result;
       if (resp.ok) {
         Success(message);
-        router.refresh();
+        // router.refresh();
       } else {
         Error(message);
       }
     } catch (error) {
       console.log(error);
-      Error(message);
+      Error(error);
     }
   };
 
@@ -61,13 +69,13 @@ const BlogProps = ({ post, profile, session, comments }) => {
 
       if (resp.ok) {
         Success(message);
-        router.refresh();
+        // router.refresh();
       } else {
         Error(message);
       }
     } catch (error) {
       console.log(error);
-      Error(message);
+      Error(error);
     }
   };
 
@@ -172,37 +180,39 @@ const BlogProps = ({ post, profile, session, comments }) => {
           </h2>
         </div>
         <div className="flex flex-col gap-3">
-          {comments && comments.length > 0
-            ? comments.map((comment, index) => (
-                <div
-                  key={index}
-                  className="p-6 text-base flex flex-col gap-1 rounded-lg bg-white"
-                >
-                  <div className="flex flex-row items-center gap-2 mb-2">
-                    <img
-                      src={
-                        comment?.user?.profile?.profilePicture || "/next.svg"
-                      }
-                      alt={comment?.user?.profile?.profilePicture}
-                      className="w-9 h-9 rounded-full"
-                    />
-                    <p>{comment?.user?.username}</p>
-                  </div>
-                  <p className="text-gray-500 dark:text-gray-400">
-                    {comment?.text}
-                  </p>
-                  <p>{formatDate(comment?.createdAt)}</p>
-                  <div className="flex justify-end">
-                    <button
-                      className="btn"
-                      onClick={() => handleDeleteComment(comment?.id)}
-                    >
-                      Delete
-                    </button>
-                  </div>
+          {isLoading ? (
+            <p>loading....</p>
+          ) : isError ? (<p>error....</p>) : (
+            comments &&
+            comments.length > 0 &&
+            comments.map((comment, index) => (
+              <div
+                key={index}
+                className="p-6 text-base flex flex-col gap-1 rounded-lg bg-white"
+              >
+                <div className="flex flex-row items-center gap-2 mb-2">
+                  <img
+                    src={comment?.user?.profile?.profilePicture || "/next.svg"}
+                    alt={comment?.user?.profile?.profilePicture}
+                    className="w-9 h-9 rounded-full"
+                  />
+                  <p>{comment?.user?.username}</p>
                 </div>
-              ))
-            : null}
+                <p className="text-gray-500 dark:text-gray-400">
+                  {comment?.text}
+                </p>
+                <p>{formatDate(comment?.createdAt)}</p>
+                <div className="flex justify-end">
+                  <button
+                    className="btn"
+                    onClick={() => handleDeleteComment(comment?.id)}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </section>
       <ToastContainer />

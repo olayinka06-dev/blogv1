@@ -3,6 +3,8 @@ import { db } from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
+
+// Function to post comment
 export async function POST(request) {
   const payload = await request.json();
   const { comment, postId } = payload;
@@ -49,6 +51,8 @@ export async function POST(request) {
   }
 }
 
+
+// Function to delete comment
 export async function DELETE(request) {
   const { searchParams } = new URL(request.url);
   const commentId = searchParams.get("id");
@@ -101,25 +105,51 @@ export async function DELETE(request) {
   }
 }
 
-// export async function GET(request) {
-//     const postId = req.query.postId;
 
-//     const comments = await db.comment.findMany({
-//       where: { postId },
-//       include: {
-//         user: {
-//           select: {
-//             username: true,
-//             profile: {
-//               select: {
-//                 profilePicture: true,
-//               },
-//             },
-//           },
-//         },
-//       },
-//     });
+// Function to get single blog post
+export async function GET(request) {
+  const { searchParams } = new URL(request.url);
+  const postId = searchParams.get("id");
+  try {
+    if (!postId) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+    const comments = await db.comment.findMany({
+      where: { postId: postId },
+      select: {
+        id: true,
+        text: true,
+        user: {
+          select: {
+            username: true,
+            profile: {
+              select: {
+                profilePicture: true,
+              },
+            },
+          },
+        },
+        createdAt: true,
+      },
+    });
+    if (comments) {
+      return NextResponse.json(
+        comments,
+        { message: "Single Comment Returned" },
+        { status: 200 }
+      );
+    } else {
+      return NextResponse.json(
+        { message: "Unable to load Comment" },
+        { status: 400 }
+      );
+    }
+  } catch (error) {
+    console.log(error);
+    return NextResponse.json(
+      { message: "Internal Server Error" },
+      { status: 500 }
+    );
+  }
+}
 
-//     res.status(200).json(comments);
-//     res.status(405).json({ error: 'Method not allowed' });
-// }
