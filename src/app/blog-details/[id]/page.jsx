@@ -88,7 +88,7 @@ const BlogDetails = async ({ params }) => {
       <div className="container">
         <BackButton />
         {post ? (
-          <BlogProps profile={profile} post={post} session={session} comments={comments} />
+          <BlogProps profile={profile} post={post} session={session} comm={comments} />
         ) : (
           <NetworkError />
         )}

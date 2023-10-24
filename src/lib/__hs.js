@@ -79,7 +79,30 @@ export const handleImageSaveToFireBase = async (file) => {
 }
 
 export const formatDate = (timestamp) => {
+  const now = new Date();
   const date = new Date(timestamp);
-  const options = { year: "numeric", month: "long", day: "numeric" };
-  return date.toLocaleDateString(undefined, options);
+  const seconds = Math.floor((now - date) / 1000);
+
+  const intervals = {
+    year: 31536000,
+    month: 2592000,
+    day: 86400,
+    hour: 3600,
+    minute: 60,
+    second: 1,
+  };
+
+  for (const interval in intervals) {
+    const count = Math.floor(seconds / intervals[interval]);
+    if (count > 0) {
+      if (count === 1) {
+        return `${count} ${interval} ago`;
+      } else {
+        return `${count} ${interval}s ago`;
+      }
+    }
+  }
+
+  return "just now";
 };
+
