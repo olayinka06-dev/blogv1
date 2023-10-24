@@ -1,0 +1,68 @@
+[
+  {
+    "id": "clnxnfou70000ud38s6vtl3fh",
+    "text": "Wow! what an amaizing site",
+    "user": {
+      "username": "Idiagbon",
+      "profile": {
+        "profilePicture": "https://firebasestorage.googleapis.com/v0/b/blog-website-a3ed3.appspot.com/o/blog%2Fprogramming.jpeg-1697729906444-21ms4dmnxf?alt=media&token=22924913-cb0b-468f-83ca-a57e54dbe993"
+      }
+    },
+    "createdAt": "2023-10-19T20:43:06.706Z"
+  },
+  {
+    "id": "clnxoa8xe0002ud38jsbd2fxb",
+    "text": "Yeah the site is great",
+    "user": {
+      "username": "Olayinka",
+      "profile": {
+        "profilePicture": "https://firebasestorage.googleapis.com/v0/b/blog-website-a3ed3.appspot.com/o/blog%2Fmy-profile.jpeg-1697724040711-pgv98vu9lw?alt=media&token=94d8997b-2a7d-47f6-805a-db5dc8cdcb06"
+      }
+    },
+    "createdAt": "2023-10-19T21:06:52.101Z"
+  },
+  {
+    "id": "clnxobdfs0003ud38dhwxecsr",
+    "text": "I am moving to next js next month",
+    "user": {
+      "username": "Idiagbon",
+      "profile": {
+        "profilePicture": "https://firebasestorage.googleapis.com/v0/b/blog-website-a3ed3.appspot.com/o/blog%2Fprogramming.jpeg-1697729906444-21ms4dmnxf?alt=media&token=22924913-cb0b-468f-83ca-a57e54dbe993"
+      }
+    },
+    "createdAt": "2023-10-19T21:07:43.283Z"
+  },
+  {
+    "id": "clnxocjy30004ud38eznqxz9d",
+    "text": "I am moving to next js next month",
+    "user": {
+      "username": "Idiagbon",
+      "profile": {
+        "profilePicture": "https://firebasestorage.googleapis.com/v0/b/blog-website-a3ed3.appspot.com/o/blog%2Fprogramming.jpeg-1697729906444-21ms4dmnxf?alt=media&token=22924913-cb0b-468f-83ca-a57e54dbe993"
+      }
+    },
+    "createdAt": "2023-10-19T21:08:39.746Z"
+  },
+  {
+    "id": "clo2p8t9t0003udk8dpstsszw",
+    "text": "Wow! it look s that i am late",
+    "user": {
+      "username": "Dakieo",
+      "profile": {
+        "profilePicture": "https://firebasestorage.googleapis.com/v0/b/blog-website-a3ed3.appspot.com/o/blog%2Freact.png-1698052523526-tcs9lhq525?alt=media&token=5b5ca152-6cc8-4efc-ad84-49bb0ae38635"
+      }
+    },
+    "createdAt": "2023-10-23T09:32:35.601Z"
+  },
+  {
+    "id": "clo2pnx8o0005udk8hk4s1rqr",
+    "text": "Yeah! it took me so long",
+    "user": {
+      "username": "Dakieo",
+      "profile": {
+        "profilePicture": "https://firebasestorage.googleapis.com/v0/b/blog-website-a3ed3.appspot.com/o/blog%2Freact.png-1698052523526-tcs9lhq525?alt=media&token=5b5ca152-6cc8-4efc-ad84-49bb0ae38635"
+      }
+    },
+    "createdAt": "2023-10-23T09:44:20.154Z"
+  }
+]

@@ -156,7 +156,7 @@ const SignInForm = () => {
 
       <div className="mb-4 flex justify-end">
         <span>
-          Don't have an Account{" "}
+          Don&apos;t have an Account{" "}
           <a className="text-accent underline" href="/register">
             Register
           </a>

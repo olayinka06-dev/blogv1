@@ -5,7 +5,7 @@ import FormPost from "@/components/formpost/FormPost";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 
-const page = ({ params }) => {
+const EditPostPage = ({ params }) => {
   const id = params.id;
   const router = useRouter();
   const [formPost, setformPost] = useState({
@@ -87,4 +87,4 @@ const page = ({ params }) => {
   );
 };
 
-export default page;
+export default EditPostPage;

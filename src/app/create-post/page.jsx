@@ -7,7 +7,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { handleImageSaveToFireBase } from "@/lib/__hs";
 
-const page = () => {
+const CreatePostPage = () => {
   const router = useRouter();
   const [imagePreviewUrl, setImagePreviewUrl] = useState("");
   const [imageLoading, setImageLoading] = useState(false);
@@ -119,4 +119,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default CreatePostPage;

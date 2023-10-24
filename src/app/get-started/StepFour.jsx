@@ -28,7 +28,7 @@ const StepFour = () => {
       </div>
       <div className="mb-4">
         <label htmlFor="connectWith" className="block text-sm font-semibold">
-          Who you'd like to connect with
+          Who you&apos;d like to connect with
         </label>
         <InputSelect
           payload={"connect"}
@@ -38,7 +38,7 @@ const StepFour = () => {
       </div>
       <div className="mb-4">
         <label htmlFor="updates" className="block text-sm font-semibold">
-          What updates you're interested in
+          What updates you&apos;re interested in
         </label>
         <InputSelect
           payload={"updates"}
