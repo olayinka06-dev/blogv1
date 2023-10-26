@@ -12,12 +12,17 @@ import { useData } from "@/app/practice/useData";
 import { BiChevronDown } from "react-icons/bi";
 import { MdModeEditOutline } from "react-icons/md";
 import { RiDeleteBin5Line } from "react-icons/ri";
+import Reply from "./Reply";
 
 const BlogProps = ({ post, profile, session, comm }) => {
   const router = useRouter();
   const [comments, setComments] = useState(comm);
   const [comment, setComment] = useState("");
   const [editingComment, setEditingComment] = useState({
+    commentId: null,
+    text: "",
+  });
+  const [replyingComment, setReplyingComment] = useState({
     commentId: null,
     text: "",
   });
@@ -128,6 +133,7 @@ const BlogProps = ({ post, profile, session, comm }) => {
 
       const result = await resp.json();
       const { message } = result;
+      setCommentInfo(null);
 
       if (resp.ok) {
         Success(message);
@@ -149,9 +155,58 @@ const BlogProps = ({ post, profile, session, comm }) => {
       commentId: comment.id,
       text: comment.text,
     });
+    setCommentInfo(null);
   };
 
   const handleEditSaveComment = async (comment) => {
+    try {
+      const BASE_URL = `/api/post/comments`;
+      const resp = await fetch(BASE_URL, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          commentId: comment.id,
+          text: editingComment.text,
+        }),
+      });
+      const result = await resp.json();
+      const { message } = result;
+
+      if (resp.ok) {
+        Success(message);
+        router.refresh();
+        // Reset the editing state
+        setEditingComment({ commentId: null, text: "" });
+        // Refresh comments to show the updated one
+        const updatedComments = [...comments];
+        const editedCommentIndex = updatedComments.findIndex(
+          (c) => c.id === comment.id
+        );
+        if (editedCommentIndex !== -1) {
+          updatedComments[editedCommentIndex].text = editingComment.text;
+          setComments(updatedComments);
+        }
+      } else {
+        Error(message);
+      }
+    } catch (error) {
+      console.error(error);
+      Error(error);
+    }
+  };
+
+  const handleReplyComment = (comment) => {
+    setReplyingComment({
+      commentId: comment.id,
+    });
+    setCommentInfo(null);
+  };
+
+  const handleSaveReplyComment = async (comment) => {
+
+    
     try {
       const BASE_URL = `/api/post/comments`;
       const resp = await fetch(BASE_URL, {
@@ -274,11 +329,10 @@ const BlogProps = ({ post, profile, session, comm }) => {
         </div>
       )}
 
-      <section className="bg-gray-100 dark:bg-gray-800 p-6 rounded-lg mt-8">
+      <section className="bg-gray-100 dark:bg-gray-800 p-6 relative rounded-lg mt-8">
         <h2 className="text-lg lg:text-2xl font-bold text-black dark:text-white">
           Comments ({comments?.length})
         </h2>
-
         <div className="mt-4">
           {comments &&
             comments
@@ -314,45 +368,74 @@ const BlogProps = ({ post, profile, session, comm }) => {
                       </time>
                     </div>
                     <div className="chat-bubble bg-white relative text-gray-700">
-                      {comment?.user?.id === session?.user?.id && (
-                        <span
-                          onClick={() => handleShowCommentInfo(comment.id)}
-                          className=" absolute cursor-pointer top-0 right-0"
-                        >
-                          <BiChevronDown />
-                        </span>
-                      )}
+                      {/* {comment?.user?.id === session?.user?.id && ( */}
+                      <span
+                        onClick={() => handleShowCommentInfo(comment.id)}
+                        className=" absolute cursor-pointer top-0 right-0"
+                      >
+                        <BiChevronDown />
+                      </span>
+                      {/* )} */}
                       {comment?.text}
-                      {commentInfo === comment.id &&
-                        comment?.user?.id === session?.user?.id && (
-                          <div className="flex flex-col z-[100] bg-white w-[200px] shadow border rounded-xl h-fit gap-2 absolute items-center mt-3">
+                      {commentInfo === comment.id && (
+                        <div className="flex flex-col z-[100] bg-white w-[200px] shadow border rounded-xl h-fit gap-2 absolute items-center mt-3">
+                          {comment?.user?.id === session?.user?.id && (
                             <span
                               className="btn flex flex-row justify-start gap-1 btn-sm w-full bg-white border-none text-right"
                               onClick={() => handleEditComment(comment)}
                             >
-                              <span><MdModeEditOutline /></span>
+                              <span>
+                                <MdModeEditOutline />
+                              </span>
                               <span>Edit</span>
                             </span>
+                          )}
+                          {comment?.user?.id === session?.user?.id && (
                             <button
                               className="btn btn-sm w-full flex flex-row justify-start gap-1 bg-white border-none text-right"
                               onClick={() => handleDeleteComment(comment?.id)}
                             >
                               <span>
-          <RiDeleteBin5Line />
-        </span>
+                                <RiDeleteBin5Line />
+                              </span>
                               <span>Delete</span>
                             </button>
-                            <button className="btn btn-sm w-full bg-white border-none text-right">
-                              Copy
-                            </button>
-                            <button className="btn btn-sm w-full bg-white border-none text-right">
-                              Reply
-                            </button>
-                          </div>
-                        )}
+                          )}
+
+                          <button className="btn btn-sm w-full bg-white border-none text-right">
+                            Copy
+                          </button>
+                          <button onClick={()=>handleReplyComment(comment)} className="btn btn-sm w-full bg-white border-none text-right">
+                            Reply
+                          </button>
+                        </div>
+                      )}
                     </div>
                     <div className="chat-footer opacity-50">Delivered</div>
                   </div>
+                  {/* <Reply/> */}
+                  {replyingComment.commentId === comment.id && (
+                    <div className="flex flex-row gap-2 mt-5">
+                      <input
+                        type="text"
+                        value={replyingComment.text}
+                        placeholder="reply to a comment ..."
+                        className="input input-bordered input-md w-[90%]"
+                        onChange={(e) =>
+                          setReplyingComment({
+                            ...replyingComment,
+                            text: e.target.value,
+                          })
+                        }
+                      />
+                      <button
+                        className="btn btn-accent text-white py-2 px-5"
+                        onClick={() => handleSaveReplyComment(comment)}
+                      >
+                        Save
+                      </button>
+                    </div>
+                  )}
                   {editingComment.commentId === comment.id && (
                     <div className="flex flex-row gap-2 mt-5">
                       <input
@@ -381,7 +464,6 @@ const BlogProps = ({ post, profile, session, comm }) => {
       <ToastContainer />
     </div>
   );
-
 };
 
 export default BlogProps;

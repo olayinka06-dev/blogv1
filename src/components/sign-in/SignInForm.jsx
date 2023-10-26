@@ -23,7 +23,7 @@ const SignInForm = () => {
   });
 
   if (session) {
-    router.back(); // Redirect back
+    router.push("/blog"); // Redirect back
     return <div className="loading loading-spinner">Redirecting...</div>; // You can return null or any loading indicator while redirecting
   }
 

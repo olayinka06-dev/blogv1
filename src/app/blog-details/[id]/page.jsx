@@ -1,7 +1,7 @@
 import React from "react";
 
 // import { db } from "@/lib/db";
-import {db} from "../../../lib/db";
+import { db } from "../../../lib/db";
 import { NetworkError } from "@/components/NetworkError";
 import BackButton from "@/components/buttons/BackButton";
 import { getServerSession } from "next-auth";
@@ -10,69 +10,88 @@ import BlogProps from "@/components/blog-details/BlogProps";
 
 async function getPost(id) {
   // setInterval(async () => {
-    try {
-      const response = await db.post.findFirst({
-        where: {
-          id: id,
-        },
-        select: {
-          id: true,
-          title: true,
-          content: true,
-          tag: true,
-          media: true,
-          Comment: true,
-          user: {
-            select: {
-              id: true,
-              Comment: true,
-              username: true,
-              profile: {
-                select: {
-                  profilePicture: true,
-                  userRole: true,
-                },
+  try {
+    const response = await db.post.findFirst({
+      where: {
+        id: id,
+      },
+      select: {
+        id: true,
+        title: true,
+        content: true,
+        tag: true,
+        media: true,
+        Comment: true,
+        user: {
+          select: {
+            id: true,
+            Comment: true,
+            username: true,
+            profile: {
+              select: {
+                profilePicture: true,
+                userRole: true,
               },
             },
           },
-          createdAt: true,
-          updatedAt: true,
         },
-      });
-      return response;
-    } catch (error) {
-      console.log(error);
-    }
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
   // }, 1000);
 }
 
 async function getAllComment(postId) {
   // setInterval( async () => {
-    try {
-      const comments = await db.comment.findMany({
-        where: { postId: postId },
-        select: {
-          id: true,
-          text: true,
-          user: {
-            select: {
-              id: true,
-              username: true,
-              profile: {
-                select: {
-                  profilePicture: true,
+  try {
+    const comments = await db.comment.findMany({
+      where: { postId: postId },
+      select: {
+        id: true,
+        text: true,
+        commentreply: {
+          select: {
+            id: true,
+            text: true,
+            user: {
+              select: {
+                id: true,
+                username: true,
+                profile: {
+                  select: {
+                    profilePicture: true,
+                  },
                 },
               },
             },
+            createdAt: true,
+            updatedAt: true,
           },
-          createdAt: true,
         },
-      });
-  
-      return comments;
-    } catch (error) {
-      console.log(error);
-    }
+        user: {
+          select: {
+            id: true,
+            username: true,
+            profile: {
+              select: {
+                profilePicture: true,
+              },
+            },
+          },
+        },
+        createdAt: true,
+      },
+    });
+
+    return comments;
+  } catch (error) {
+    console.log(error);
+  }
   // }, 1000);
 }
 
@@ -80,6 +99,8 @@ const BlogDetails = async ({ params }) => {
   const post = await getPost(params.id);
   // console.log("params.id",params.id);
   const comments = await getAllComment(post?.id);
+  console.log("comments", comments)
+
   const session = await getServerSession(authOptions);
   const profile = post?.user?.profile;
 
@@ -88,7 +109,12 @@ const BlogDetails = async ({ params }) => {
       <div className="container">
         <BackButton />
         {post ? (
-          <BlogProps profile={profile} post={post} session={session} comm={comments} />
+          <BlogProps
+            profile={profile}
+            post={post}
+            session={session}
+            comm={comments}
+          />
         ) : (
           <NetworkError />
         )}
@@ -98,7 +124,6 @@ const BlogDetails = async ({ params }) => {
 };
 
 export default BlogDetails;
-
 
 // "use client";
 // import React from "react";
@@ -123,7 +148,6 @@ export default BlogDetails;
 //     // Handle the error, e.g., display an error message.
 //     return <NetworkError/>;
 //   }
-  
 
 //   return (
 //     <section className="">

@@ -15,6 +15,7 @@ import {
 } from "firebase/storage";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useRouter } from 'next/navigation';
 
 const app = initializeApp(firebaseConfig);
 const storage = getStorage(app, "gs://blog-website-a3ed3.appspot.com"); // Corrected a typo: "stroage" to "storage"
@@ -50,6 +51,8 @@ const Getstarted = () => {
   const { formData, setFormData, setErrors, step, setStep } = blogData;
   const [imagePreviewUrl, setImagePreviewUrl] = useState("");
   const [imageLoading, setImageLoading] = useState(false);
+
+  const router = useRouter()
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
