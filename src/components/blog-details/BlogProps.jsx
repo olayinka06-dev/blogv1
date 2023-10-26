@@ -9,6 +9,9 @@ import { useRouter } from "next/navigation";
 import { formatDate } from "@/lib/__hs";
 import { Success, Error } from "@/lib/entities";
 import { useData } from "@/app/practice/useData";
+import { BiChevronDown } from "react-icons/bi";
+import { MdModeEditOutline } from "react-icons/md";
+import { RiDeleteBin5Line } from "react-icons/ri";
 
 const BlogProps = ({ post, profile, session, comm }) => {
   const router = useRouter();
@@ -20,6 +23,16 @@ const BlogProps = ({ post, profile, session, comm }) => {
   });
 
   const postId = post?.id;
+  const [commentInfo, setCommentInfo] = useState(null);
+
+  const handleShowCommentInfo = (commentId) => {
+    setCommentInfo(commentId);
+    if (commentInfo === commentId) {
+      setCommentInfo(null); // Close the comment info if it's already open
+    } else {
+      setCommentInfo(commentId); // Open the comment info if it's closed
+    }
+  };
 
   // const {
   //   data: comments,
@@ -177,15 +190,15 @@ const BlogProps = ({ post, profile, session, comm }) => {
     }
   };
 
-  useEffect(() => {
-    let interval = setInterval(() => {
-      router.refresh();
-    }, 2000);
+  // useEffect(() => {
+  //   let interval = setInterval(() => {
+  //     router.refresh();
+  //   }, 2000);
 
-    return () => {
-      clearInterval(interval);
-    };
-  }, [comments]);
+  //   return () => {
+  //     clearInterval(interval);
+  //   };
+  // }, [comments]);
 
   return (
     <div className="container md:w-[70%] mx-auto p-4">
@@ -201,18 +214,17 @@ const BlogProps = ({ post, profile, session, comm }) => {
             </Link>
           </div>
           <div className="flex items-center mb-5">
-          <div className="relative h-10 w-10 overflow-hidden rounded-full mr-4">
-            <Image
-              src={profile?.profilePicture || "/next.svg"}
-              alt="User"
-              fill
-            />
+            <div className="relative h-10 w-10 overflow-hidden rounded-full mr-4">
+              <Image
+                src={profile?.profilePicture || "/next.svg"}
+                alt="User"
+                fill
+              />
+            </div>
+            <h4 className="text-base font-medium text-body-color">
+              By <span className="pl-2">{post?.user?.username}</span>
+            </h4>
           </div>
-          <h4 className="text-base font-medium text-body-color">
-            By <span className="pl-2">{post?.user?.username}</span>
-          </h4>
-          </div>
-          
         </div>
         <ActionButtons id={post.id} />
       </div>
@@ -276,45 +288,70 @@ const BlogProps = ({ post, profile, session, comm }) => {
                 <>
                   <div
                     key={index}
-                    className="rounded-lg bg-white dark:bg-gray-900 p-4 mb-4"
+                    className={`chat  ${
+                      comment?.user?.id === session?.user?.id
+                        ? " chat-end"
+                        : "chat-start"
+                    }`}
                   >
-                    <div className="flex items-center mb-2">
-                      <div className="relative h-8 w-8 overflow-hidden rounded-full mr-3">
+                    <div className="chat-image avatar">
+                      <div className="w-10 rounded-full">
                         <Image
                           src={
                             comment?.user?.profile?.profilePicture ||
                             "/next.svg"
                           }
                           alt={comment?.user?.profile?.profilePicture}
-                          fill
+                          height={50}
+                          width={50}
                         />
                       </div>
-                      <p className="text-lg text-body-color dark:text-gray-300 font-semibold">
-                        {comment?.user?.username}
-                      </p>
                     </div>
-                    <p className="text-body-color dark:text-gray-300 text-sm mb-4">
+                    <div className="chat-header">
+                      {comment?.user?.username}
+                      <time className="text-xs opacity-50">
+                        {formatDate(comment?.createdAt)}
+                      </time>
+                    </div>
+                    <div className="chat-bubble bg-white relative text-gray-700">
+                      {comment?.user?.id === session?.user?.id && (
+                        <span
+                          onClick={() => handleShowCommentInfo(comment.id)}
+                          className=" absolute cursor-pointer top-0 right-0"
+                        >
+                          <BiChevronDown />
+                        </span>
+                      )}
                       {comment?.text}
-                    </p>
-                    <p className="text-gray-400 dark:text-gray-500 text-xs">
-                      {formatDate(comment?.createdAt)}
-                    </p>
-                    {comment?.user?.id === session?.user?.id && (
-                      <div className="flex items-center mt-3">
-                        <button
-                          className="btn btn-sm btn-primary mr-2"
-                          onClick={() => handleEditComment(comment)}
-                        >
-                          Edit
-                        </button>
-                        <button
-                          className="btn btn-sm btn-error text-white"
-                          onClick={() => handleDeleteComment(comment?.id)}
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    )}
+                      {commentInfo === comment.id &&
+                        comment?.user?.id === session?.user?.id && (
+                          <div className="flex flex-col z-[100] bg-white w-[200px] shadow border rounded-xl h-fit gap-2 absolute items-center mt-3">
+                            <span
+                              className="btn flex flex-row justify-start gap-1 btn-sm w-full bg-white border-none text-right"
+                              onClick={() => handleEditComment(comment)}
+                            >
+                              <span><MdModeEditOutline /></span>
+                              <span>Edit</span>
+                            </span>
+                            <button
+                              className="btn btn-sm w-full flex flex-row justify-start gap-1 bg-white border-none text-right"
+                              onClick={() => handleDeleteComment(comment?.id)}
+                            >
+                              <span>
+          <RiDeleteBin5Line />
+        </span>
+                              <span>Delete</span>
+                            </button>
+                            <button className="btn btn-sm w-full bg-white border-none text-right">
+                              Copy
+                            </button>
+                            <button className="btn btn-sm w-full bg-white border-none text-right">
+                              Reply
+                            </button>
+                          </div>
+                        )}
+                    </div>
+                    <div className="chat-footer opacity-50">Delivered</div>
                   </div>
                   {editingComment.commentId === comment.id && (
                     <div className="flex flex-row gap-2 mt-5">
@@ -345,176 +382,6 @@ const BlogProps = ({ post, profile, session, comm }) => {
     </div>
   );
 
-  // return (
-  //   <div className="-mx-4 flex flex-col gap-4 items-center justify-center">
-  //     <ActionButtons id={post.id} />
-
-  //     <div className="w-full px-4 lg:w-8/12">
-  //       <div>
-  //         <h2 className="mb-8 text-3xl font-bold leading-tight text-black dark:text-white sm:text-4xl">
-  //           {post?.title}
-  //         </h2>
-
-  //         <div className="mb-10 flex flex-wrap items-center justify-between border-b border-body-color border-opacity-10 pb-4 dark:border-white dark:border-opacity-10">
-  //           <div className="flex flex-wrap items-center">
-  //             <div className="mr-10 mb-5 flex items-center">
-  //               <div className="mr-4">
-  //                 <div className="relative h-10 w-10 overflow-hidden rounded-full">
-  //                   <Image
-  //                     src={profile?.profilePicture || "/next.svg"}
-  //                     alt="User"
-  //                     fill
-  //                   />
-  //                 </div>
-  //               </div>
-  //               <div className="w-full">
-  //                 <h4 className="mb-1 text-base font-medium text-body-color">
-  //                   By
-  //                   <span className="pl-2">{post?.user?.username}</span>
-  //                 </h4>
-  //               </div>
-  //             </div>
-  //           </div>
-  //           <div className="mb-5">
-  //             <Link
-  //               className="badge badge-accent text-white"
-  //               href={`/category/`}
-  //             >
-  //               {post?.tag?.name}
-  //             </Link>
-  //           </div>
-  //         </div>
-  //         <div>
-  //           <div className="relative aspect-[97/60] w-full sm:aspect-[97/44]">
-  //             {isImage(post?.media) ? (
-  //               <Image
-  //                 className="object-cover object-center"
-  //                 src={post?.media}
-  //                 alt={post?.media}
-  //                 fill
-  //               />
-  //             ) : (
-  //               <video
-  //                 className="object-cover object-center"
-  //                 src={post?.media}
-  //                 alt={post?.media}
-  //                 controls
-  //               />
-  //             )}
-  //           </div>
-  //           <p className="mb-8 leading-relaxed text-base font-medium text-body-color sm:text-lg lg:text-base xl:text-lg">
-  //             {post?.content}
-  //           </p>
-  //         </div>
-  //       </div>
-  //     </div>
-  //     <div className="w-full lg:w-8/12 flex gap-4">
-  //       {session !== null ? (
-  //         <>
-  //           <input
-  //             name="comment"
-  //             id="comment"
-  //             autoFocus
-  //             autoComplete="off"
-  //             placeholder="Add comment here"
-  //             value={comment}
-  //             onChange={(event) => setComment(event.target.value)}
-  //             className="input input-bordered input-md w-full"
-  //           />
-  //           <button
-  //             onClick={handleCommentSave}
-  //             className="btn btn-accent px-8 text-white"
-  //           >
-  //             Add
-  //           </button>
-  //         </>
-  //       ) : null}
-  //     </div>
-  //     <section className="bg-[#f2f2f2] py-8 px-5 lg:py-16 w-full lg:w-8/12">
-  //       <div className="flex justify-between items-center mb-6">
-  //         <h2 className="text-lg lg:text-2xl font-bold text-black dark:text-white">
-  //           Discussion ({comments?.length})
-  //         </h2>
-  //       </div>
-  //       <div className="flex flex-col gap-3">
-  //         {
-  //           // isLoading ? (
-  //           //   <p>loading....</p>
-  //           // ) : isError ? (<p>error....</p>) : (
-  //           comments &&
-  //             comments.length > 0 &&
-  //             comments
-  //               .slice()
-  //               .reverse()
-  //               .map((comment, index) => (
-  //                 <div>
-  //                   <div
-  //                     key={index}
-  //                     className="p-6 text-base flex flex-col gap-1 rounded-lg bg-white"
-  //                   >
-  //                     <div className="flex flex-row items-center gap-2 mb-2">
-  //                       <img
-  //                         src={
-  //                           comment?.user?.profile?.profilePicture ||
-  //                           "/next.svg"
-  //                         }
-  //                         alt={comment?.user?.profile?.profilePicture}
-  //                         className="w-9 h-9 rounded-full"
-  //                       />
-  //                       <p>{comment?.user?.username}</p>
-  //                     </div>
-  //                     <p className="text-gray-500 dark:text-gray-400">
-  //                       {comment?.text}
-  //                     </p>
-  //                     <p>{formatDate(comment?.createdAt)}</p>
-  //                     <div className="flex justify-end">
-  //                       {comment?.user?.id === session?.user?.id && (
-  //                         <div className="flex item-center gap-2">
-  //                           <button
-  //                             className="btn"
-  //                             onClick={() => handleEditComment(comment)}
-  //                           >
-  //                             Edit
-  //                           </button>
-  //                           <button
-  //                             className="btn"
-  //                             onClick={() => handleDeleteComment(comment?.id)}
-  //                           >
-  //                             Delete
-  //                           </button>
-  //                         </div>
-  //                       )}
-  //                     </div>
-  //                   </div>
-  // {editingComment.commentId === comment.id && (
-  //   <div className="flex flex-row gap-2 mt-5">
-  //     <input
-  //       type="text"
-  //       value={editingComment.text}
-  //       className="input input-bordered input-md w-[90%]"
-  //       onChange={(e) =>
-  //         setEditingComment({
-  //           ...editingComment,
-  //           text: e.target.value,
-  //         })
-  //       }
-  //     />
-  //     <button
-  //       className="btn btn-accent text-white py-2 px-5"
-  //       onClick={() => handleEditSaveComment(comment)}
-  //     >
-  //       Save
-  //     </button>
-  //   </div>
-  // )}
-  //                 </div>
-  //               ))
-  //         }
-  //       </div>
-  //     </section>
-  //     <ToastContainer />
-  //   </div>
-  // );
 };
 
 export default BlogProps;
