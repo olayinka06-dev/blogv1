@@ -9,10 +9,11 @@ import { useRouter } from "next/navigation";
 import { formatDate } from "@/lib/__hs";
 import { Success, Error } from "@/lib/entities";
 import { useData } from "@/app/practice/useData";
-import { BiChevronDown } from "react-icons/bi";
+import { BiChevronDown, BiCopy } from "react-icons/bi";
 import { MdModeEditOutline } from "react-icons/md";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import Reply from "./Reply";
+import { BsFillReplyAllFill } from "react-icons/bs";
 
 const BlogProps = ({ post, profile, session, comm }) => {
   const router = useRouter();
@@ -29,6 +30,7 @@ const BlogProps = ({ post, profile, session, comm }) => {
 
   const postId = post?.id;
   const [commentInfo, setCommentInfo] = useState(null);
+  const [replyInfo, setReplyInfo] = useState(null);
 
   const handleShowCommentInfo = (commentId) => {
     setCommentInfo(commentId);
@@ -36,6 +38,14 @@ const BlogProps = ({ post, profile, session, comm }) => {
       setCommentInfo(null); // Close the comment info if it's already open
     } else {
       setCommentInfo(commentId); // Open the comment info if it's closed
+    }
+  };
+  const handleShowReplyInfo = (replyId) => {
+    setCommentInfo(replyId);
+    if (replyInfo === replyId) {
+      setReplyInfo(null); // Close the comment info if it's already open
+    } else {
+      setReplyInfo(replyId); // Open the comment info if it's closed
     }
   };
 
@@ -205,18 +215,16 @@ const BlogProps = ({ post, profile, session, comm }) => {
   };
 
   const handleSaveReplyComment = async (comment) => {
-
-    
     try {
-      const BASE_URL = `/api/post/comments`;
+      const BASE_URL = `/api/post/reply`;
       const resp = await fetch(BASE_URL, {
-        method: "PATCH",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           commentId: comment.id,
-          text: editingComment.text,
+          text: replyingComment.text,
         }),
       });
       const result = await resp.json();
@@ -226,16 +234,16 @@ const BlogProps = ({ post, profile, session, comm }) => {
         Success(message);
         router.refresh();
         // Reset the editing state
-        setEditingComment({ commentId: null, text: "" });
+        setReplyingComment({ commentId: null, text: "" });
         // Refresh comments to show the updated one
-        const updatedComments = [...comments];
-        const editedCommentIndex = updatedComments.findIndex(
-          (c) => c.id === comment.id
-        );
-        if (editedCommentIndex !== -1) {
-          updatedComments[editedCommentIndex].text = editingComment.text;
-          setComments(updatedComments);
-        }
+        // const updatedComments = [...comments];
+        // const editedCommentIndex = updatedComments.findIndex(
+        //   (c) => c.id === comment.id
+        // );
+        // if (editedCommentIndex !== -1) {
+        //   updatedComments[editedCommentIndex].text = editingComment.text;
+        //   setComments(updatedComments);
+        // }
       } else {
         Error(message);
       }
@@ -361,24 +369,22 @@ const BlogProps = ({ post, profile, session, comm }) => {
                         />
                       </div>
                     </div>
-                    <div className="chat-header">
+                    <div className="chat-header flex flex-row gap-2 items-center">
                       {comment?.user?.username}
                       <time className="text-xs opacity-50">
                         {formatDate(comment?.createdAt)}
                       </time>
                     </div>
                     <div className="chat-bubble bg-white relative text-gray-700">
-                      {/* {comment?.user?.id === session?.user?.id && ( */}
                       <span
                         onClick={() => handleShowCommentInfo(comment.id)}
                         className=" absolute cursor-pointer top-0 right-0"
                       >
                         <BiChevronDown />
                       </span>
-                      {/* )} */}
                       {comment?.text}
                       {commentInfo === comment.id && (
-                        <div className="flex flex-col z-[100] bg-white w-[200px] shadow border rounded-xl h-fit gap-2 absolute items-center mt-3">
+                        <div className="flex flex-col z-[100] bg-white w-[200px] shadow border rounded-xl h-fit gap-2 absolute top-[-5rem] left-0 items-center mt-3">
                           {comment?.user?.id === session?.user?.id && (
                             <span
                               className="btn flex flex-row justify-start gap-1 btn-sm w-full bg-white border-none text-right"
@@ -402,17 +408,106 @@ const BlogProps = ({ post, profile, session, comm }) => {
                             </button>
                           )}
 
-                          <button className="btn btn-sm w-full bg-white border-none text-right">
-                            Copy
-                          </button>
-                          <button onClick={()=>handleReplyComment(comment)} className="btn btn-sm w-full bg-white border-none text-right">
-                            Reply
+<button className="btn btn-sm w-full flex flex-row justify-start bg-white border-none text-right">
+                              <span><BiCopy/></span>
+                              <span>Copy</span>
+                            </button>
+                          <button
+                            onClick={() => handleReplyComment(comment)}
+                            className="btn btn-sm w-full flex flex-row justify-start bg-white border-none text-right"
+                          >
+                            <span><BsFillReplyAllFill/></span>
+                              <span>Reply</span>
                           </button>
                         </div>
                       )}
                     </div>
                     <div className="chat-footer opacity-50">Delivered</div>
                   </div>
+                  {comment?.commentreply.map((reply, index) => (
+                    <div
+                      key={index}
+                      className={`chat mt-3 ${
+                        reply?.user?.id === session?.user?.id
+                          ? " chat-end"
+                          : "chat-start"
+                      }`}
+                    >
+                      <div className="chat-image avatar">
+                        <div className="w-10 rounded-full">
+                          <Image
+                            src={
+                              reply?.user?.profile?.profilePicture ||
+                              "/next.svg"
+                            }
+                            alt={reply?.user?.profile?.profilePicture}
+                            height={50}
+                            width={50}
+                          />
+                        </div>
+                      </div>
+                      <div className="chat-header flex flex-row gap-2 items-center">
+                        {reply?.user?.username}
+                        <time className="text-xs mr-2 opacity-50">
+                          {formatDate(reply?.createdAt)}
+                        </time>
+                      </div>
+                      
+                      <div className="chat-bubble bg-white relative text-gray-700">
+                      <div className="bg-white  px-[1rem] py-[0.5rem] border rounded-xl text-gray-700">
+                        <Image alt="logo" src={comment?.user?.profile?.profilePicture} height={20} width={20} className="rounded-full " priority/>
+                        <span>{comment?.text?.slice(0, 30) + "..."}</span>
+                      </div>
+                        <span
+                          onClick={() => handleShowReplyInfo(reply.id)}
+                          className=" absolute cursor-pointer top-0 right-0"
+                        >
+                          <BiChevronDown />
+                        </span>
+                        {reply?.text}
+                        {replyInfo === reply.id && (
+                          <div className="flex flex-col z-[100] bg-white w-[200px] shadow border rounded-xl h-fit gap-2 absolute top-[-5rem] left-0 items-center mt-3">
+                            {reply?.user?.id === session?.user?.id && (
+                              <span
+                                className="btn flex flex-row justify-start gap-1 btn-sm w-full bg-white border-none text-right"
+                                onClick={() => handleEditComment(reply)}
+                              >
+                                <span>
+                                  <MdModeEditOutline />
+                                </span>
+                                <span>Edit</span>
+                              </span>
+                            )}
+                            {reply?.user?.id === session?.user?.id && (
+                              <button
+                                className="btn btn-sm w-full flex flex-row justify-start gap-1 bg-white border-none text-right"
+                                onClick={() => handleDeleteComment(reply?.id)}
+                              >
+                                <span>
+                                  <RiDeleteBin5Line />
+                                </span>
+                                <span>Delete</span>
+                              </button>
+                            )}
+
+                            <button className="btn btn-sm w-full flex flex-row justify-start bg-white border-none text-right">
+                              <span><BiCopy/></span>
+                              <span>Copy</span>
+                            </button>
+                            <button
+                              onClick={() => handleReplyComment(reply)}
+                              className="btn btn-sm w-full flex flex-row justify-start bg-white border-none text-right"
+                            >
+                              <span><BsFillReplyAllFill/></span>
+                              <span>Reply</span>
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                      <div className="chat-footer opacity-50">Delivered</div>
+                    </div>
+                  ))}
+
                   {/* <Reply/> */}
                   {replyingComment.commentId === comment.id && (
                     <div className="flex flex-row gap-2 mt-5">
