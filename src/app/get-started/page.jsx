@@ -5,46 +5,11 @@ import React, { useState } from "react";
 import StepOne from "./StepOne";
 import StepThree from "./StepThree";
 import StepFour from "./StepFour";
-import { firebaseConfig } from "@/utils";
-import { initializeApp } from "firebase/app";
-import {
-  getStorage,
-  ref,
-  uploadBytesResumable,
-  getDownloadURL,
-} from "firebase/storage";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from 'next/navigation';
+import { handleImageSaveToFireBase } from './../../lib/__hs';
 
-const app = initializeApp(firebaseConfig);
-const storage = getStorage(app, "gs://blog-website-a3ed3.appspot.com"); // Corrected a typo: "stroage" to "storage"
-
-function createUniqueFileName(fileName) {
-  const timeStamp = Date.now();
-  const randomString = Math.random().toString(36).substring(2, 12);
-
-  return `${fileName}-${timeStamp}-${randomString}`;
-}
-
-async function handleImageSaveToFireBase(file) {
-  const extractUniqueFileName = createUniqueFileName(file?.name);
-  const storageRef = ref(storage, `blog/${extractUniqueFileName}`);
-  const uploadImg = uploadBytesResumable(storageRef, file);
-
-  return new Promise((resolve, reject) => {
-    uploadImg.on(
-      "state_changed",
-      (snapshot) => {},
-      (error) => reject(error),
-      () => {
-        getDownloadURL(uploadImg.snapshot.ref)
-          .then((url) => resolve(url))
-          .catch((error) => reject(error));
-      }
-    );
-  });
-}
 
 const Getstarted = () => {
   const { blogData } = useBlogContext();

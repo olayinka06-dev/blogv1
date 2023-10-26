@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import supabase from "../../components/dashboard/provider/Mydatabase";
 import { BiChevronDown } from "react-icons/bi";
 
-const Chat = ({ user, conversationId }) => {
+const Chat = () => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [commentInfo, setCommentInfo] = useState(false);
