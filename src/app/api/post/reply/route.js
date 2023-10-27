@@ -3,6 +3,7 @@ import { db } from "../../../../lib/db";
 import { NextResponse } from "next/server";
 import { authOptions } from "@/lib/auth";
 
+// Function to get comment
 export async function POST(request) {
   const session = await getServerSession(authOptions);
   const payload = await request.json();
@@ -42,6 +43,8 @@ export async function POST(request) {
     );
   }
 }
+
+// Function to edit comment
 export async function PATCH(request) {
   const session = await getServerSession(authOptions);
   const payload = await request.json();
@@ -49,28 +52,44 @@ export async function PATCH(request) {
   const { replyId, text } = payload;
 
   if (!session) {
-    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    return NextResponse.json(
+      { message: "Unauthorized, please login to add a reply" },
+      { status: 401 }
+    );
   }
 
   try {
     // Create the reply in the database
     const replyComment = await db.commentreply.findUnique({
-      data: {
-        text,
-        userId: session?.user?.id,
-        commentId,
+      where: { id: replyId },
+      select: {
+        user: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
 
-    if (replyComment) {
+    if (!replyComment) {
+      return NextResponse.json({ message: "reply not found" }, { status: 404 });
+    }
+
+    if (replyComment.user.id !== session?.user?.id) {
       return NextResponse.json(
-        { replyComment, message: "reply uploaded successfully" },
-        { status: 201 }
+        { message: "Unauthorized, you can only edit your reply" },
+        { status: 403 }
       );
     } else {
+      await db.commentreply.update({
+        where: { id: replyId },
+        data: {
+          text,
+        },
+      });
       return NextResponse.json(
-        { message: "Could not upload reply" },
-        { status: 400 }
+        { message: "reply updated successfully" },
+        { status: 200 }
       );
     }
   } catch (error) {
@@ -106,10 +125,7 @@ export async function DELETE(request) {
     });
 
     if (!reply) {
-      return NextResponse.json(
-        { message: "reply not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ message: "reply not found" }, { status: 404 });
     }
 
     // Check if the authenticated user is the owner of the comment
@@ -122,7 +138,9 @@ export async function DELETE(request) {
       );
     } else {
       return NextResponse.json(
-        { message: "Unauthorized, you can only delete your reply to a comment" },
+        {
+          message: "Unauthorized, you can only delete your reply to a comment",
+        },
         { status: 403 }
       );
     }

@@ -20,7 +20,7 @@ const Reply = ({ comment, session }) => {
     commentId: null,
     text: "",
   });
-
+//implemented
   const handleShowReplyInfo = (replyId) => {
     if (replyInfo === replyId) {
       setReplyInfo(null); // Close the comment info if it's already open
@@ -29,11 +29,14 @@ const Reply = ({ comment, session }) => {
     }
   };
 
+
+
   const handleReplyComment = (reply) => {
     setReplyingComment({
-      commentId: reply.id,
+      commentId: reply?.id,
     });
     setReplyInfo(null);
+    setEditingCommentReply({ commentId: null, text: "" });
   };
 
   const handleSaveReplyComment = async (comment) => {
@@ -75,6 +78,8 @@ const Reply = ({ comment, session }) => {
     }
   };
 
+
+//implemented
   const handleDeleteReply = async (replyId) => {
     try {
       const BASE_URL = `/api/post/reply?id=${replyId}`;
@@ -101,25 +106,28 @@ const Reply = ({ comment, session }) => {
     }
   };
 
-  const handleEditReply = (comment) => {
-    setEditingComment({
-      commentId: comment.id,
-      text: comment.text,
-    });
-    setCommentInfo(null);
-  };
 
-  const handleEditSaveReply = async (comment) => {
+  //implemented
+  const handleEditReply = (reply) => {
+    setEditingCommentReply({
+      commentId: reply?.id,
+      text: reply?.text,
+    });
+    setReplyInfo(null);
+    setReplyingComment({ commentId: null})
+  };
+//implemented
+  const handleEditSaveReply = async (reply) => {
     try {
-      const BASE_URL = `/api/post/comments`;
+      const BASE_URL = `/api/post/reply`;
       const resp = await fetch(BASE_URL, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          commentId: comment.id,
-          text: editingComment.text,
+          replyId: reply?.id,
+          text: editingCommentReply.text,
         }),
       });
       const result = await resp.json();
@@ -129,16 +137,16 @@ const Reply = ({ comment, session }) => {
         Success(message);
         router.refresh();
         // Reset the editing state
-        setEditingComment({ commentId: null, text: "" });
-        // Refresh comments to show the updated one
-        const updatedComments = [...comments];
-        const editedCommentIndex = updatedComments.findIndex(
-          (c) => c.id === comment.id
-        );
-        if (editedCommentIndex !== -1) {
-          updatedComments[editedCommentIndex].text = editingComment.text;
-          setComments(updatedComments);
-        }
+        setEditingCommentReply({ commentId: null, text: "" });
+        // // Refresh comments to show the updated one
+        // const updatedComments = [...comments];
+        // const editedCommentIndex = updatedComments.findIndex(
+        //   (c) => c.id === comment.id
+        // );
+        // if (editedCommentIndex !== -1) {
+        //   updatedComments[editedCommentIndex].text = editingComment.text;
+        //   setComments(updatedComments);
+        // }
       } else {
         Error(message);
       }
@@ -148,6 +156,8 @@ const Reply = ({ comment, session }) => {
     }
   };
 
+
+//implemented
   const handleCopy = async (message) => {
     await CopyToClipBoard(message);
     setReplyInfo(null);
@@ -246,15 +256,36 @@ const Reply = ({ comment, session }) => {
             </div>
             <div className="chat-footer opacity-50">Delivered</div>
           </div>
-          {editingCommentReply.commentId === reply?.id && (
+          {replyingComment.commentId === reply?.id && (
             <div className="flex flex-row gap-2 mt-5">
               <input
                 type="text"
                 value={replyingComment.text}
-                placeholder="reply to a comment ..."
+                placeholder="reply to a reply ..."
                 className="input input-bordered input-md w-[90%]"
                 onChange={(e) =>
                   setReplyingComment({
+                    ...replyingComment,
+                    text: e.target.value,
+                  })
+                }
+              />
+              <button
+                className="btn btn-accent text-white py-2 px-5"
+                onClick={() => handleSaveReplyComment(reply)}
+              >
+                Reply
+              </button>
+            </div>
+          )}
+          {editingCommentReply.commentId === reply?.id && (
+            <div className="flex flex-row gap-2 mt-5">
+              <input
+                type="text"
+                value={editingCommentReply.text}
+                className="input input-bordered input-md w-[90%]"
+                onChange={(e) =>
+                  setEditingCommentReply({
                     ...editingCommentReply,
                     text: e.target.value,
                   })
@@ -262,9 +293,9 @@ const Reply = ({ comment, session }) => {
               />
               <button
                 className="btn btn-accent text-white py-2 px-5"
-                onClick={() => handleSaveReplyComment(comment)}
+                onClick={() => handleEditSaveReply(reply)}
               >
-                Reply
+                Edit and Save
               </button>
             </div>
           )}
