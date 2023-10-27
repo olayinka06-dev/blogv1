@@ -211,6 +211,7 @@ const BlogProps = ({ post, profile, session, comm }) => {
     setReplyingComment({
       commentId: comment.id,
     });
+    setReplyInfo(null);
     setCommentInfo(null);
   };
 
@@ -408,23 +409,29 @@ const BlogProps = ({ post, profile, session, comm }) => {
                             </button>
                           )}
 
-<button className="btn btn-sm w-full flex flex-row justify-start bg-white border-none text-right">
-                              <span><BiCopy/></span>
-                              <span>Copy</span>
-                            </button>
+                          <button className="btn btn-sm w-full flex flex-row justify-start bg-white border-none text-right">
+                            <span>
+                              <BiCopy />
+                            </span>
+                            <span>Copy</span>
+                          </button>
                           <button
                             onClick={() => handleReplyComment(comment)}
                             className="btn btn-sm w-full flex flex-row justify-start bg-white border-none text-right"
                           >
-                            <span><BsFillReplyAllFill/></span>
-                              <span>Reply</span>
+                            <span>
+                              <BsFillReplyAllFill />
+                            </span>
+                            <span>Reply</span>
                           </button>
                         </div>
                       )}
                     </div>
                     <div className="chat-footer opacity-50">Delivered</div>
                   </div>
-                  {comment?.commentreply.map((reply, index) => (
+
+                  
+                  {/* {comment?.commentreply.map((reply, index) => (
                     <div
                       key={index}
                       className={`chat mt-3 ${
@@ -452,12 +459,19 @@ const BlogProps = ({ post, profile, session, comm }) => {
                           {formatDate(reply?.createdAt)}
                         </time>
                       </div>
-                      
+
                       <div className="chat-bubble bg-white relative text-gray-700">
-                      <div className="bg-white  px-[1rem] py-[0.5rem] border rounded-xl text-gray-700">
-                        <Image alt="logo" src={comment?.user?.profile?.profilePicture} height={20} width={20} className="rounded-full " priority/>
-                        <span>{comment?.text?.slice(0, 30) + "..."}</span>
-                      </div>
+                        <div className="bg-white  px-[1rem] py-[0.5rem] border rounded-xl text-gray-700">
+                          <Image
+                            alt="logo"
+                            src={comment?.user?.profile?.profilePicture}
+                            height={20}
+                            width={20}
+                            className="rounded-full "
+                            priority
+                          />
+                          <span>{comment?.text?.slice(0, 30) + "..."}</span>
+                        </div>
                         <span
                           onClick={() => handleShowReplyInfo(reply.id)}
                           className=" absolute cursor-pointer top-0 right-0"
@@ -491,14 +505,18 @@ const BlogProps = ({ post, profile, session, comm }) => {
                             )}
 
                             <button className="btn btn-sm w-full flex flex-row justify-start bg-white border-none text-right">
-                              <span><BiCopy/></span>
+                              <span>
+                                <BiCopy />
+                              </span>
                               <span>Copy</span>
                             </button>
                             <button
                               onClick={() => handleReplyComment(reply)}
                               className="btn btn-sm w-full flex flex-row justify-start bg-white border-none text-right"
                             >
-                              <span><BsFillReplyAllFill/></span>
+                              <span>
+                                <BsFillReplyAllFill />
+                              </span>
                               <span>Reply</span>
                             </button>
                           </div>
@@ -506,9 +524,9 @@ const BlogProps = ({ post, profile, session, comm }) => {
                       </div>
                       <div className="chat-footer opacity-50">Delivered</div>
                     </div>
-                  ))}
+                  ))} */}
 
-                  {/* <Reply/> */}
+                  <Reply comment={comment} session={session}/>
                   {replyingComment.commentId === comment.id && (
                     <div className="flex flex-row gap-2 mt-5">
                       <input

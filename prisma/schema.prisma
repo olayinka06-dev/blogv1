@@ -78,6 +78,10 @@ model Commentreply {
   commentId String
   createdAt DateTime @default(now())
   updatedAt DateTime  @updatedAt
+  // Add this field to support replies to replies
+  parentReply  Commentreply?  @relation("ChildReplies", fields: [parentReplyId], references: [id])
+  parentReplyId String?
+  childReplies Commentreply[] @relation("ChildReplies")
 }
 
 // Post model for user posts

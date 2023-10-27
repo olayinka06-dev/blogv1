@@ -13,3 +13,9 @@ export const Error = (message) => {
     autoClose: 3000,
   });
 };
+export const CopyToClipBoard = async (message) => {
+   await navigator.clipboard.writeText(message)
+    .then(() => {
+      Success("Content successfully copied to clipboard");
+    });
+};
