@@ -5,10 +5,11 @@ import { BiChevronDown, BiCopy } from "react-icons/bi";
 import { MdModeEditOutline } from "react-icons/md";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { formatDate } from "@/lib/__hs";
-import { BsFillReplyAllFill } from "react-icons/bs";
+import { BsFillReplyAllFill, BsReplyFill } from "react-icons/bs";
 import { Success } from "@/lib/entities";
 import { Error } from "@/lib/entities";
 import { CopyToClipBoard } from "../../lib/entities";
+import Replies from "./Replies";
 
 const Reply = ({ comment, session }) => {
   const [replyInfo, setReplyInfo] = useState(null);
@@ -20,7 +21,7 @@ const Reply = ({ comment, session }) => {
     commentId: null,
     text: "",
   });
-//implemented
+  //implemented
   const handleShowReplyInfo = (replyId) => {
     if (replyInfo === replyId) {
       setReplyInfo(null); // Close the comment info if it's already open
@@ -29,9 +30,7 @@ const Reply = ({ comment, session }) => {
     }
   };
 
-
-
-  const handleReplyComment = (reply) => {
+  const handleReplyReplies = (reply) => {
     setReplyingComment({
       commentId: reply?.id,
     });
@@ -39,17 +38,18 @@ const Reply = ({ comment, session }) => {
     setEditingCommentReply({ commentId: null, text: "" });
   };
 
-  const handleSaveReplyComment = async (comment) => {
+  const handleSaveReplyRelies = async (reply, commentId) => {
     try {
-      const BASE_URL = `/api/post/reply`;
+      const BASE_URL = `/api/post/reply/replies`;
       const resp = await fetch(BASE_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          commentId: comment.id,
           text: replyingComment.text,
+          parentReplyId: reply.id,
+          commentId: commentId,
         }),
       });
       const result = await resp.json();
@@ -78,8 +78,7 @@ const Reply = ({ comment, session }) => {
     }
   };
 
-
-//implemented
+  //implemented
   const handleDeleteReply = async (replyId) => {
     try {
       const BASE_URL = `/api/post/reply?id=${replyId}`;
@@ -106,7 +105,6 @@ const Reply = ({ comment, session }) => {
     }
   };
 
-
   //implemented
   const handleEditReply = (reply) => {
     setEditingCommentReply({
@@ -114,9 +112,9 @@ const Reply = ({ comment, session }) => {
       text: reply?.text,
     });
     setReplyInfo(null);
-    setReplyingComment({ commentId: null})
+    setReplyingComment({ commentId: null });
   };
-//implemented
+  //implemented
   const handleEditSaveReply = async (reply) => {
     try {
       const BASE_URL = `/api/post/reply`;
@@ -156,8 +154,7 @@ const Reply = ({ comment, session }) => {
     }
   };
 
-
-//implemented
+  //implemented
   const handleCopy = async (message) => {
     await CopyToClipBoard(message);
     setReplyInfo(null);
@@ -191,14 +188,21 @@ const Reply = ({ comment, session }) => {
 
             <div className="chat-bubble bg-white relative text-gray-700">
               <div className="bg-white  px-[1rem] py-[0.5rem] border rounded-xl text-gray-700">
-                <Image
-                  alt="logo"
-                  src={comment?.user?.profile?.profilePicture}
-                  height={20}
-                  width={20}
-                  className="rounded-full "
-                  priority
-                />
+                <div className="flex items-center justify-between">
+                  <div className="">
+                    <Image
+                      alt="logo"
+                      src={comment?.user?.profile?.profilePicture}
+                      height={20}
+                      width={20}
+                      className="rounded-full "
+                      priority
+                    />
+                  </div>
+                  <span>
+                    <BsReplyFill />
+                  </span>
+                </div>
                 <span>{comment?.text?.slice(0, 30) + "..."}</span>
               </div>
               <span
@@ -243,7 +247,7 @@ const Reply = ({ comment, session }) => {
                     <span>Copy</span>
                   </button>
                   <button
-                    onClick={() => handleReplyComment(reply)}
+                    onClick={() => handleReplyReplies(reply)}
                     className="btn btn-sm w-full flex flex-row justify-start bg-white border-none text-right"
                   >
                     <span>
@@ -272,7 +276,7 @@ const Reply = ({ comment, session }) => {
               />
               <button
                 className="btn btn-accent text-white py-2 px-5"
-                onClick={() => handleSaveReplyComment(reply)}
+                onClick={() => handleSaveReplyRelies(reply, comment?.id)}
               >
                 Reply
               </button>
@@ -299,6 +303,7 @@ const Reply = ({ comment, session }) => {
               </button>
             </div>
           )}
+          <Replies reply={reply} session={session} />
         </div>
       ))}
     </>

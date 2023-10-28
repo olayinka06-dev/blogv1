@@ -58,6 +58,25 @@ async function getAllComment(postId) {
           select: {
             id: true,
             text: true,
+            childReplies: {
+              select: {
+                id: true,
+                text: true,
+                user: {
+                  select: {
+                    id: true,
+                    username: true,
+                    profile: {
+                      select: {
+                        profilePicture: true,
+                      },
+                    },
+                  },
+                },
+                createdAt: true,
+                updatedAt: true,
+              },
+            },
             user: {
               select: {
                 id: true,
@@ -85,6 +104,7 @@ async function getAllComment(postId) {
           },
         },
         createdAt: true,
+        updatedAt: true,
       },
     });
 
@@ -99,7 +119,7 @@ const BlogDetails = async ({ params }) => {
   const post = await getPost(params.id);
   // console.log("params.id",params.id);
   const comments = await getAllComment(post?.id);
-  console.log("comments", comments)
+  console.log("comments", comments);
 
   const session = await getServerSession(authOptions);
   const profile = post?.user?.profile;

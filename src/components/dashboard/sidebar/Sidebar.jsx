@@ -3,7 +3,7 @@ import React from "react";
 
 export const Sidebar = () => {
   return (
-    <aside className="fixed  left-0 bg-white shadow bottom-0 w-[350px] px-3 border-l h-[90vh]">
+    <aside className="fixed  left-0 bg-white shadow hidden md:block bottom-0 w-[350px] px-3 border-l h-[90vh]">
       <div className="mt-10 overflow-y-scroll">
         <div className="flex flex-col gap-5">
           <div className="flex flex-row items-center border-b gap-2">

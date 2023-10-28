@@ -315,9 +315,8 @@ const BlogProps = ({ post, profile, session, comm }) => {
               .slice()
               .reverse()
               .map((comment, index) => (
-                <>
+                <div key={index}>
                   <div
-                    key={index}
                     className={`chat  ${
                       comment?.user?.id === session?.user?.id
                         ? " chat-end"
@@ -441,7 +440,7 @@ const BlogProps = ({ post, profile, session, comm }) => {
                       </button>
                     </div>
                   )}
-                </>
+                </div>
               ))}
         </div>
       </section>

@@ -5,7 +5,7 @@ import {Navbar} from "@/components/dashboard/navbar/Navbar"
 export const Appwrapper = ({children}) => {
   return (
     <section>
-      <div className="pl-[350px]">
+      <div className="md:pl-[350px]">
         <Sidebar/>
         <div className="">
           <Navbar/>
