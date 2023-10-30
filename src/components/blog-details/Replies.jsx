@@ -188,7 +188,6 @@ const Replies = ({ reply, session }) => {
           <div className="chat-bubble bg-white relative text-gray-700">
             <div className="bg-white  px-[1rem] py-[0.5rem] border rounded-xl text-gray-700">
               <div className="flex items-center justify-between">
-                <div className="">
                   <Image
                     alt="logo"
                     src={reply?.user?.profile?.profilePicture}
@@ -197,7 +196,6 @@ const Replies = ({ reply, session }) => {
                     className="rounded-full "
                     priority
                   />
-                </div>
                 <span><BsFillReplyAllFill/></span>
               </div>
               <span>{reply?.text?.slice(0, 30) + "..."}</span>

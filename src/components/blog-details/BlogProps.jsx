@@ -30,7 +30,6 @@ const BlogProps = ({ post, profile, session, comm }) => {
 
   const postId = post?.id;
   const [commentInfo, setCommentInfo] = useState(null);
-  const [replyInfo, setReplyInfo] = useState(null);
 
   const handleShowCommentInfo = (commentId) => {
     setCommentInfo(commentId);
@@ -178,7 +177,6 @@ const BlogProps = ({ post, profile, session, comm }) => {
     setReplyingComment({
       commentId: comment.id,
     });
-    setReplyInfo(null);
     setCommentInfo(null);
   };
 
@@ -254,6 +252,9 @@ const BlogProps = ({ post, profile, session, comm }) => {
             </div>
             <h4 className="text-base font-medium text-body-color">
               By <span className="pl-2">{post?.user?.username}</span>
+            </h4>
+            <h4 className="text-base font-medium text-body-color">
+              By <span className="pl-2">{post?.user?.profile?.userRole.map((role=> role))}</span>
             </h4>
           </div>
         </div>

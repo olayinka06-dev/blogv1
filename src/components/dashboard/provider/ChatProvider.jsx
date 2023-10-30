@@ -7,6 +7,14 @@ export const ChatContext = createContext({
       media: null,
       message: "",
     },
+    chatComments: {
+      id: "",
+      text: "",
+      postId: "",
+      userId: "",
+      createdAt: Date,
+      updatedAt: Date,
+    },
     setNewMessage: () => {},
   },
 });

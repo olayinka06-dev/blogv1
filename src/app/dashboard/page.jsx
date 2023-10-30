@@ -1,10 +1,22 @@
 import React from "react";
 import ChatWrapper from "@/components/dashboard/chat/ChatWrapper";
+import { db } from "@/lib/db";
 
-const Chat = () => {
+async function getAllChatComment() {
+  try {
+    const allChatComment = await db.comment.findMany();
+    return allChatComment;
+  } catch (error) {
+    
+  }
+}
+
+const Chat = async () => {
+  const allChat = await getAllChatComment();
+
   return (
     <section>
-      <ChatWrapper />
+      <ChatWrapper chatComments={allChat} />
     </section>
   );
 };

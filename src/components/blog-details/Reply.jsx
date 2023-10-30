@@ -179,6 +179,7 @@ const Reply = ({ comment, session }) => {
                 />
               </div>
             </div>
+
             <div className="chat-header flex flex-row gap-2 items-center">
               {reply?.user?.username}
               <time className="text-xs mr-2 opacity-50">

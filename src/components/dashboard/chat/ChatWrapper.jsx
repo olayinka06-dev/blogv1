@@ -3,7 +3,7 @@ import React, {useState} from "react";
 import ChatComponent from "@/components/dashboard/chat/ChatComponent";
 import { ChatContext } from "@/components/dashboard/provider/ChatProvider";
 
-const ChatWrapper = () => {
+const ChatWrapper = ({chatComments}) => {
     const [newMessage, setNewMessage] = useState({
         media: null,
         message: ""
@@ -12,7 +12,8 @@ const ChatWrapper = () => {
 
     const chatData = {
         newMessage,
-        setNewMessage
+        setNewMessage,
+        chatComments
     }
   return (
     <section>
