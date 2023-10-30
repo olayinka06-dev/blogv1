@@ -7,6 +7,7 @@ export const ChatContext = createContext({
       media: null,
       message: "",
     },
+    receiver: null, 
     chatComments: {
       id: "",
       text: "",
@@ -15,7 +16,17 @@ export const ChatContext = createContext({
       createdAt: Date,
       updatedAt: Date,
     },
+    friendList: [
+      {
+        id: "",
+        username: "",
+        profile: {
+          profilePicture: "",
+        },
+      },
+    ],
     setNewMessage: () => {},
+    setReceiver: () => {},
   },
 });
 

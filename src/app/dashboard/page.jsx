@@ -11,12 +11,32 @@ async function getAllChatComment() {
   }
 }
 
+async function getMyFriends(){
+  try {
+    const response = await db.user.findMany({
+      select: {
+        id: true,
+        username: true,
+        profile: {
+          select: {
+            profilePicture: true,
+          }
+        }
+      }
+    });
+     return response
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 const Chat = async () => {
   const allChat = await getAllChatComment();
+  const friendList = await getMyFriends();
 
   return (
     <section>
-      <ChatWrapper chatComments={allChat} />
+      <ChatWrapper chatComments={allChat} friendList={friendList} />
     </section>
   );
 };

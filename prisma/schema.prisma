@@ -9,16 +9,20 @@ datasource db {
 
 // User model for user authentication
 model User {
-  id           String         @id @default(cuid())
-  username     String         @unique
-  password     String
+  id              String            @id @default(cuid())
+  username        String            @unique
+  password        String
   // Define a relation to the Post model for user's posts.
-  posts        Post[]
+  posts           Post[]
   // Define a relation to the Profile model for user profiles.
-  profile      Profile?
-  Comment      Comment[]
-  Like         Like[]
-  commentreply Commentreply[]
+  profile         Profile?
+  Comment         Comment[]
+  Like            Like[]
+  commentreply    Commentreply[]
+  ChatMessage     ChatMessage[]
+  MessageReaction MessageReaction[]
+  ChatRoom        ChatRoom?         @relation(fields: [chatRoomId], references: [id])
+  chatRoomId      String?
 }
 
 // Profile model for user profiles
@@ -70,18 +74,18 @@ model Like {
 }
 
 model Commentreply {
-  id        String   @id @default(cuid())
-  text      String
-  user      User     @relation(fields: [userId], references: [id])
-  userId    String
-  comment   Comment  @relation(fields: [commentId], references: [id])
-  commentId String
-  createdAt DateTime @default(now())
-  updatedAt DateTime  @updatedAt
+  id            String         @id @default(cuid())
+  text          String
+  user          User           @relation(fields: [userId], references: [id])
+  userId        String
+  comment       Comment        @relation(fields: [commentId], references: [id])
+  commentId     String
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
   // Add this field to support replies to replies
-  parentReply  Commentreply?  @relation("ChildReplies", fields: [parentReplyId], references: [id])
+  parentReply   Commentreply?  @relation("ChildReplies", fields: [parentReplyId], references: [id])
   parentReplyId String?
-  childReplies Commentreply[] @relation("ChildReplies")
+  childReplies  Commentreply[] @relation("ChildReplies")
 }
 
 // Post model for user posts
@@ -108,4 +112,41 @@ model Tag {
   name  String @unique
   // Define a relation to the Post model for tags associated with posts.
   posts Post[]
+}
+
+model ChatMessage {
+  id         String            @id @default(cuid())
+  content    String
+  media      String?
+  sentAt     DateTime          @default(now())
+  updatedAt  DateTime          @updatedAt
+  status     MessageStatus // Message status (sent, delivered, read)
+  user       User              @relation(fields: [userId], references: [id])
+  userId     String
+  reactions  MessageReaction[]
+  ChatRoom   ChatRoom?         @relation(fields: [chatRoomId], references: [id])
+  chatRoomId String?
+}
+
+enum MessageStatus {
+  SENT
+  DELIVERED
+  READ
+}
+
+model MessageReaction {
+  id        String      @id @default(cuid())
+  reaction  String
+  message   ChatMessage @relation(fields: [messageId], references: [id])
+  messageId String
+  user      User        @relation(fields: [userId], references: [id])
+  userId    String
+}
+
+model ChatRoom {
+  id          String        @id @default(cuid())
+  name        String
+  description String?
+  members     User[] // Users who are part of the chat room
+  messages    ChatMessage[]
 }
