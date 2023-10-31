@@ -12,6 +12,7 @@ const ChatWrapper = ({ chatComments, friendList }) => {
   const [receiver, setReceiver] = useState(null);
 
   const handleSelect = (receiverId) => {
+    console.log(receiverId);
     setReceiver(receiverId);
   }
 
@@ -27,7 +28,7 @@ const ChatWrapper = ({ chatComments, friendList }) => {
     <section>
       <ChatContext.Provider value={{ chatData: chatData }}>
         <>
-          <Sidebar handleSelect={handleSelect} />
+          <Sidebar />
           <ChatComponent />
         </>
       </ChatContext.Provider>

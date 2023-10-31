@@ -7,7 +7,7 @@ const SideBar = ({ userList }) => {
   return (
     <div className="flex flex-col">
       <div className="">
-        {userList.map((user) => (
+        {userList?.map((user) => (
           <div  key={user} className="flex flex-row items-center border-b gap-2">
             <div className="">
               <Image

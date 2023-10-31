@@ -48,7 +48,7 @@ function Chat({ data, receiverId, senderId }) {
   return (
     <div>
       <div className="chat-messages">
-        {messages.map((message) => (
+        {messages?.map((message) => (
           <div key={message.id}>
             <p>{message.content}</p>
             {message.id === replyingTo ? (

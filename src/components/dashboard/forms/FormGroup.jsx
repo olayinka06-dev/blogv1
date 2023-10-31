@@ -22,11 +22,11 @@ export const FormSubmit = () => {
       return;
     } else {
 
-      if (showMedia) {
-        setNewMessage({ ...newMessage, media: file });
-      } else {
-        setpopUpChat({ ...popUpChat, media: file });
-      }
+      // if (showMedia) {
+      //   setNewMessage({ ...newMessage, media: file });
+      // } else {
+      //   setpopUpChat({ ...popUpChat, media: file });
+      // }
 
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -38,13 +38,21 @@ export const FormSubmit = () => {
   };
   const handleSendMessage = async (e) => {
     e.preventDefault();
-    console.log("Message", imagePreviewUrl ? popUpChat : newMessage);
-    // console.log("popupChat", popUpChat);
+    if (imagePreviewUrl) {
+      const saveImageToFirebase = await handleImageSaveToFireBase(
+        newMessage.media
+      );
+      if (saveImageToFirebase && saveImageToFirebase !== "" ) {
+        setpopUpChat({...popUpChat, media: saveImageToFirebase})
+      }
+      console.log("saveImageToFirebase", saveImageToFirebase);
+      
+    }
+  console.log("Message", imagePreviewUrl ? popUpChat : newMessage);
     try {
       const BASE_URL = "/api/chat/comments";
-      // const saveImageToFirebase = await handleImageSaveToFireBase(
-      //   newMessage.media
-      // );
+      
+      
       // if (saveImageToFirebase !== "") {
         const resp = await fetch(BASE_URL, {
           method: "POST",
@@ -60,9 +68,9 @@ export const FormSubmit = () => {
         if (resp.ok) {
           Success(message);
           setShowMedia(false);
-          setImagePreviewUrl("")
-          setNewMessage({...newMessage, message: "", media: null})
-          setpopUpChat({...popUpChat, message: "", media: null})
+          // setImagePreviewUrl("")
+          // setNewMessage({...newMessage, message: "", media: null})
+          // setpopUpChat({...popUpChat, message: "", media: null})
           //   router.push("/blog");
         } else {
           Error(message);
