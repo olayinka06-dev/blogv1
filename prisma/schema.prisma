@@ -9,20 +9,19 @@ datasource db {
 
 // User model for user authentication
 model User {
-  id              String            @id @default(cuid())
-  username        String            @unique
-  password        String
+  id           String         @id @default(cuid())
+  username     String         @unique
+  password     String
   // Define a relation to the Post model for user's posts.
-  posts           Post[]
+  posts        Post[]
   // Define a relation to the Profile model for user profiles.
-  profile         Profile?
-  Comment         Comment[]
-  Like            Like[]
-  commentreply    Commentreply[]
-  ChatMessage     ChatMessage[]
-  MessageReaction MessageReaction[]
-  ChatRoom        ChatRoom?         @relation(fields: [chatRoomId], references: [id])
-  chatRoomId      String?
+  profile      Profile?
+  Comment      Comment[]
+  Like         Like[]
+  commentreply Commentreply[]
+  ChatMessage  ChatMessage[]
+  ChatRoom     ChatRoom?      @relation(fields: [chatRoomId], references: [id])
+  chatRoomId   String?
 }
 
 // Profile model for user profiles
@@ -115,32 +114,15 @@ model Tag {
 }
 
 model ChatMessage {
-  id         String            @id @default(cuid())
+  id         String   @id @default(cuid())
   content    String
   media      String?
-  sentAt     DateTime          @default(now())
-  updatedAt  DateTime          @updatedAt
-  status     MessageStatus // Message status (sent, delivered, read)
-  user       User              @relation(fields: [userId], references: [id])
+  sentAt     DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  user       User     @relation(fields: [userId], references: [id])
   userId     String
-  reactions  MessageReaction[]
-  ChatRoom   ChatRoom?         @relation(fields: [chatRoomId], references: [id])
-  chatRoomId String?
-}
-
-enum MessageStatus {
-  SENT
-  DELIVERED
-  READ
-}
-
-model MessageReaction {
-  id        String      @id @default(cuid())
-  reaction  String
-  message   ChatMessage @relation(fields: [messageId], references: [id])
-  messageId String
-  user      User        @relation(fields: [userId], references: [id])
-  userId    String
+  ChatRoom   ChatRoom @relation(fields: [chatRoomId], references: [id])
+  chatRoomId String
 }
 
 model ChatRoom {

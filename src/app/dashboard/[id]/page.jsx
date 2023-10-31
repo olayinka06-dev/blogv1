@@ -1,17 +1,37 @@
 import React from "react";
 import ChatWrapper from "@/components/dashboard/chat/ChatWrapper";
-import { db } from "@/lib/db";
+import { db } from "../../../lib/db";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { authOptions } from "../../../lib/auth";
 
 async function getAllChatComment(friendId, userId) {
   try {
+    // const messages = await db.chatMessage.findMany({
+    //   where: {
+    //     OR: [
+    //       { userId, chatRoom: { members: { some: { id: friendId } } } },
+    //       { userId: friendId, chatRoom: { members: { some: { id: userId } } }},
+    //     ],
+    //   },
+    // });
+
+    const chatRoom  = await db.chatRoom.findFirst({
+      where: {
+        AND: [
+          { members: { some: { id: userId } } },
+          { members: { some: { id: friendId } } },
+        ],
+      },
+    });
+
+    if (!chatRoom) {
+      // Handle the case where a chat room between the user and the selected friend doesn't exist.
+      return 'Chat room not found.'
+    }
+  
     const messages = await db.chatMessage.findMany({
       where: {
-        OR: [
-          { userId, chatRoom: { members: { some: { id: friendId } } } },
-          { userId: friendId, chatRoom: { members: { some: { id: userId } } }},
-        ],
+        chatRoomId: chatRoom.id, // Use the chat room ID to filter messages
       },
     });
     return messages
@@ -69,7 +89,7 @@ const Chat = async ({ params }) => {
   console.log(params.id);
   return (
     <section>
-      <ChatWrapper chatComments={allChat} friendList={friendList} />
+      <ChatWrapper chatComments={allChat} friendId={friendId} friendList={friendList} />
     </section>
   );
 };

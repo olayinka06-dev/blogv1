@@ -1,11 +1,13 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../../../lib/auth";
 import { NextResponse } from "next/server";
+import { db } from "../../../../lib/db";
 
 export async function POST(request) {
   const session = await getServerSession(authOptions);
+  const userId = session?.user?.id;
   const payload = await request.json();
-  const { media, message } = payload;
+  const { media, message: content, receiver: friendId } = payload;
 
   console.log("payload", payload);
 
@@ -14,11 +16,29 @@ export async function POST(request) {
       message: "Unauthorized!, please login to begin a chat",
     });
   }
-
+  const status = 'SENT';
   try {
-    if (payload) {
+    const newMessage = await db.chatMessage.create({
+      data: {
+        content,
+        media,
+        userId,
+        status,
+        chatRoom: {
+          create: {
+            members: {
+              connect: [
+                { id: userId },
+                { id: friendId },
+              ],
+            },
+          },
+        },
+      },
+    });
+    if (newMessage) {
       return NextResponse.json(
-        { payload, message: "Success!" },
+        { newMessage, message: "Success!" },
         { status: 201 }
       );
     } else {
