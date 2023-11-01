@@ -53,7 +53,7 @@ export const FormSubmit = () => {
 
     console.log("Message", imagePreviewUrl ? popUpChat : newMessage);
     try {
-      const BASE_URL = "/api/chat/comments";
+      const BASE_URL = "/api/chat/message";
 
       const resp = await fetch(BASE_URL, {
         method: "POST",

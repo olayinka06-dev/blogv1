@@ -1,6 +1,8 @@
 import React from "react";
 import ChatWrapper from "@/components/dashboard/chat/ChatWrapper";
 import { db } from "@/lib/db";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 async function getAllChatComment() {
   try {
@@ -11,28 +13,43 @@ async function getAllChatComment() {
   }
 }
 
-async function getMyFriends(){
+async function getMyFriends(userId) {
   try {
-    const response = await db.user.findMany({
-      select: {
-        id: true,
-        username: true,
-        profile: {
+    // Get the authenticated user's ID
+    // Find the user and include their friends
+    const user = await db.user.findUnique({
+      where: { id: userId },
+      include: {
+        friends: {
           select: {
-            profilePicture: true,
-          }
-        }
-      }
+            id: true,
+            username: true,
+            profile: {
+              select: {
+                profilePicture: true,
+              },
+            },
+          },
+        },
+      },
     });
-     return response
+
+    // Extract the list of friends
+    const response = user.friends;
+
+    console.log("friends", response);
+
+    return response;
   } catch (error) {
-    console.error(error);
+    console.error("Error getting friends:", error);
   }
 }
 
 const Chat = async () => {
+  const session = await getServerSession(authOptions);
+  const userId = session?.user?.id;
   const allChat = await getAllChatComment();
-  const friendList = await getMyFriends();
+  const friendList = await getMyFriends(userId);
 
   return (
     <section>

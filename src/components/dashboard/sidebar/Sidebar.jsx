@@ -9,24 +9,35 @@ export const Sidebar = () => {
   return (
     <aside className="fixed  left-0 bg-white shadow hidden md:block bottom-0 w-[350px] px-3 border-l h-[90vh]">
       <div className="mt-10 overflow-y-scroll">
+
         <div className="flex flex-col gap-5">
-          {friendList?.map((friend) => (
-            <Link href={`/dashboard/${friend?.id}`} className="flex flex-row items-center border-b gap-2">
-              <div className="">
-                <Image
-                  alt={friend?.profile?.profilePicture || "/next.svg"}
-                  className="rounded-full"
-                  src={friend?.profile?.profilePicture || "/next.svg"}
-                  height={40}
-                  width={40}
-                />
-              </div>
-              <div className="flex flex-col">
-                <span>{friend?.username}</span>
-                <span className="mt-[1px]">Hello when will come home</span>
-              </div>
-            </Link>
-          ))}
+          {friendList?.length === 0 ? (
+            <div>
+              <p>No friends yet please add up friend</p>
+              <Link href={"/users"} className="btn btn-accent">Search</Link>
+            </div>
+          ) : (
+            friendList?.map((friend) => (
+              <Link
+                href={`/dashboard/${friend?.id}`}
+                className="flex flex-row items-center border-b gap-2"
+              >
+                <div className="">
+                  <Image
+                    alt={friend?.profile?.profilePicture || "/next.svg"}
+                    className="rounded-full"
+                    src={friend?.profile?.profilePicture || "/next.svg"}
+                    height={40}
+                    width={40}
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <span>{friend?.username}</span>
+                  <span className="mt-[1px]">Hello when will come home</span>
+                </div>
+              </Link>
+            ))
+          )}
         </div>
       </div>
     </aside>

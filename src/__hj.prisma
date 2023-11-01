@@ -1,76 +1,262 @@
+// model User {
+//     id       String @id @default(cuid())
+//     username String @unique
+//     password String
+//     // ... Other user-related fields
+
+//     // Relations to user interactions
+//     likes       Like[] // A user can like multiple posts
+//     forwards    Forward[] // A user can forward multiple posts
+//     comments    Comment[] // A user can post multiple comments
+//     Post        Post[]
+//     ChatMessage ChatMessage[]
+// }
+
+// model Like {
+//     id     String @id @default(cuid())
+//     post   Post   @relation(fields: [postId], references: [id])
+//     postId String
+//     user   User   @relation(fields: [userId], references: [id])
+//     userId String
+// }
+
+// model Forward {
+//     id     String @id @default(cuid())
+//     post   Post   @relation(fields: [postId], references: [id])
+//     postId String
+//     user   User   @relation(fields: [userId], references: [id])
+//     userId String
+// }
+
+// model Comment {
+//     id     String @id @default(cuid())
+//     text   String
+//     post   Post   @relation(fields: [postId], references: [id])
+//     postId String
+//     user   User   @relation(fields: [userId], references: [id])
+//     userId String
+// }
+
+// model Post {
+//     id        String   @id @default(cuid())
+//     title     String
+//     content   String
+//     createdAt DateTime @default(now())
+//     updatedAt DateTime @updatedAt
+
+//     // Relations
+//     user   User    @relation(fields: [userId], references: [id])
+//     userId String
+//     tag    Tag     @relation(fields: [tagId], references: [id])
+//     tagId  String
+//     media  String?
+
+//     // User interactions
+//     likes    Like[] // Multiple users can like a post
+//     forwards Forward[] // Multiple users can forward a post
+//     comments Comment[] // Multiple users can comment on a post
+// }
+
+// model Tag {
+//     id   String @id @default(cuid())
+//     name String @unique
+
+//     // Relations
+//     posts Post[]
+// }
+
+// model ChatMessage {
+//     id        String   @id @default(cuid())
+//     content   String
+//     media     String?
+//     sentAt    DateTime @default(now())
+//     updatedAt DateTime @updatedAt
+//     user      User     @relation(fields: [userId], references: [id])
+//     userId    String
+// }
+
+// generator client {
+//   provider = "prisma-client-js"
+// }
+
+// datasource db {
+//   provider = "postgresql"
+//   url      = env("DATABASE_URL")
+// }
+
+// model User {
+//   id              String @id @default(cuid()) 
+//   name            String?
+//   email           String?   @unique
+//   emailVerified   DateTime?
+//   image           String?
+//   hashedPassword  String?
+//   createdAt       DateTime @default(now())
+//   updatedAt       DateTime @updatedAt
+
+//   conversationIds Int[]     
+//   conversations   Conversation[] @relation("participants")
+
+//   seenMessageIds Int[]      
+//   seenMessages    Message[] @relation("messageSeenBy")
+
+//   accounts Account[] @relation("userAccount")
+//   messages Message[] @relation("sentBy")
+// }
+
+// model Account {
+//   id String @id @default(cuid())
+//   userId             String   
+//   type               String
+//   provider           String
+//   providerAccountId  String
+//   refresh_token      String?
+//   access_token       String?
+//   expires_at         Int?
+//   token_type         String?
+//   scope              String?
+//   id_token           String?
+//   session_state      String?
+
+//   user User @relation("userAccount", fields: [userId], references: [id])
+
+//   @@unique([provider, providerAccountId])
+// }
+
+// model Conversation {
+//   id String @id @default(cuid())
+//   createdAt       DateTime @default(now())
+//   lastMessageAt DateTime @default(now())
+//   name String?
+//   isGroup Boolean
+
+//   messagesIds Int[]     
+//   messages Message[] @relation("conversationMessages")
+
+//   userIds Int[]        
+//   users User[] @relation("participants")
+
+//   messageSeenBy Message[] @relation("messageSeenBy")
+// }
+
+// model Message {
+//   id String @id @default(cuid())
+//   body String?
+//   image String?
+//   createdAt DateTime @default(now())
+
+//   seenIds Int[]        
+//   seen User[] @relation("messageSeenBy")
+
+//   conversationId String
+//   conversation Conversation @relation("conversationMessages", fields: [conversationId], references: [id])
+
+//   senderId String
+//   sender User @relation("sentBy", fields: [senderId], references: [id])
+// }
+
+// Prisma schema for chat application
+
+// schema.prisma
+
+// Define the User model
+// schema.prisma
+
+// schema.prisma
+
+// model User {
+//     id               Int          @id @default(autoincrement())
+//     username         String       @unique
+//     email            String       @unique
+//     password         String
+//     createdAt        DateTime     @default(now())
+//     updatedAt        DateTime     @updatedAt
+//     sentMessages     Message[]    @relation("SenderMessages")
+//     receivedMessages Message[]    @relation("RecipientMessages")
+//     friendships      Friendship[] @relation("Friendships")
+// }
+
+// model Message {
+//     id          Int      @id @default(autoincrement())
+//     content     String
+//     createdAt   DateTime @default(now())
+//     updatedAt   DateTime @updatedAt
+//     sender      User     @relation("SenderMessages", fields: [senderId], references: [id])
+//     senderId    Int
+//     recipient   User     @relation("RecipientMessages", fields: [recipientId], references: [id])
+//     recipientId Int
+// }
+
+// model Friendship {
+//     id       Int  @id @default(autoincrement())
+//     user     User @relation("Friendships", fields: [userId], references: [id])
+//     userId   Int
+//     friend   User @relation("Friendships", fields: [friendId], references: [id])
+//     friendId Int
+// }
+
+// schema.prisma
+
+// Define the data model for users
+// schema.prisma
+
+// Define the data model for users
+// schema.prisma
+
+// schema.prisma
+
+// Define the User model
+// schema.prisma
+
+// Define the User model
+// schema.prisma
+
+// Define the User model
 model User {
-    id       String @id @default(cuid())
-    username String @unique
-    password String
-    // ... Other user-related fields
-
-    // Relations to user interactions
-    likes       Like[] // A user can like multiple posts
-    forwards    Forward[] // A user can forward multiple posts
-    comments    Comment[] // A user can post multiple comments
-    Post        Post[]
-    ChatMessage ChatMessage[]
+    id                     Int             @id @default(autoincrement())
+    username               String          @unique
+    email                  String          @unique
+    password               String
+    createdAt              DateTime        @default(now())
+    updatedAt              DateTime        @updatedAt
+    sentFriendRequests     FriendRequest[] @relation("sender")
+    receivedFriendRequests FriendRequest[] @relation("recipient")
+    friends                User[]          @relation("Friendship")
+    friendOf               User[]          @relation("Friendship")
+    sentMessages           Message[]       @relation("SentMessages")
+    receivedMessages       Message[]       @relation("ReceivedMessages")
+    notifications          Notification[]  @relation("user")
 }
 
-model Like {
-    id     String @id @default(cuid())
-    post   Post   @relation(fields: [postId], references: [id])
-    postId String
-    user   User   @relation(fields: [userId], references: [id])
-    userId String
+// Define the FriendRequest model
+model FriendRequest {
+    id          Int      @id @default(autoincrement())
+    createdAt   DateTime @default(now())
+    sender      User     @relation("sender", fields: [senderId], references: [id])
+    senderId    Int
+    recipient   User     @relation("recipient", fields: [recipientId], references: [id])
+    recipientId Int
 }
 
-model Forward {
-    id     String @id @default(cuid())
-    post   Post   @relation(fields: [postId], references: [id])
-    postId String
-    user   User   @relation(fields: [userId], references: [id])
-    userId String
+// Define the Message model
+model Message {
+    id          Int      @id @default(autoincrement())
+    content     String
+    media       String?
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+    sender      User     @relation("SentMessages", fields: [senderId], references: [id])
+    senderId    Int
+    recipient   User     @relation("ReceivedMessages", fields: [recipientId], references: [id])
+    recipientId Int
 }
 
-model Comment {
-    id     String @id @default(cuid())
-    text   String
-    post   Post   @relation(fields: [postId], references: [id])
-    postId String
-    user   User   @relation(fields: [userId], references: [id])
-    userId String
-}
-
-model Post {
-    id        String   @id @default(cuid())
-    title     String
-    content   String
+// Define the Notification model
+model Notification {
+    id        Int      @id @default(autoincrement())
+    type      String // e.g., 'friend_request', 'friend_request_accepted', etc.
+    userId    Int
+    isRead    Boolean  @default(false)
     createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-
-    // Relations
-    user   User    @relation(fields: [userId], references: [id])
-    userId String
-    tag    Tag     @relation(fields: [tagId], references: [id])
-    tagId  String
-    media  String?
-
-    // User interactions
-    likes    Like[] // Multiple users can like a post
-    forwards Forward[] // Multiple users can forward a post
-    comments Comment[] // Multiple users can comment on a post
-}
-
-model Tag {
-    id   String @id @default(cuid())
-    name String @unique
-
-    // Relations
-    posts Post[]
-}
-
-model ChatMessage {
-    id        String   @id @default(cuid())
-    content   String
-    media     String?
-    sentAt    DateTime @default(now())
-    updatedAt DateTime @updatedAt
-    user      User     @relation(fields: [userId], references: [id])
-    userId    String
+    user      User     @relation("user", fields: [userId], references: [id])
 }

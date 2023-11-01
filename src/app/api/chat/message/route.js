@@ -18,20 +18,26 @@ export async function POST(request) {
   }
   const status = 'SENT';
   try {
+    // Create a new chat room or connect to an existing one
+  const chatRoom = await db.chatRoom.create({
+    data: {
+      members: {
+        connect: [{ id: userId }, { id: friendId }],
+      },
+    },
+  });
     const newMessage = await db.chatMessage.create({
       data: {
         content,
         media,
-        userId,
-        status,
-        chatRoom: {
-          create: {
-            members: {
-              connect: [
-                { id: userId },
-                { id: friendId },
-              ],
-            },
+        userId, // Connect to the user who is sending the message
+        ChatRoom: {
+          connect: { id: chatRoom.id },
+        },
+        user: {
+          connectOrCreate: {
+            where: { id: userId },
+            create: { id: userId },
           },
         },
       },

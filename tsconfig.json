@@ -33,7 +33,7 @@
     ".next/types/**/*.ts",
     "**/*.ts",
     "**/*.tsx"
-  ],
+, "src/app/api/search/route.js"  ],
   "exclude": [
     "node_modules"
   ]

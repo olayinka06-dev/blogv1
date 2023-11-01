@@ -15,7 +15,7 @@ async function getAllChatComment(friendId, userId) {
     //   },
     // });
 
-    const chatRoom  = await db.chatRoom.findFirst({
+    const chatRoom = await db.chatRoom.findFirst({
       where: {
         AND: [
           { members: { some: { id: userId } } },
@@ -26,36 +26,49 @@ async function getAllChatComment(friendId, userId) {
 
     if (!chatRoom) {
       // Handle the case where a chat room between the user and the selected friend doesn't exist.
-      return 'Chat room not found.'
+      return "Chat room not found.";
     }
-  
+
     const messages = await db.chatMessage.findMany({
       where: {
         chatRoomId: chatRoom.id, // Use the chat room ID to filter messages
       },
     });
-    return messages
+    return messages;
   } catch (error) {
     console.error(error);
   }
 }
 
-async function getMyFriends(){
+async function getMyFriends(userId) {
   try {
-    const response = await db.user.findMany({
-      select: {
-        id: true,
-        username: true,
-        profile: {
+    // Get the authenticated user's ID
+    // Find the user and include their friends
+    const user = await db.user.findUnique({
+      where: { id: userId },
+      include: {
+        friends: {
           select: {
-            profilePicture: true,
-          }
-        }
-      }
+            id: true,
+            username: true,
+            profile: {
+              select: {
+                profilePicture: true,
+              },
+            },
+          },
+        },
+      },
     });
-     return response
+
+    // Extract the list of friends
+    const response = user.friends;
+
+    console.log("friends", response);
+
+    return response;
   } catch (error) {
-    console.error(error);
+    console.error("Error getting friends:", error);
   }
 }
 
@@ -84,12 +97,16 @@ const Chat = async ({ params }) => {
   const userId = session?.user?.id;
   const friendId = params?.id;
   const allChat = await getAllChatComment(friendId, userId);
-  const friendList = await getMyFriends();
+  const friendList = await getMyFriends(userId);
   const profile = await getUserProfile(friendId);
   console.log(params.id);
   return (
     <section>
-      <ChatWrapper chatComments={allChat} friendId={friendId} friendList={friendList} />
+      <ChatWrapper
+        chatComments={allChat}
+        friendId={friendId}
+        friendList={friendList}
+      />
     </section>
   );
 };
