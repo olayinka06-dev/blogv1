@@ -103,6 +103,27 @@ async function getUserProfile(friendId) {
   }
 }
 
+async function getMyProfile(userId) {
+  try {
+    const profile = await db.user.findUnique({
+      where: {id: userId},
+      select: {
+        id: true,
+        username: true,
+        profile: {
+          select: {
+            profilePicture: true
+          }
+        }
+      }
+    });
+
+    return profile
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 const Chat = async ({ params }) => {
   const session = await getServerSession(authOptions);
   const userId = session?.user?.id;
@@ -110,6 +131,9 @@ const Chat = async ({ params }) => {
   const allChat = await getAllChatComment(friendId, userId);
   const friendList = await getMyFriends(userId);
   const profile = await getUserProfile(friendId);
+  const userProfile = await getMyProfile(userId);
+
+  console.log("profilePicture", userProfile);
   console.log(params.id);
   return (
     <section>
@@ -117,6 +141,7 @@ const Chat = async ({ params }) => {
         chatComments={allChat}
         friendId={friendId}
         friendList={friendList}
+        profilePicture={userProfile}
       />
     </section>
   );

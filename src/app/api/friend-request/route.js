@@ -137,6 +137,8 @@ export async function PUT(request) {
   const payload = await request.json();
   const { requestId, accepted } = payload;
 
+  console.log("payload", payload);
+
   if (!session) {
     return NextResponse.json({
       message: "Unauthorized!, please login to Accept/Decline a Friend Request",
@@ -157,7 +159,7 @@ export async function PUT(request) {
       );
     }
 
-    // Mark the request as accepted or declined
+    //Mark the request as accepted or declined
     if (accepted) {
       await db.friendRequest.update({
         where: {
@@ -175,18 +177,23 @@ export async function PUT(request) {
           userId: request.senderId,
         },
       });
+
+      return NextResponse.json(
+        { message: "Friend request Accepted successfully" },
+        { status: 200 }
+      );
     } else {
       await db.friendRequest.delete({
         where: {
           id: requestId,
         },
       });
-    }
 
-    return NextResponse.json(
-      { message: "Friend request handled successfully" },
-      { status: 200 }
-    );
+      return NextResponse.json(
+        { message: "Friend request Declined successfully" },
+        { status: 200 }
+      );
+    }
   } catch (error) {
     console.error(error);
     return NextResponse.json(

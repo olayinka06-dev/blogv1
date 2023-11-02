@@ -7,7 +7,14 @@ export const ChatContext = createContext({
       media: null,
       message: "",
     },
-    receiver: null, 
+    receiver: null,
+    profilePicture: {
+      id: "",
+      username: "",
+      profile: {
+        profilePicture: "",
+      },
+    },
     chatComments: {
       id: "",
       text: "",
