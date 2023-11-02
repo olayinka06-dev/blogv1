@@ -122,6 +122,7 @@ model FriendRequest {
   senderId    String
   recipient   User     @relation("recipient", fields: [recipientId], references: [id])
   recipientId String
+  accepted  Boolean  @default(false) // Define the 'accepted' field
 }
 
 // Define the Message model
@@ -135,6 +136,7 @@ model Message {
   senderId    String
   recipient   User     @relation("ReceivedMessages", fields: [recipientId], references: [id])
   recipientId String
+  isRead    Boolean  @default(false)
 }
 
 // Define the Notification model

@@ -42,14 +42,14 @@ async function getAllChatComment(friendId, userId) {
 
 async function getMyFriends(userId) {
   try {
-    // Get the authenticated user's ID
-    // Find the user and include their friends
-    const user = await db.user.findUnique({
-      where: { id: userId },
+    const acceptedFriendRequests = await db.friendRequest.findMany({
+      where: {
+        recipientId: userId,
+        accepted: true, // Fetch only accepted friend requests
+      },
       include: {
-        friends: {
+        sender: {
           select: {
-            id: true,
             username: true,
             profile: {
               select: {
@@ -61,12 +61,22 @@ async function getMyFriends(userId) {
       },
     });
 
-    // Extract the list of friends
-    const response = user.friends;
+    const friendRequestsData  = acceptedFriendRequests.map((request) => ({
+      requestId: request.id,
+      senderId: request.senderId,
+      accepted: request.accepted,
+      recipientId: request.recipientId,
+      senderUsername: request.sender.username,
+      senderProfilePicture: request.sender.profile.profilePicture,
+      createdAt: request.createdAt,
+    }));
 
-    console.log("friends", response);
+    if (friendRequestsData) {
+      return friendRequestsData;
+    } else {
+      return "Error loading friends";
+    }
 
-    return response;
   } catch (error) {
     console.error("Error getting friends:", error);
     return "Error loading friends please check your connection";

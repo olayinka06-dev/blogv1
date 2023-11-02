@@ -25,20 +25,21 @@ export const Sidebar = () => {
           ) : (
             friendList?.map((friend) => (
               <Link
-                href={`/dashboard/${friend?.id}`}
+                href={`/dashboard/${friend?.recipientId}`}
                 className="flex flex-row items-center border-b gap-2"
+                key={friend?.requestId}
               >
                 <div className="">
                   <Image
-                    alt={friend?.profile?.profilePicture || "/next.svg"}
+                    alt={friend?.senderProfilePicture}
                     className="rounded-full"
-                    src={friend?.profile?.profilePicture || "/next.svg"}
+                    src={friend?.senderProfilePicture || "/next.svg"}
                     height={40}
                     width={40}
                   />
                 </div>
                 <div className="flex flex-col">
-                  <span>{friend?.username}</span>
+                  <span>{friend?.senderUsername}</span>
                   <span className="mt-[1px]">Hello when will come home</span>
                 </div>
               </Link>

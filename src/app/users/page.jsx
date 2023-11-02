@@ -32,9 +32,11 @@ const Users = () => {
   }
 
   return (
-    <section>
+    <section className='container'>
+      <div className="container md:w-[70%] mx-auto p-4">
       <UserSearch onSearch={handleSearch} users={users}/>
       <UserList users={users}/>
+      </div>
     </section>
   )
 }

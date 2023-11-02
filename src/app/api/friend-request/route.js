@@ -72,17 +72,48 @@ export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const userId = searchParams.get("userId");
 
+  if (!userId) {
+    return NextResponse.json(
+      { message: "User id is missing" },
+      { status: 400 }
+    );
+  }
+
   try {
     const friendRequests = await db.friendRequest.findMany({
       where: {
         recipientId: userId,
         accepted: false, // Fetch only pending friend requests
       },
+      include: {
+        sender: {
+          select: {
+            username: true,
+            profile: {
+              select: {
+                profilePicture: true,
+                userRole: true,
+              },
+            },
+          },
+        },
+      },
     });
 
-    if (friendRequests) {
+    const formattedFriendRequests = friendRequests.map((request) => ({
+      requestId: request.id,
+      senderId: request.senderId,
+      accepted: request.accepted,
+      recipientId: request.recipientId,
+      senderUsername: request.sender.username,
+      senderProfilePicture: request.sender.profile.profilePicture,
+      senderRole: request.sender.profile.userRole,
+      createdAt: request.createdAt,
+    }));
+
+    if (formattedFriendRequests) {
       return NextResponse.json(
-        { friendRequests, message: "sucess" },
+        { formattedFriendRequests, message: "sucess" },
         { status: 200 }
       );
     } else {
