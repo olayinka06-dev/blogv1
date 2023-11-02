@@ -221,11 +221,12 @@ model User {
     updatedAt              DateTime        @updatedAt
     sentFriendRequests     FriendRequest[] @relation("sender")
     receivedFriendRequests FriendRequest[] @relation("recipient")
+    sentNotifications      Notification[]  @relation("sender")
+    receivedNotifications  Notification[]  @relation("recipient")
     friends                User[]          @relation("Friendship")
     friendOf               User[]          @relation("Friendship")
     sentMessages           Message[]       @relation("SentMessages")
     receivedMessages       Message[]       @relation("ReceivedMessages")
-    notifications          Notification[]  @relation("user")
 }
 
 // Define the FriendRequest model
@@ -253,10 +254,13 @@ model Message {
 
 // Define the Notification model
 model Notification {
-    id        Int      @id @default(autoincrement())
-    type      String // e.g., 'friend_request', 'friend_request_accepted', etc.
-    userId    Int
-    isRead    Boolean  @default(false)
-    createdAt DateTime @default(now())
-    user      User     @relation("user", fields: [userId], references: [id])
+    id          Int      @id @default(autoincrement())
+    type        String // e.g., 'friend_request', 'friend_request_accepted', etc.
+    userId      Int
+    isRead      Boolean  @default(false)
+    createdAt   DateTime @default(now())
+    sender      User     @relation("sender", fields: [senderId], references: [id])
+    senderId    Int
+    recipient   User     @relation("recipient", fields: [recipientId], references: [id])
+    recipientId Int
 }
