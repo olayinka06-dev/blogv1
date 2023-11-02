@@ -2,6 +2,7 @@ import Image from "next/image";
 import React from "react";
 import { useChatContext } from "../provider/ChatProvider";
 import Link from "next/link";
+import { NetworkError } from "../../NetworkError";
 
 export const Sidebar = () => {
   const { chatData } = useChatContext();
@@ -9,13 +10,18 @@ export const Sidebar = () => {
   return (
     <aside className="fixed  left-0 bg-white shadow hidden md:block bottom-0 w-[350px] px-3 border-l h-[90vh]">
       <div className="mt-10 overflow-y-scroll">
-
         <div className="flex flex-col gap-5">
           {friendList?.length === 0 ? (
             <div>
               <p>No friends yet please add up friend</p>
-              <Link href={"/users"} className="btn btn-accent">Search</Link>
+              <Link href={"/users"} className="btn btn-accent">
+                Search
+              </Link>
             </div>
+          ) : friendList.includes("Error") ? (
+            <div>
+              <NetworkError text={friendList}/>
+              </div>
           ) : (
             friendList?.map((friend) => (
               <Link

@@ -69,6 +69,7 @@ async function getMyFriends(userId) {
     return response;
   } catch (error) {
     console.error("Error getting friends:", error);
+    return "Error loading friends please check your connection";
   }
 }
 
