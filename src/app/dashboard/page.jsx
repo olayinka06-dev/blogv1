@@ -3,7 +3,6 @@ import Sidebar from "@/components/dashboard/sidebar/Sidebar";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { getServerSession } from "next-auth";
-// import React, {useEffect, useState} from "react";
 import React from 'react'
 
 async function getMyProfile() {
@@ -107,75 +106,12 @@ const Chat = async ()=> {
   const notification = await getNotifications();
   const friends = await getMyFriends();
 
-  // const [friendList, setFriendList] = useState("");
-  // useEffect(() => {
-  //   const getListOfFriends = async () => {
-  //     try {
-  //       const resp = await fetch("/api/friend-list?t=friend_list", {
-  //         method: "GET"
-  //       });
-
-  //       const data = await resp.json();
-  //       const friends = data?.friendRequestsData;
-
-  //       if (resp.ok) {
-  //         console.log("data", friends);
-  //       }
-  //       else{
-  //         console.log("something went wrong")
-  //       }
-  //     } catch (error) {
-  //       console.log("error", error);
-  //     }
-  //   }
-  //   const getUserProfile = async () => {
-  //     try {
-  //       const resp = await fetch("/api/friend-list?t=my_profile", {
-  //         method: "GET"
-  //       });
-
-  //       const data = await resp.json();
-  //       const profile = data?.profile;
-
-  //       if (resp.ok) {
-  //         console.log("data", profile);
-  //       }
-  //       else{
-  //         console.log("something went wrong")
-  //       }
-  //     } catch (error) {
-  //       console.log("error", error);
-  //     }
-  //   }
-  //   const getNotification = async () => {
-  //     try {
-  //       const resp = await fetch("/api/friend-list?t=notification", {
-  //         method: "GET"
-  //       });
-
-  //       const data = await resp.json();
-  //       const unread = data?.unread;
-
-  //       if (resp.ok) {
-  //         console.log("data", unread);
-  //       }
-  //       else{
-  //         console.log("something went wrong")
-  //       }
-  //     } catch (error) {
-  //       console.log("error", error);
-  //     }
-  //   }
-  //   getUserProfile()
-  //   getListOfFriends()
-  //   getNotification()
-  // }, []);
-  // const handleClick = (i)=> {
-  //   console.log(i)
-  // }
   return (
     <section>
       <Sidebar friends={friends} notification={notification} photo={profile?.profile?.profilePicture}/>
+      <div className="">
+        <h2>Welcome to your dashboard {profile?.username}</h2>
+      </div>
     </section>
   );
 };

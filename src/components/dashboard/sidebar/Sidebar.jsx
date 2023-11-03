@@ -109,7 +109,7 @@ export const Sidebar = ({ picture, unread, friends, photo, notification }) => {
           ) : (
             (pathname === "/dashboard" ? friends : friendList)?.map((friend) => (
               <Link
-                href={`/dashboard/${friend?.recipientId}`}
+                href={`/dashboard/${friend?.senderId}`}
                 className="flex flex-row items-center border-b gap-2"
                 key={friend?.requestId}
               >

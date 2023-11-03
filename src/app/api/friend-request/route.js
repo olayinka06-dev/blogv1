@@ -167,18 +167,13 @@ export async function PUT(request) {
     // Check if the user is the recipient of the friend request
     if (request.recipientId !== session.user.id) {
       return NextResponse.json(
-        { message: "Unauthorized! You can only respond to friend requests sent to you" },
+        {
+          message:
+            "Unauthorized! You can only respond to friend requests sent to you",
+        },
         { status: 403 }
       );
     }
-
-    // // Check if the friend request has already been accepted or declined
-    // if (request.accepted !== null) {
-    //   return NextResponse.json(
-    //     { message: "Friend request has already been responded to" },
-    //     { status: 400 }
-    //   );
-    // }
 
     //Mark the request as accepted or declined
     if (accepted) {
@@ -197,6 +192,15 @@ export async function PUT(request) {
           type: "friend_request_accepted",
           senderId: request.senderId,
           recipientId: request.recipientId,
+        },
+      });
+
+      // Create a new friend request in the reverse direction to establish mutual friendship
+      await db.friendRequest.create({
+        data: {
+          senderId: request.recipientId,
+          recipientId: request.senderId,
+          accepted: true,
         },
       });
 
@@ -225,5 +229,99 @@ export async function PUT(request) {
       { message: "Internal server error" },
       { status: 500 }
     );
+  }
+}
+
+// Delete a Friend
+export async function DELETE(request) {
+  const session = await getServerSession(authOptions);
+  // const payload = await request.json();
+  // const { recipientId } = payload;
+  const  recipientId  = "cloheocbz0001udkoweajwqlc";
+  const senderId = session?.user?.id;
+  const { searchParams } = new URL(request.url);
+  const type = searchParams.get("t");
+
+  // if (!session) {
+  //   return NextResponse.json({
+  //     message: "Unauthorized! Please log in to delete a friend",
+  //   });
+  // }
+
+  if (type === "many") {
+    try {
+      // Check if the friend relationship exists
+      const friendRelation = await db.friendRequest.findFirst({
+        where: {
+          OR: [
+            {
+              AND: [{ senderId }, { recipientId }],
+            },
+            {
+              AND: [{ senderId }, { recipientId }],
+            },
+          ],
+        },
+      });
+
+      if (!friendRelation) {
+        return NextResponse.json(
+          { message: "Friend relationship not found" },
+          { status: 404 }
+        );
+      }
+
+      // Delete the friend relationship from both sides
+      await db.friendRequest.delete({
+        where: {
+          id: friendRelation.id,
+        },
+      });
+
+      return NextResponse.json(
+        { message: "Friend deleted successfully" },
+        { status: 200 }
+      );
+    } catch (error) {
+      console.error(error);
+      return NextResponse.json(
+        { message: "Internal server error" },
+        { status: 500 }
+      );
+    }
+  } else if (type === "single") {
+    try {
+      // Check if the friend relationship exists
+      const friendRelation = await db.friendRequest.findFirst({
+        where: {
+          AND: [{ senderId }, { recipientId }],
+        },
+      });
+
+      if (!friendRelation) {
+        return NextResponse.json(
+          { message: "Friend relationship not found" },
+          { status: 404 }
+        );
+      }
+
+      // Delete the friend relationship
+      await db.friendRequest.delete({
+        where: {
+          id: friendRelation.id,
+        },
+      });
+
+      return NextResponse.json(
+        { message: "Friend deleted successfully" },
+        { status: 200 }
+      );
+    } catch (error) {
+      console.error(error);
+      return NextResponse.json(
+        { message: "Internal server error" },
+        { status: 500 }
+      );
+    }
   }
 }
