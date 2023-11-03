@@ -124,6 +124,34 @@ async function getMyProfile(userId) {
   }
 }
 
+async function getNotifications() {
+  const session = await getServerSession(authOptions);
+  const userId = session?.user.id;
+  // Fetching and Marking Notifications as Read
+  try {
+    const notifications = await db.notification.findMany({
+      where: {
+        OR: [
+          { recipientId: userId }, // Notifications received by the user
+          { senderId: userId }, // Notifications sent by the user
+        ],
+      },
+      include: {
+        recipient: true,
+        sender: true,
+      },
+    });
+
+    const unreadNotifications = notifications.filter(
+      (notification) => !notification.isRead
+    );
+
+    return unreadNotifications.length
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 const Chat = async ({ params }) => {
   const session = await getServerSession(authOptions);
   const userId = session?.user?.id;
@@ -132,8 +160,9 @@ const Chat = async ({ params }) => {
   const friendList = await getMyFriends(userId);
   const profile = await getUserProfile(friendId);
   const userProfile = await getMyProfile(userId);
+  const unread = await getNotifications();
 
-  console.log("profilePicture", userProfile);
+  console.log("profilePicture", userProfile?.profile?.profilePicture);
   console.log(params.id);
   return (
     <section>
@@ -141,7 +170,8 @@ const Chat = async ({ params }) => {
         chatComments={allChat}
         friendId={friendId}
         friendList={friendList}
-        profilePicture={userProfile}
+        profilePicture={userProfile?.profile?.profilePicture}
+        unread={unread}
       />
     </section>
   );

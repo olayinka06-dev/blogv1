@@ -8,6 +8,7 @@ export const ChatContext = createContext({
       message: "",
     },
     receiver: null,
+    unread: 0,
     profilePicture: {
       id: "",
       username: "",

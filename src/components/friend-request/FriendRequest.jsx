@@ -108,13 +108,13 @@ const FriendRequests = ({ users }) => {
                   className="btn w-1/2 btn-accent text-white"
                 >
                   <div>
-                    {loading === user?.id && (
+                    {loading === user?.requestId && (
                       <span className="loading absolute ml-6 bottom-[12px] loading-spinner loading-md">
                         Accepting...
                       </span>
                     )}
                     <span className="">
-                      {loading === user?.id ? "Accepting..." : "Accept"}
+                      {loading === user?.requestId ? "Accepting..." : "Accept"}
                     </span>
                   </div>
                 </button>
@@ -123,13 +123,13 @@ const FriendRequests = ({ users }) => {
                   className="btn w-1/2 btn-error text-white"
                 >
                   <div>
-                    {loading === user?.id && (
+                    {loading === user?.requestId && (
                       <span className="loading absolute ml-6 bottom-[12px] loading-spinner loading-md">
                         Decling...
                       </span>
                     )}
                     <span className="">
-                      {loading === user?.id ? "Decling..." : "Decline"}
+                      {loading === user?.requestId ? "Decling..." : "Decline"}
                     </span>
                   </div>
                 </button>

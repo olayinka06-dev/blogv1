@@ -50,6 +50,38 @@ function NotificationComp({ notifications }) {
                     </div>
                   </div>
                 )}
+                {notification?.type === "friend_request_accepted" && (
+                  <div className="p-5 flex flex-col gap-2 border rounded-xl">
+                    <div className="flex flex-row gap-1 items-center">
+                      <div className="">
+                        <Image
+                          src={
+                            notification?.sender?.profilePicture || "/next.svg"
+                          }
+                          alt={notification?.sender?.profilePicture}
+                          height={50}
+                          width={50}
+                          priority
+                          className="w-auto h-auto object-contain rounded-full"
+                        />
+                      </div>
+                      <div className="flex flex-col gap-[2px]">
+                        <span>{notification?.sender?.username}</span>
+                        {/* <div>
+                        {user?.profile?.userRole?.map((role) => (
+                          <span key={role}>{role}</span>
+                        ))}
+                      </div> */}
+                      </div>
+                    </div>
+                    <div className="">
+                      <p>
+                        @{notification?.sender?.username} Accepted your a friend
+                        request
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           ))

@@ -4,7 +4,7 @@ import ChatComponent from "@/components/dashboard/chat/ChatComponent";
 import { ChatContext } from "@/components/dashboard/provider/ChatProvider";
 import Sidebar from "@/components/dashboard/sidebar/Sidebar";
 
-const ChatWrapper = ({ chatComments, friendList, friendId, profilePicture }) => {
+const ChatWrapper = ({ chatComments, friendList, friendId, profilePicture, unread }) => {
   const [newMessage, setNewMessage] = useState({
     media: null,
     message: "",
@@ -23,7 +23,7 @@ const ChatWrapper = ({ chatComments, friendList, friendId, profilePicture }) => 
     <section>
       <ChatContext.Provider value={{ chatData: chatData }}>
         <>
-          <Sidebar />
+          <Sidebar picture={profilePicture} unread={unread} />
           <ChatComponent />
         </>
       </ChatContext.Provider>

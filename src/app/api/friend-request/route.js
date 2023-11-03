@@ -172,13 +172,13 @@ export async function PUT(request) {
       );
     }
 
-    // Check if the friend request has already been accepted or declined
-    if (request.accepted !== null) {
-      return NextResponse.json(
-        { message: "Friend request has already been responded to" },
-        { status: 400 }
-      );
-    }
+    // // Check if the friend request has already been accepted or declined
+    // if (request.accepted !== null) {
+    //   return NextResponse.json(
+    //     { message: "Friend request has already been responded to" },
+    //     { status: 400 }
+    //   );
+    // }
 
     //Mark the request as accepted or declined
     if (accepted) {
