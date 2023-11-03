@@ -8,12 +8,14 @@ import { FaPeopleArrows, FaUserFriends } from "react-icons/fa";
 import { IoIosNotifications } from "react-icons/io";
 import { MdFeedback } from "react-icons/md";
 import { TbLogout } from "react-icons/tb";
+import { usePathname } from "next/navigation";
 
-export const Sidebar = ({ picture, unread }) => {
+export const Sidebar = ({ picture, unread, friends, photo, notification }) => {
+  const pathname = usePathname();
   const { chatData } = useChatContext();
   const { friendList} = chatData;
 
-  console.log("client", picture);
+  // console.log("client", picture);
 
   const sideBarData = [
     {
@@ -53,8 +55,8 @@ export const Sidebar = ({ picture, unread }) => {
                   {data.menu === "Notifications" ? (
                     <div className="relative">
                       <span className="">{data.icon}</span>
-                      <span className="absolute top-[-10px] badge left-[10px] z-[1000] bg-error">
-                        {unread}
+                      <span className="absolute top-[-10px] badge text-white text-sm left-[10px] z-[1000] bg-error">
+                        {(pathname === "/dashboard" ? notification : unread)}
                       </span>
                     </div>
                   ) : (
@@ -74,7 +76,7 @@ export const Sidebar = ({ picture, unread }) => {
             </div>
             <div className="">
               <Image
-                src={picture}
+                src={(pathname === "/dashboard" ? photo : picture)}
                 className="w-8 h-8 rounded-full"
                 alt="profile"
                 height={20}
@@ -93,19 +95,19 @@ export const Sidebar = ({ picture, unread }) => {
               <input type="search" className="w-full input input-bordered input-sm" placeholder="Search or Start a new Chat" name="" id="" />
             </div>
           </div>
-          {friendList?.length === 0 ? (
+          {(pathname === "/dashboard" ? friends : friendList)?.length === 0 ? (
             <div>
               <p>No friends yet please add up friend</p>
               <Link href={"/users"} className="btn btn-accent">
                 Search
               </Link>
             </div>
-          ) : friendList?.includes("Error") ? (
+          ) : (pathname === "/dashboard" ? friends : friendList)?.includes("Error") ? (
             <div>
-              <NetworkError text={friendList} />
+              <NetworkError text={(pathname === "/dashboard" ? friends : friendList)} />
             </div>
           ) : (
-            friendList?.map((friend) => (
+            (pathname === "/dashboard" ? friends : friendList)?.map((friend) => (
               <Link
                 href={`/dashboard/${friend?.recipientId}`}
                 className="flex flex-row items-center border-b gap-2"
