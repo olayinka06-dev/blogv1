@@ -23,7 +23,8 @@ model User {
   friendOf               User[]          @relation("Friendship")
   sentMessages           Message[]       @relation("SentMessages")
   receivedMessages       Message[]       @relation("ReceivedMessages")
-  notifications          Notification[]  @relation("user")
+  sentNotifications      Notification[]  @relation("sender")
+  receivedNotifications  Notification[]  @relation("recipient")
 }
 
 // Profile model for user profiles
@@ -122,7 +123,7 @@ model FriendRequest {
   senderId    String
   recipient   User     @relation("recipient", fields: [recipientId], references: [id])
   recipientId String
-  accepted  Boolean  @default(false) // Define the 'accepted' field
+  accepted    Boolean  @default(false) // Define the 'accepted' field
 }
 
 // Define the Message model
@@ -136,15 +137,17 @@ model Message {
   senderId    String
   recipient   User     @relation("ReceivedMessages", fields: [recipientId], references: [id])
   recipientId String
-  isRead    Boolean  @default(false)
+  isRead      Boolean  @default(false)
 }
 
 // Define the Notification model
 model Notification {
-  id        String   @id @default(cuid())
-  type      String // e.g., 'friend_request', 'friend_request_accepted', etc.
-  userId    String
-  isRead    Boolean  @default(false)
-  createdAt DateTime @default(now())
-  user      User     @relation("user", fields: [userId], references: [id])
+  id          String   @id @default(cuid())
+  type        String // e.g., 'friend_request', 'friend_request_accepted', etc.
+  isRead      Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  sender      User     @relation("sender", fields: [senderId], references: [id])
+  senderId    String
+  recipient   User     @relation("recipient", fields: [recipientId], references: [id])
+  recipientId String
 }

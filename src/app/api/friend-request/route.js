@@ -44,7 +44,8 @@ export async function POST(request) {
       await db.notification.create({
         data: {
           type: "friend_request",
-          userId: recipientId,
+          recipientId: recipientId,
+          senderId,
         },
       });
 
@@ -150,12 +151,32 @@ export async function PUT(request) {
       where: {
         id: requestId,
       },
+      include: {
+        sender: true, // Include the sender information
+        recipient: true, // Include the recipient information
+      },
     });
 
     if (!request) {
       return NextResponse.json(
-        { error: "Friend request not found" },
+        { message: "Friend request not found" },
         { status: 404 }
+      );
+    }
+
+    // Check if the user is the recipient of the friend request
+    if (request.recipientId !== session.user.id) {
+      return NextResponse.json(
+        { message: "Unauthorized! You can only respond to friend requests sent to you" },
+        { status: 403 }
+      );
+    }
+
+    // Check if the friend request has already been accepted or declined
+    if (request.accepted !== null) {
+      return NextResponse.json(
+        { message: "Friend request has already been responded to" },
+        { status: 400 }
       );
     }
 
@@ -174,7 +195,8 @@ export async function PUT(request) {
       await db.notification.create({
         data: {
           type: "friend_request_accepted",
-          userId: request.senderId,
+          senderId: request.senderId,
+          recipientId: request.recipientId,
         },
       });
 
@@ -183,9 +205,12 @@ export async function PUT(request) {
         { status: 200 }
       );
     } else {
-      await db.friendRequest.delete({
+      await db.friendRequest.update({
         where: {
           id: requestId,
+        },
+        data: {
+          accepted: false,
         },
       });
 

@@ -97,7 +97,7 @@ const FriendRequests = ({ users }) => {
                   <span>{user?.senderUsername}</span>
                   <div>
                     {user?.senderRole?.map((role) => (
-                      <span key={role}>{role}</span>
+                      <span className="badge" key={role}>{role}</span>
                     ))}
                   </div>
                 </div>

@@ -16,7 +16,7 @@ function NotificationComp({ notifications }) {
           <NetworkError text={notifications} />
         ) : (
           notifications?.map((notification) => (
-            <div className="">
+            <div key={notification} className="">
               <div className="">
                 {notification?.type === "friend_request" && (
                   <div className="p-5 flex flex-col gap-2 border rounded-xl">
@@ -24,9 +24,9 @@ function NotificationComp({ notifications }) {
                       <div className="">
                         <Image
                           src={
-                            notification?.user?.profilePicture || "/next.svg"
+                            notification?.sender?.profilePicture || "/next.svg"
                           }
-                          alt={notification?.user?.profilePicture}
+                          alt={notification?.sender?.profilePicture}
                           height={50}
                           width={50}
                           priority
@@ -34,7 +34,7 @@ function NotificationComp({ notifications }) {
                         />
                       </div>
                       <div className="flex flex-col gap-[2px]">
-                        <span>{notification?.user?.username}</span>
+                        <span>{notification?.sender?.username}</span>
                         {/* <div>
                         {user?.profile?.userRole?.map((role) => (
                           <span key={role}>{role}</span>
@@ -44,7 +44,7 @@ function NotificationComp({ notifications }) {
                     </div>
                     <div className="">
                       <p>
-                        @{notification?.user?.username} sent you a friend
+                        @{notification?.sender?.username} sent you a friend
                         request
                       </p>
                     </div>
