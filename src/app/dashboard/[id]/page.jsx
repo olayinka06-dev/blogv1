@@ -162,7 +162,7 @@ const Chat = async ({ params }) => {
   const userProfile = await getMyProfile(userId);
   const unread = await getNotifications();
 
-  console.log("profilePicture", userProfile?.profile?.profilePicture);
+  console.log("profilePicture", profile);
   console.log(params.id);
   return (
     <section>
@@ -172,6 +172,7 @@ const Chat = async ({ params }) => {
         friendList={friendList}
         profilePicture={userProfile?.profile?.profilePicture}
         unread={unread}
+        receipant_info={profile}
       />
     </section>
   );

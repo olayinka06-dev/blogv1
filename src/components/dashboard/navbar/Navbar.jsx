@@ -1,63 +1,31 @@
-"use client";
+// "use client";
 import Image from "next/image";
 import React from "react";
 import { useChatContext } from "../provider/ChatProvider";
 
-// async function getUserProfile(userId) {
-//   try {
-//     const response = await db.user.findFirst({
-//       where: { id: userId },
-//       select: {
-//         id: true,
-//         username: true,
-//         profile: {
-//           select: {
-//             profilePicture: true,
-//           },
-//         },
-//       },
-//     });
-//     return response;
-//   } catch (error) {
-//     console.error(error);
-//   }
-// }
+export const Navbar = () => {
+  const { chatData } = useChatContext();
+  const { receipant_info } = chatData;
 
-export const Navbar =  ({receiver}) => {
-
-  const {chatData} = useChatContext();
-  const { receiver: userId } = chatData
-
-  const profile =  receiver(userId);
   return (
-    <nav className="shadow py-4 px-3">
-      <div className="">
-        <Image
-          alt={profile?.profile?.profilePicture}
-          src={profile?.profile?.profilePicture || "/next.svg"}
-          height={40}
-          width={40}
-          priority
-          className="w-auto h-auto"
-        />
-        <span>{profile?.username}</span>
-      </div>
-      {/* <div className=" overflow-x-scroll">
-        <span>frequently chat</span>
-        <div className="flex gap-2">
-          {images.map((image, i) => (
-            <div key={i} className="">
-              <Image
-                alt="logo"
-                className="rounded-full"
-                src={image}
-                height={40}
-                width={40}
-              />
-            </div>
-          ))}
+    <nav className="shadow py-4 flex justify-between items-center px-3">
+      <div className="flex items-center gap-1">
+        <div className="">
+          <Image
+            src={receipant_info?.profile?.profilePicture}
+            className="w-10 h-10 rounded-full"
+            alt="profile"
+            height={20}
+            width={20}
+            priority
+          />
         </div>
-      </div> */}
+        <div className="flex flex-col gap-[1px]">
+          <span>{receipant_info?.username}</span>
+          <span></span>
+        </div>
+      </div>
+      <div className=""></div>
     </nav>
   );
 };

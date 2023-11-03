@@ -1,5 +1,6 @@
 import "./globals.css";
 import Navbar from "../components/navbar/Navbar";
+import NavWrapper from "../components/navbar/NavWrapper";
 import { AppWrapper } from "@/provider/AppWrapper";
 import {NextAuthProvider} from "@/auth-provider/NextAuthProvider";
 import { ToastContainer } from "react-toastify";
@@ -15,7 +16,8 @@ export default function RootLayout({ children }) {
       <body>
         <NextAuthProvider>
         <AppWrapper>
-          <Navbar />
+          {/* <Navbar /> */}
+          <NavWrapper/>
           {children}
         </AppWrapper>
         </NextAuthProvider>

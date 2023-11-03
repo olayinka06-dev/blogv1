@@ -43,9 +43,9 @@ export const Sidebar = ({ picture, unread }) => {
   ];
 
   return (
-    <aside className="fixed  left-0 bg-white shadow hidden md:block bottom-0 w-[350px] px-3 border-l h-[90vh]">
-      <div className="mt-10 flex  overflow-y-scroll">
-        <div className="border-r shadow px-2 h-screen">
+    <aside className="fixed border-r left-0 bg-white shadow hidden md:block bottom-0 w-full max-w-[330px] px-3 border-l h-[100vh]">
+      <div className=" flex w-full overflow-y-scroll">
+        <div className=" shadow px-2 ">
           <div className="flex flex-col gap-6 h-[80vh]">
             {sideBarData.map((data, index) => (
               <Link href={data.link} key={index} className="">
@@ -75,16 +75,24 @@ export const Sidebar = ({ picture, unread }) => {
             <div className="">
               <Image
                 src={picture}
-                className="w-auto h-auto bg-[red]"
+                className="w-8 h-8 rounded-full"
                 alt="profile"
-                height={50}
-                width={50}
+                height={20}
+                width={20}
                 priority
               />
             </div>
           </div>
         </div>
-        <div className="flex flex-col gap-5">
+        <div className="flex px-3 flex-col gap-5">
+          <div className="py-3 flex flex-col gap-1">
+            <div className="">
+              <h2>Chats</h2>
+            </div>
+            <div className="">
+              <input type="search" className="w-full input input-bordered input-sm" placeholder="Search or Start a new Chat" name="" id="" />
+            </div>
+          </div>
           {friendList?.length === 0 ? (
             <div>
               <p>No friends yet please add up friend</p>
@@ -114,7 +122,7 @@ export const Sidebar = ({ picture, unread }) => {
                 </div>
                 <div className="flex flex-col">
                   <span>{friend?.senderUsername}</span>
-                  <span className="mt-[1px]">Hello when will come home</span>
+                  <span className="mt-[1px] text-sm">Hello when will come home</span>
                 </div>
               </Link>
             ))
