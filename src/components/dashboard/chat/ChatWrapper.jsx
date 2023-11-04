@@ -11,7 +11,8 @@ const ChatWrapper = ({
   friendId,
   profilePicture,
   unread,
-  receipant_info
+  receipant_info,
+  session,
 }) => {
   const [newMessage, setNewMessage] = useState({
     media: null,
@@ -26,7 +27,7 @@ const ChatWrapper = ({
     chatComments,
     friendList,
     profilePicture,
-    receipant_info
+    receipant_info,
   };
   return (
     <section>
@@ -35,7 +36,7 @@ const ChatWrapper = ({
           <Sidebar picture={profilePicture} unread={unread} />
           <>
             <Navbar />
-            <ChatComponent />
+            <ChatComponent session={session}/>
           </>
         </>
       </ChatContext.Provider>

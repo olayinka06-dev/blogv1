@@ -116,7 +116,7 @@ export const Sidebar = ({ picture, unread, friends, photo, notification }) => {
                 <div className="">
                   <Image
                     alt={friend?.senderProfilePicture}
-                    className="rounded-full"
+                    className="w-9 h-9 rounded-full"
                     src={friend?.senderProfilePicture || "/next.svg"}
                     height={40}
                     width={40}

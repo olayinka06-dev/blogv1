@@ -23,14 +23,25 @@ export const ChatContext = createContext({
         profilePicture: "",
       },
     },
-    chatComments: {
-      id: "",
-      text: "",
-      postId: "",
-      userId: "",
-      createdAt: Date,
-      updatedAt: Date,
-    },
+    chatComments: [
+      {
+        id: "",
+        content: "",
+        media: "",
+        createdAt: Date,
+        updatedAt: Date,
+        senderId: "",
+        recipientId: "",
+        isRead: Boolean,
+        sender: {
+          id: "",
+          username: "",
+          profile: {
+            profilePicture: "",
+          },
+        },
+      },
+    ],
     friendList: [
       {
         id: "",

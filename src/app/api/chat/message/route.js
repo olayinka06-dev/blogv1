@@ -1,55 +1,64 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "../../../../lib/auth";
+// pages/api/chat.js
 import { NextResponse } from "next/server";
 import { db } from "../../../../lib/db";
+import { authOptions } from "../../../../lib/auth";
+import { getServerSession } from "next-auth";
+import Pusher from "pusher";
 
+// POST /api/send-message
 export async function POST(request) {
   const session = await getServerSession(authOptions);
-  const userId = session?.user?.id;
+  const senderId = session?.user?.id;
   const payload = await request.json();
-  const { media, message: content, receiver: friendId } = payload;
 
-  console.log("payload", payload);
+  const { receiver: recipientId, message: content, media } = payload;
+  console.log(payload);
 
   if (!session) {
-    return NextResponse.json({
-      message: "Unauthorized!, please login to begin a chat",
-    });
-  }
-  const status = 'SENT';
-  try {
-    // Create a new chat room or connect to an existing one
-  const chatRoom = await db.chatRoom.create({
-    data: {
-      members: {
-        connect: [{ id: userId }, { id: friendId }],
+    return NextResponse.json(
+      {
+        message: "Unauthorized!, please login to engage in a conversation",
       },
-    },
-  });
-    const newMessage = await db.chatMessage.create({
+      { status: 401 }
+    );
+  }
+
+  try {
+    const chatMessages = await db.message.create({
       data: {
+        senderId,
+        recipientId,
         content,
         media,
-        userId, // Connect to the user who is sending the message
-        ChatRoom: {
-          connect: { id: chatRoom.id },
-        },
-        user: {
-          connectOrCreate: {
-            where: { id: userId },
-            create: { id: userId },
-          },
-        },
       },
     });
-    if (newMessage) {
+
+    const pusher = new Pusher({
+      appId: process.env.PUSHER_APP_ID,
+      key: process.env.NEXT_PUBLIC_PUSHER_KEY,
+      secret: process.env.PUSHER_SECRET,
+      cluster: "mt1",
+      useTLS: true,
+    });
+
+    await pusher.trigger("chat", "hello", {
+      message: `${JSON.stringify(chatMessages)}\n\n`,
+    });
+
+    // console.log("message", chatMessages);
+
+    if (chatMessages) {
       return NextResponse.json(
-        { newMessage, message: "Success!" },
-        { status: 201 }
+        {
+          message: "sent successfully",
+        },
+        { status: 200 }
       );
     } else {
       return NextResponse.json(
-        { message: "error! uploading the comment" },
+        {
+          message: "unable to send message",
+        },
         { status: 400 }
       );
     }

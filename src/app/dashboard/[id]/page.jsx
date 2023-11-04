@@ -4,40 +4,48 @@ import { db } from "../../../lib/db";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../../lib/auth";
 
-async function getAllChatComment(friendId, userId) {
-  try {
-    // const messages = await db.chatMessage.findMany({
-    //   where: {
-    //     OR: [
-    //       { userId, chatRoom: { members: { some: { id: friendId } } } },
-    //       { userId: friendId, chatRoom: { members: { some: { id: userId } } }},
-    //     ],
-    //   },
-    // });
+async function getConversation(recipientId, senderId) {
 
-    const chatRoom = await db.chatRoom.findFirst({
-      where: {
-        AND: [
-          { members: { some: { id: userId } } },
-          { members: { some: { id: friendId } } },
-        ],
-      },
-    });
+  // console.log("recepent", recipientId);
+  // console.log("sender", senderId)
 
-    if (!chatRoom) {
-      // Handle the case where a chat room between the user and the selected friend doesn't exist.
-      return "Chat room not found.";
+  
+    try {
+      const messages = await db.message.findMany({
+        where: {
+          OR: [
+            {
+              senderId,
+              recipientId,
+            },
+            {
+              senderId: recipientId,
+              recipientId: senderId,
+            },
+          ],
+        },
+        orderBy: {
+          createdAt: "asc",
+        },
+        include: {
+          sender: {
+            select: {
+              id: true,
+              username: true,
+              profile: {
+                select: {
+                  profilePicture: true,
+                },
+              },
+            },
+          },
+        },
+      });
+    
+      return messages;
+    } catch (error) {
+      console.log(error);
     }
-
-    const messages = await db.chatMessage.findMany({
-      where: {
-        chatRoomId: chatRoom.id, // Use the chat room ID to filter messages
-      },
-    });
-    return messages;
-  } catch (error) {
-    console.error(error);
-  }
 }
 
 async function getMyFriends(userId) {
@@ -156,13 +164,13 @@ const Chat = async ({ params }) => {
   const session = await getServerSession(authOptions);
   const userId = session?.user?.id;
   const friendId = params?.id;
-  const allChat = await getAllChatComment(friendId, userId);
+  const allChat = await getConversation(friendId, userId);
   const friendList = await getMyFriends(userId);
   const profile = await getUserProfile(friendId);
   const userProfile = await getMyProfile(userId);
   const unread = await getNotifications();
 
-  // console.log("profilePicture", profile);
+  console.log("profilePicture", allChat);
   // console.log(params.id);
   return (
     <section>
@@ -173,6 +181,7 @@ const Chat = async ({ params }) => {
         profilePicture={userProfile?.profile?.profilePicture}
         unread={unread}
         receipant_info={profile}
+        session={session}
       />
     </section>
   );
