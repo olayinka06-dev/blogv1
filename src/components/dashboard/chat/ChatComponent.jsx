@@ -16,16 +16,22 @@ const ChatComponent = ({ session }) => {
   const [messages, setmessages] = useState(data);
   const [commentInfo, setCommentInfo] = useState(false);
 
-  var pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY, {
-    cluster: "mt1",
-  });
+  useEffect(() => {
+    var pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY, {
+      cluster: "mt1",
+    });
+  
+    var channel = pusher.subscribe("chat");
+    channel.bind("hello", function (data) {
+      const parsedComments = JSON.parse(data.message);
+  
+      setmessages((prev) => [...prev, parsedComments]);
+    });
 
-  var channel = pusher.subscribe("chat");
-  channel.bind("hello", function (data) {
-    const parsedComments = JSON.parse(data.message);
-
-    setmessages((prev) => [...prev, parsedComments]);
-  });
+    return () => {
+      pusher.unsubscribe("chat");
+    };
+  }, []);
 
   const handleShowCommentInfo = () => {
     setCommentInfo(!commentInfo);
@@ -72,7 +78,7 @@ const ChatComponent = ({ session }) => {
       {/* ${
           message.uid === currentUser.uid ? "chat-end" : "chat-start"
         } */}
-      {messages.map((message) => (
+      {messages?.map((message) => (
         <div
           className={`chat  ${
             message?.sender?.id === session?.user?.id
