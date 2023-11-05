@@ -74,12 +74,13 @@ const ChatComponent = ({ session }) => {
   };
 
   return (
-    <div>
+    <div className="p-6 flex-grow max-h-screen overflow-y-auto pt-10 pb-48">
       {/* ${
           message.uid === currentUser.uid ? "chat-end" : "chat-start"
         } */}
       {messages?.map((message) => (
         <div
+        key={message}
           className={`chat  ${
             message?.sender?.id === session?.user?.id
               ? " chat-end"

@@ -13,7 +13,7 @@ import { usePathname } from "next/navigation";
 export const Sidebar = ({ picture, unread, friends, photo, notification }) => {
   const pathname = usePathname();
   const { chatData } = useChatContext();
-  const { friendList} = chatData;
+  const { friendList } = chatData;
 
   // console.log("client", picture);
 
@@ -56,7 +56,7 @@ export const Sidebar = ({ picture, unread, friends, photo, notification }) => {
                     <div className="relative">
                       <span className="">{data.icon}</span>
                       <span className="absolute top-[-10px] badge text-white text-sm left-[10px] z-[1000] bg-error">
-                        {(pathname === "/dashboard" ? notification : unread)}
+                        {pathname === "/dashboard" ? notification : unread}
                       </span>
                     </div>
                   ) : (
@@ -76,7 +76,7 @@ export const Sidebar = ({ picture, unread, friends, photo, notification }) => {
             </div>
             <div className="">
               <Image
-                src={(pathname === "/dashboard" ? photo : picture)}
+                src={pathname === "/dashboard" ? photo : picture}
                 className="w-8 h-8 rounded-full"
                 alt="profile"
                 height={20}
@@ -92,7 +92,13 @@ export const Sidebar = ({ picture, unread, friends, photo, notification }) => {
               <h2>Chats</h2>
             </div>
             <div className="">
-              <input type="search" className="w-full input input-bordered input-sm" placeholder="Search or Start a new Chat" name="" id="" />
+              <input
+                type="search"
+                className="w-full input input-bordered input-sm"
+                placeholder="Search or Start a new Chat"
+                name=""
+                id=""
+              />
             </div>
           </div>
           {(pathname === "/dashboard" ? friends : friendList)?.length === 0 ? (
@@ -102,35 +108,48 @@ export const Sidebar = ({ picture, unread, friends, photo, notification }) => {
                 Search
               </Link>
             </div>
-          ) : (pathname === "/dashboard" ? friends : friendList)?.includes("Error") ? (
+          ) : (pathname === "/dashboard" ? friends : friendList)?.includes(
+              "Error"
+            ) ? (
             <div>
-              <NetworkError text={(pathname === "/dashboard" ? friends : friendList)} />
+              <NetworkError
+                text={pathname === "/dashboard" ? friends : friendList}
+              />
             </div>
           ) : (
-            (pathname === "/dashboard" ? friends : friendList)?.map((friend) => (
-              <Link
-                href={`/dashboard/${friend?.senderId}`}
-                className="flex flex-row items-center border-b gap-2"
-                key={friend?.requestId}
-              >
-                <div className="">
-                  <Image
-                    alt={friend?.senderProfilePicture}
-                    className="w-9 h-9 rounded-full"
-                    src={friend?.senderProfilePicture || "/next.svg"}
-                    height={40}
-                    width={40}
-                  />
-                </div>
-                <div className="flex flex-col">
-                  <span>{friend?.senderUsername}</span>
-                  <span className="mt-[1px] text-sm">Hello when will come home</span>
-                </div>
-              </Link>
-            ))
+            (pathname === "/dashboard" ? friends : friendList)?.map(
+              (friend) => (
+                <Link
+                  href={`/dashboard/${friend?.senderId}`}
+                  className="flex flex-row items-center border-b gap-2"
+                  key={friend?.requestId}
+                >
+                  <div className="">
+                    <Image
+                      alt={friend?.senderProfilePicture}
+                      className="w-9 h-9 rounded-full"
+                      src={friend?.senderProfilePicture || "/next.svg"}
+                      height={40}
+                      width={40}
+                    />
+                  </div>
+                  <div className="flex flex-col">
+                    <span>{friend?.senderUsername}</span>
+                    <span className="mt-[1px] text-sm">
+                      Hello when will come home
+                    </span>
+                  </div>
+                </Link>
+              )
+            )
           )}
         </div>
       </div>
+      <style jsx>{`
+        ::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
     </aside>
   );
 };
