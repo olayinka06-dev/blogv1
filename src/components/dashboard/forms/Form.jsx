@@ -159,7 +159,7 @@ export default function FormSubmit() {
           type="submit"
           className={`w-[10%] disabled:btn-accent btn btn-accent text-white`}
         >
-          Send
+          <BiSend />
         </button>
       </form>
     </div>

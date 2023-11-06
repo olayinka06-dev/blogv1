@@ -6,10 +6,11 @@ import Pusher from "pusher-js";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { BsFillReplyAllFill } from "react-icons/bs";
 import { MdModeEditOutline } from "react-icons/md";
-import { useChatContext } from "../provider/ChatProvider";
+import { MessageContext, useChatContext } from "../provider/ChatProvider";
 import { formatDate } from "@/lib/__hs";
 import Image from "next/image";
 import Form from "../forms/Form";
+import ChatMessages from "../chat/ChatMessages";
 
 const ChatComponent = ({ session }) => {
   const { chatData } = useChatContext();
@@ -76,7 +77,10 @@ const ChatComponent = ({ session }) => {
 
   return (
     <div className="p-6 flex-grow max-h-screen overflow-y-auto pt-10 pb-48">
-      {messages?.map((message) => (
+      <MessageContext.Provider value={{ messages, session }}>
+        <ChatMessages />
+      </MessageContext.Provider>
+      {/* {messages?.map((message) => (
         <div
           key={message}
           className={`chat  ${
@@ -124,7 +128,6 @@ const ChatComponent = ({ session }) => {
                 )}
                 {message?.sender?.id === session?.user?.id && (
                   <div>
-                    {/* Open the modal using document.getElementById('ID').showModal() method */}
                     <button
                       className="btn"
                       onClick={() =>
@@ -176,7 +179,7 @@ const ChatComponent = ({ session }) => {
           </div>
           <div className="chat-footer opacity-50">Delivered</div>
         </div>
-      ))}
+      ))} */}
       <Form />
       {/* <FormSubmit /> */}
     </div>

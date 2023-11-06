@@ -10,8 +10,8 @@ export const Navbar = () => {
   const { receipant_info } = chatData;
 
   return (
-    <nav className="shadow py-4 flex sticky top-0 z-[1000] justify-between items-center px-3">
-      <div className="flex items-center gap-1">
+    <nav className="shadow py-4 flex bg-[rgba(255,255,255,0.9)] backdrop:blur-sm z-[500] sticky top-0  justify-between items-center px-3">
+      <div className="flex items-center  gap-1">
         <div className="">
           <Link href={"/dashboard"}><BsArrowLeft/></Link>
         </div>

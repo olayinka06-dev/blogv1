@@ -1,12 +1,26 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import Image from "next/image";
+import { BiChevronDown, BiCopy } from "react-icons/bi";
 import { useMessageContext } from "../provider/ChatProvider";
+import { RiDeleteBin5Line } from "react-icons/ri";
+import { BsFillReplyAllFill } from "react-icons/bs";
+import { MdModeEditOutline } from "react-icons/md";
+import { formatDate } from "@/lib/__hs";
+import { CopyToClipBoard } from "@/lib/entities";
 
 const ChatMessages = () => {
   const { messages, session } = useMessageContext();
+  const [commentInfo, setCommentInfo] = useState(null);
 
-  const handleShowCommentInfo = () => {
-    setCommentInfo(!commentInfo);
+  const handleShowMessageInfo = (messageId) => {
+    
+    if (commentInfo === messageId) {
+      setCommentInfo(null);
+       // Close the comment info if it's already open
+    } else {
+      setCommentInfo(messageId); // Open the comment info if it's closed
+    }
   };
 
   const handleSendMessage = () => {
@@ -45,6 +59,11 @@ const ChatMessages = () => {
     });
   };
 
+  const handleCopy = async (message) => {
+    await CopyToClipBoard(message);
+    setCommentInfo(null);
+  };
+
   return (
     <section>
       {messages?.map((message) => (
@@ -74,17 +93,18 @@ const ChatMessages = () => {
           </div>
           <div className="chat-bubble bg-gray-100 relative text-gray-700">
             <span
-              onClick={() => handleShowCommentInfo(message.id)}
+              onClick={() => handleShowMessageInfo(message.id)}
               className=" absolute cursor-pointer top-0 right-0"
             >
               <BiChevronDown />
             </span>
             {message?.content}
             {commentInfo === message.id && (
-              <div className="flex flex-col z-[100] bg-white w-[200px] shadow border rounded-xl h-fit gap-2 absolute top-[-5rem] left-0 items-center mt-3">
+             
+              <div className="flex flex-col z-[100] bg-white w-[200px] shadow border  h-fit gap-2 absolute top-[-5rem] left-0 items-center mt-3">
                 {message?.sender?.id === session?.user?.id && (
                   <span
-                    className="btn flex flex-row justify-start gap-1 btn-sm w-full bg-white border-none text-right"
+                    className="btn flex flex-row justify-start gap-1 btn-sm w-full rounded-none bg-white border-none text-right"
                     onClick={() => handleEditComment(message)}
                   >
                     <span>
@@ -95,26 +115,6 @@ const ChatMessages = () => {
                 )}
                 {message?.sender?.id === session?.user?.id && (
                   <div>
-                    {/* Open the modal using document.getElementById('ID').showModal() method */}
-                    <button
-                      className="btn"
-                      onClick={() =>
-                        document.getElementById("my_modal_2").showModal()
-                      }
-                    >
-                      open modal
-                    </button>
-                    <dialog id="my_modal_2" className="modal">
-                      <div className="modal-box">
-                        <h3 className="font-bold text-lg">Hello!</h3>
-                        <p className="py-4">
-                          Press ESC key or click outside to close
-                        </p>
-                      </div>
-                      <form method="dialog" className="modal-backdrop">
-                        <button>close</button>
-                      </form>
-                    </dialog>
                     <button
                       className="btn btn-sm w-full flex flex-row justify-start gap-1 bg-white border-none text-right"
                       onClick={() => handleDeleteComment(message?.id)}
@@ -127,7 +127,7 @@ const ChatMessages = () => {
                   </div>
                 )}
 
-                <button className="btn btn-sm w-full flex flex-row justify-start bg-white border-none text-right">
+                <button onClick={()=> handleCopy(message?.content)} className="btn btn-sm w-full flex flex-row justify-start bg-white border-none text-right">
                   <span>
                     <BiCopy />
                   </span>
