@@ -172,7 +172,7 @@ const Reply = ({ comment, session }) => {
             <div className="chat-image avatar">
               <div className="w-10 rounded-full">
                 <Image
-                  src={reply?.user?.profile?.profilePicture || "/next.svg"}
+                  src={reply?.user?.profile?.profilePicture || "/placeholder.jpg"}
                   alt={reply?.user?.profile?.profilePicture}
                   height={50}
                   width={50}

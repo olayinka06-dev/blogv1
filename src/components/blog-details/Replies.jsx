@@ -171,7 +171,7 @@ const Replies = ({ reply, session }) => {
           <div className="chat-image avatar">
             <div className="w-10 rounded-full">
               <Image
-                src={replies?.user?.profile?.profilePicture || "/next.svg"}
+                src={replies?.user?.profile?.profilePicture || "/placeholder.jpg"}
                 alt={replies?.user?.profile?.profilePicture}
                 height={50}
                 width={50}

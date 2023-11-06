@@ -24,7 +24,7 @@ function NotificationComp({ notifications }) {
                       <div className="">
                         <Image
                           src={
-                            notification?.sender?.profilePicture || "/next.svg"
+                            notification?.sender?.profilePicture || "/placeholder.jpg"
                           }
                           alt={notification?.sender?.profilePicture}
                           height={50}
@@ -56,7 +56,7 @@ function NotificationComp({ notifications }) {
                       <div className="">
                         <Image
                           src={
-                            notification?.sender?.profilePicture || "/next.svg"
+                            notification?.sender?.profilePicture || "/placeholder.jpg"
                           }
                           alt={notification?.sender?.profilePicture}
                           height={50}

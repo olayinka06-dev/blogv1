@@ -76,8 +76,8 @@ export const Sidebar = ({ picture, unread, friends, photo, notification }) => {
             </div>
             <div className="">
               <Image
-                src={pathname === "/dashboard" ? photo : picture}
-                className="w-8 h-8 rounded-full"
+                src={pathname === "/dashboard" ? photo || "/placeholder.jpg" : picture || "/placeholder.jpg"}
+                className="w-10 h-10 rounded-full"
                 alt="profile"
                 height={20}
                 width={20}
@@ -128,7 +128,7 @@ export const Sidebar = ({ picture, unread, friends, photo, notification }) => {
                     <Image
                       alt={friend?.senderProfilePicture}
                       className="w-9 h-9 rounded-full"
-                      src={friend?.senderProfilePicture || "/next.svg"}
+                      src={friend?.senderProfilePicture || "/placeholder.jpg"}
                       height={40}
                       width={40}
                     />

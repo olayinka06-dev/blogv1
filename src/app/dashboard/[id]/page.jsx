@@ -5,47 +5,43 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../../../lib/auth";
 
 async function getConversation(recipientId, senderId) {
-
-  // console.log("recepent", recipientId);
-  // console.log("sender", senderId)
-
-  
-    try {
-      const messages = await db.message.findMany({
-        where: {
-          OR: [
-            {
-              senderId,
-              recipientId,
-            },
-            {
-              senderId: recipientId,
-              recipientId: senderId,
-            },
-          ],
-        },
-        orderBy: {
-          createdAt: "asc",
-        },
-        include: {
-          sender: {
-            select: {
-              id: true,
-              username: true,
-              profile: {
-                select: {
-                  profilePicture: true,
-                },
+  try {
+    const messages = await db.message.findMany({
+      where: {
+        OR: [
+          {
+            senderId,
+            recipientId,
+          },
+          {
+            senderId: recipientId,
+            recipientId: senderId,
+          },
+        ],
+      },
+      orderBy: {
+        createdAt: "asc",
+      },
+      include: {
+        sender: {
+          select: {
+            id: true,
+            username: true,
+            profile: {
+              select: {
+                profilePicture: true,
               },
             },
           },
         },
-      });
-    
-      return messages;
-    } catch (error) {
-      console.log(error);
-    }
+      },
+    });
+
+    return messages;
+  } catch (error) {
+    console.log(error);
+    return "Error loading coversation"
+  }
 }
 
 async function getMyFriends(userId) {
@@ -69,7 +65,7 @@ async function getMyFriends(userId) {
       },
     });
 
-    const friendRequestsData  = acceptedFriendRequests.map((request) => ({
+    const friendRequestsData = acceptedFriendRequests.map((request) => ({
       requestId: request.id,
       senderId: request.senderId,
       accepted: request.accepted,
@@ -84,7 +80,6 @@ async function getMyFriends(userId) {
     } else {
       return "Error loading friends";
     }
-
   } catch (error) {
     console.error("Error getting friends:", error);
     return "Error loading friends please check your connection";
@@ -114,19 +109,19 @@ async function getUserProfile(friendId) {
 async function getMyProfile(userId) {
   try {
     const profile = await db.user.findUnique({
-      where: {id: userId},
+      where: { id: userId },
       select: {
         id: true,
         username: true,
         profile: {
           select: {
-            profilePicture: true
-          }
-        }
-      }
+            profilePicture: true,
+          },
+        },
+      },
     });
 
-    return profile
+    return profile;
   } catch (error) {
     console.error(error);
   }
@@ -154,11 +149,14 @@ async function getNotifications() {
       (notification) => !notification.isRead
     );
 
-    return unreadNotifications.length
+    return unreadNotifications.length;
   } catch (error) {
     console.error(error);
   }
 }
+
+// Add
+export const dynamic = "force-dynamic";
 
 const Chat = async ({ params }) => {
   const session = await getServerSession(authOptions);
@@ -169,6 +167,8 @@ const Chat = async ({ params }) => {
   const profile = await getUserProfile(friendId);
   const userProfile = await getMyProfile(userId);
   const unread = await getNotifications();
+
+  // console.log(allChat);
 
   return (
     <section>

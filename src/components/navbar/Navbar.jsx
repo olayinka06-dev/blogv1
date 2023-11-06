@@ -17,7 +17,7 @@ const Navbar = ({ session, profilePicture }) => {
         {session?.user.username ? (
           <div className="flex items-center gap-2">
             <img
-              src={profilePicture || "/next.svg"}
+              src={profilePicture || "/placeholder.jpg"}
               className="w-8 h-8 rounded-full"
               alt={profilePicture}
             />

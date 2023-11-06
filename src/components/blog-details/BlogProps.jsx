@@ -245,7 +245,7 @@ const BlogProps = ({ post, profile, session, comm }) => {
           <div className="flex items-center mb-5">
             <div className="relative h-10 w-10 overflow-hidden rounded-full mr-4">
               <Image
-                src={profile?.profilePicture || "/next.svg"}
+                src={profile?.profilePicture || "/placeholder.jpg"}
                 alt="User"
                 fill
               />
@@ -329,7 +329,7 @@ const BlogProps = ({ post, profile, session, comm }) => {
                         <Image
                           src={
                             comment?.user?.profile?.profilePicture ||
-                            "/next.svg"
+                            "/placeholder.jpg"
                           }
                           alt={comment?.user?.profile?.profilePicture}
                           height={50}

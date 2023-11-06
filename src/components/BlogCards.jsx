@@ -41,7 +41,7 @@ const BlogCards = ({ post }) => {
         <div className="flex items-center gap-2 px-6 mt-2">
           <img
             className="w-8 h-8 rounded-full"
-            src={profile?.profilePicture || "/next.svg"}
+            src={profile?.profilePicture || "/placeholder.jpg"}
             alt="author"
           />
           <div className="">

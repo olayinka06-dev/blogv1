@@ -17,7 +17,7 @@ export const Navbar = () => {
         </div>
         <div className="">
           <Image
-            src={receipant_info?.profile?.profilePicture}
+            src={receipant_info?.profile?.profilePicture || "/placeholder.jpg"}
             className="w-10 h-10 rounded-full"
             alt="profile"
             height={20}
