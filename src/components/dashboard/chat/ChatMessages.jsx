@@ -1,38 +1,9 @@
 "use client";
-import { useEffect, useState } from "react";
-import { BiChevronDown, BiCopy } from "react-icons/bi";
-import { FormSubmit } from "@/components/dashboard/forms/FormGroup";
-import Pusher from "pusher-js";
-import { RiDeleteBin5Line } from "react-icons/ri";
-import { BsFillReplyAllFill } from "react-icons/bs";
-import { MdModeEditOutline } from "react-icons/md";
-import { useChatContext } from "../provider/ChatProvider";
-import { formatDate } from "@/lib/__hs";
-import Image from "next/image";
-import Form from "../forms/Form";
+import React, { useState, useEffect } from "react";
+import { useMessageContext } from "../provider/ChatProvider";
 
-const ChatComponent = ({ session }) => {
-  const { chatData } = useChatContext();
-  const { chatComments: data } = chatData;
-  const [messages, setmessages] = useState(data);
-  const [commentInfo, setCommentInfo] = useState(false);
-
-  useEffect(() => {
-    var pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY, {
-      cluster: "mt1",
-    });
-
-    var channel = pusher.subscribe("chat");
-    channel.bind("hello", function (data) {
-      const parsedComments = JSON.parse(data.message);
-
-      setmessages((prev) => [...prev, parsedComments]);
-    });
-
-    return () => {
-      pusher.unsubscribe("chat");
-    };
-  }, []);
+const ChatMessages = () => {
+  const { messages, session } = useMessageContext();
 
   const handleShowCommentInfo = () => {
     setCommentInfo(!commentInfo);
@@ -75,7 +46,7 @@ const ChatComponent = ({ session }) => {
   };
 
   return (
-    <div className="p-6 flex-grow max-h-screen overflow-y-auto pt-10 pb-48">
+    <section>
       {messages?.map((message) => (
         <div
           key={message}
@@ -177,10 +148,8 @@ const ChatComponent = ({ session }) => {
           <div className="chat-footer opacity-50">Delivered</div>
         </div>
       ))}
-      <Form />
-      {/* <FormSubmit /> */}
-    </div>
+    </section>
   );
 };
 
-export default ChatComponent;
+export default ChatMessages;

@@ -56,3 +56,30 @@ export const ChatContext = createContext({
 });
 
 export const useChatContext = () => useContext(ChatContext);
+
+export const MessageContext = createContext({
+  messages: [{
+    id: String,
+    content: String,
+    media: String,
+    createdAt: Date,
+    updatedAt: Date,
+    senderId: String,
+    recipientId: String,
+    isRead: Boolean,
+    sender: {
+      id: String,
+      username: String,
+      profile: {
+        profilePicture: String,
+      },
+    },
+  }],
+  session: {
+    user: {
+      id: String,
+    },
+  },
+});
+
+export const useMessageContext = () => useContext(MessageContext);

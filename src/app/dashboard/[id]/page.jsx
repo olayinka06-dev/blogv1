@@ -170,8 +170,6 @@ const Chat = async ({ params }) => {
   const userProfile = await getMyProfile(userId);
   const unread = await getNotifications();
 
-  console.log("profilePicture", allChat);
-  // console.log(params.id);
   return (
     <section>
       <ChatWrapper
