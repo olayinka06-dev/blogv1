@@ -5,6 +5,18 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../../../lib/auth";
 
 async function getConversation(recipientId, senderId) {
+  // Check if the friend is a friend of the user
+  const user = await db.user.findUnique({
+    where: { id: senderId },
+    include: { friends: true },
+  });
+
+  const isFriend = user.friends.some((friend) => friend.id === recipientId);
+
+  if (!isFriend) {
+    return "Error this id you provided is not your friend ";
+  }
+
   try {
     const messages = await db.message.findMany({
       where: {
@@ -40,7 +52,7 @@ async function getConversation(recipientId, senderId) {
     return messages;
   } catch (error) {
     console.log(error);
-    return "Error loading coversation"
+    return "Error loading coversation";
   }
 }
 

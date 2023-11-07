@@ -70,7 +70,58 @@ export async function POST(request) {
     );
   }
 }
+
+
+// Function to delete Message
 export async function DELETE(request) {
+  const { searchParams } = new URL(request.url);
+  const messageId = searchParams.get("id");
+  console.log("messageId", messageId)
   const session = await getServerSession(authOptions);
-  const senderId = session?.user?.id;
+
+  if (!session) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    if (!messageId) {
+      return NextResponse.json(
+        { message: "Comment Id is required" },
+        { status: 401 }
+      );
+    }
+    // Find the comment in the database
+    const message = await db.message.findUnique({
+      where: { id: messageId },
+      select: { senderId: true },
+    });
+
+    if (!message) {
+      return NextResponse.json(
+        { message: "Comment not found" },
+        { status: 404 }
+      );
+    }
+
+    // Check if the authenticated user is the owner of the comment
+    if (message.senderId === session.user.id) {
+      // Delete the comment
+      await db.message.delete({ where: { id: messageId } });
+      return NextResponse.json(
+        { message: "message deleted successfully" },
+        { status: 200 }
+      );
+    } else {
+      return NextResponse.json(
+        { message: "Unauthorized, you can only delete your message" },
+        { status: 403 }
+      );
+    }
+  } catch (error) {
+    console.log(error);
+    return NextResponse.json(
+      { message: "Internal server error" },
+      { status: 500 }
+    );
+  }
 }

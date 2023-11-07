@@ -18,12 +18,18 @@ const ChatWrapper = ({
     media: null,
     message: "",
   });
+  const [popUpChat, setpopUpChat] = useState({
+    media: null,
+    message: "",
+  });
   const [receiver] = useState(friendId);
 
   const chatData = {
     setNewMessage,
+    setpopUpChat,
     receiver,
     newMessage,
+    popUpChat,
     chatComments,
     friendList,
     profilePicture,

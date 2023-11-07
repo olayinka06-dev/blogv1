@@ -21,10 +21,9 @@ export async function postData(formData) {
   try {
     if (messageId) {
       // Handle message editing
-      
-      await db.message.update({
+
+      await db.message.delete({
         where: { id: messageId },
-        data: { content: content },
       });
     } else if (formData.has("deleteMessageId")) {
       // Handle message deletion

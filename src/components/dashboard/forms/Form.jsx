@@ -11,12 +11,12 @@ import { useChatContext } from "../provider/ChatProvider";
 export default function FormSubmit() {
   const formRef = useRef(null);
   const { chatData } = useChatContext();
-  const { newMessage, setNewMessage, receiver } = chatData;
+  const { newMessage, setNewMessage, receiver, popUpChat, setpopUpChat } = chatData;
   const [imagePreviewUrl, setImagePreviewUrl] = useState("");
-  const [popUpChat, setpopUpChat] = useState({
-    media: null,
-    message: "",
-  });
+  // const [popUpChat, setpopUpChat] = useState({
+  //   media: null,
+  //   message: "",
+  // });
   const [showMedia, setShowMedia] = useState(false);
 
   const handleUploadMedia = async (e) => {

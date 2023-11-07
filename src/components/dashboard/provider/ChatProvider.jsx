@@ -7,6 +7,10 @@ export const ChatContext = createContext({
       media: null,
       message: "",
     },
+    popUpChat: {
+      media: null,
+      message: "",
+    },
     receiver: null,
     unread: 0,
     receipant_info: {
@@ -52,6 +56,7 @@ export const ChatContext = createContext({
       },
     ],
     setNewMessage: () => {},
+    setpopUpChat: () => {},
   },
 });
 

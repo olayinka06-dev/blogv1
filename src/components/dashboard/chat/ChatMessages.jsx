@@ -1,18 +1,22 @@
 "use client";
-import React, { useState, useEffect , useRef} from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { BiChevronDown, BiCopy } from "react-icons/bi";
-import { useMessageContext } from "../provider/ChatProvider";
+import { useChatContext, useMessageContext } from "../provider/ChatProvider";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { BsFillReplyAllFill } from "react-icons/bs";
 import { MdModeEditOutline } from "react-icons/md";
 import { formatDate } from "@/lib/__hs";
-import { CopyToClipBoard } from "@/lib/entities";
+import { CopyToClipBoard, Error, Success } from "@/lib/entities";
 import { NetworkError } from "@/components/NetworkError";
+import { postData } from "@/action";
 
 const ChatMessages = () => {
   const commentPopupRef = useRef(null);
   const { messages, session } = useMessageContext();
+  const { chatData } = useChatContext();
+  const { setNewMessage, newMessage } = chatData;
+
   const [commentInfo, setCommentInfo] = useState(null);
 
   useEffect(() => {
@@ -44,26 +48,37 @@ const ChatMessages = () => {
     }
   };
 
-  const handleSendMessage = () => {
-    console.log("hello");
+  const handleReplyComment = (message) => {
+    setNewMessage({ ...newMessage, message: message?.content });
+    setCommentInfo(null);
   };
 
-  const handleDeleteComment = async (commentId) => {
+  const handleDeleteComment = async (messageId) => {
+    // try {
+    //   const formData = new FormData();
+    //   formData.append("messageId", messageId);
+
+    //   await postData(formData);
+    // } catch (error) {
+    //   console.error(error);
+    // }
+
     try {
-      const BASE_URL = `/api/post/comments?id=${commentId}`;
+      const BASE_URL = `/api/chat/message?id=${messageId}`;
       const resp = await fetch(BASE_URL, {
         method: "DELETE",
       });
 
       const result = await resp.json();
       const { message } = result;
+      setCommentInfo(null);
 
       if (resp.ok) {
         Success(message);
         router.refresh();
-        // Remove the deleted message from the local state
-        const updatedComments = comments.filter((c) => c.id !== commentId);
-        setComments(updatedComments);
+        // // Remove the deleted comment from the local state
+        // const updatedComments = comments.filter((c) => c.id !== commentId);
+        // setComments(updatedComments);
       } else {
         Error(message);
       }
@@ -74,10 +89,8 @@ const ChatMessages = () => {
   };
 
   const handleEditComment = (message) => {
-    setEditingComment({
-      commentId: message.id,
-      text: message.text,
-    });
+    setNewMessage({ ...newMessage, message: message?.content });
+    setCommentInfo(null);
   };
 
   const handleCopy = async (message) => {
@@ -96,7 +109,7 @@ const ChatMessages = () => {
       ) : (
         messages?.map((message) => (
           <div
-            key={message}
+            key={message?.id}
             className={`chat  ${
               message?.sender?.id === session?.user?.id
                 ? " chat-end"
