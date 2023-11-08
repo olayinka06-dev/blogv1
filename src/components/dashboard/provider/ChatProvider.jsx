@@ -55,6 +55,8 @@ export const ChatContext = createContext({
         },
       },
     ],
+    inputSwitcher: false,
+    setInputSwitcher: () => {}, 
     setNewMessage: () => {},
     setpopUpChat: () => {},
   },

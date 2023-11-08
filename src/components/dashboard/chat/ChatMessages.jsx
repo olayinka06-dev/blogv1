@@ -54,15 +54,6 @@ const ChatMessages = () => {
   };
 
   const handleDeleteComment = async (messageId) => {
-    // try {
-    //   const formData = new FormData();
-    //   formData.append("messageId", messageId);
-
-    //   await postData(formData);
-    // } catch (error) {
-    //   console.error(error);
-    // }
-
     try {
       const BASE_URL = `/api/chat/message?id=${messageId}`;
       const resp = await fetch(BASE_URL, {

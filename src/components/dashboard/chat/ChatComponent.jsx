@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import Pusher from "pusher-js";
 import { MessageContext, useChatContext } from "../provider/ChatProvider";
-import Image from "next/image";
 import Form from "../forms/Form";
 import ChatMessages from "../chat/ChatMessages";
 

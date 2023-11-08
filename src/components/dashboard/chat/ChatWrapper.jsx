@@ -23,10 +23,13 @@ const ChatWrapper = ({
     message: "",
   });
   const [receiver] = useState(friendId);
+  const [inputSwitcher, setInputSwitcher] = useState();
 
   const chatData = {
     setNewMessage,
     setpopUpChat,
+    setInputSwitcher,
+    inputSwitcher,
     receiver,
     newMessage,
     popUpChat,
