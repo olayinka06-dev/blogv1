@@ -11,8 +11,8 @@ export async function POST(request) {
   const senderId = session?.user?.id;
   const payload = await request.json();
 
-  const { receiver: recipientId, message: content, media } = payload;
-  console.log(payload);
+  const { recipientId, content, media } = payload;
+  console.log("type post", payload);
 
   if (!session) {
     return NextResponse.json(
@@ -125,3 +125,62 @@ export async function DELETE(request) {
     );
   }
 }
+
+export async function PATCH(request) {
+  const payload = await request.json();
+  const session = await getServerSession(authOptions);
+  const { messageId, content } = payload;
+
+  console.log("type edit", payload);
+  
+  if (!session) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    // First, check if the user making the request is the owner of the comment
+    const message = await db.message.findUnique({
+      where: { id: messageId },
+      select: {
+        sender: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    });
+
+    if (!message) {
+      return NextResponse.json(
+        { message: "Message not found" },
+        { status: 404 }
+      );
+    }
+
+    if (message.user.id !== session?.user?.id) {
+      return NextResponse.json(
+        { message: "Unauthorized, you can only edit your message" },
+        { status: 403 }
+      );
+    }
+
+    // If the user is authorized, update the comment text
+    await db.message.update({
+      where: { id: messageId },
+      data: {
+        content,
+      },
+    });
+
+    return NextResponse.json(
+      { message: "Message updated successfully" },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json(
+      { message: "Internal server error" },
+      { status: 500 }
+    );
+  }
+};

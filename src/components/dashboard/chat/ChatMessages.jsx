@@ -15,7 +15,8 @@ const ChatMessages = () => {
   const commentPopupRef = useRef(null);
   const { messages, session } = useMessageContext();
   const { chatData } = useChatContext();
-  const { setNewMessage, newMessage } = chatData;
+  const { setNewMessage, newMessage, setInputSwitcher, setEpt, setChatId } =
+    chatData;
 
   const [commentInfo, setCommentInfo] = useState(null);
 
@@ -50,7 +51,10 @@ const ChatMessages = () => {
 
   const handleReplyComment = (message) => {
     setNewMessage({ ...newMessage, message: message?.content });
+    setInputSwitcher(true);
     setCommentInfo(null);
+    setChatId(message?.id);
+    setEpt("reply");
   };
 
   const handleDeleteComment = async (messageId) => {
@@ -82,6 +86,8 @@ const ChatMessages = () => {
   const handleEditComment = (message) => {
     setNewMessage({ ...newMessage, message: message?.content });
     setCommentInfo(null);
+    setChatId(message?.id);
+    setEpt("edit");
   };
 
   const handleCopy = async (message) => {

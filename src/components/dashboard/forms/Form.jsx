@@ -11,12 +11,17 @@ import { useChatContext } from "../provider/ChatProvider";
 export default function FormSubmit() {
   const formRef = useRef(null);
   const { chatData } = useChatContext();
-  const { newMessage, setNewMessage, receiver, popUpChat, setpopUpChat } = chatData;
+  const {
+    newMessage,
+    setNewMessage,
+    receiver,
+    popUpChat,
+    setpopUpChat,
+    inputSwitcher,
+    setInputSwitcher,
+  } = chatData;
   const [imagePreviewUrl, setImagePreviewUrl] = useState("");
-  // const [popUpChat, setpopUpChat] = useState({
-  //   media: null,
-  //   message: "",
-  // });
+
   const [showMedia, setShowMedia] = useState(false);
 
   const handleUploadMedia = async (e) => {
@@ -64,6 +69,7 @@ export default function FormSubmit() {
 
       await postData(formData);
       formRef.current?.reset();
+      setInputSwitcher(false);
       setShowMedia(false);
       setImagePreviewUrl("");
       setNewMessage({ ...newMessage, message: "", media: null });
@@ -143,17 +149,25 @@ export default function FormSubmit() {
             multiple
           />
         </label>
-        <textarea
-          value={newMessage.message}
-          onChange={(e) => {
-            setNewMessage({ ...newMessage, message: e.target.value }),
-              setpopUpChat({ ...popUpChat, message: e.target.value });
-          }}
-          className="input flex-grow input-bordered input-md w-[90%] "
-          type="text"
-          placeholder="Type your message..."
-          disabled={showMedia}
-        />
+        <div className="relative w-[90%]">
+          {inputSwitcher && (
+            <div className="absolute top-[-45px] px-2 py-2 border w-full bg-white">
+              <span className="border-l-[4px] py-1 rounded pl-2 border-accent">{newMessage.message}</span>
+              <span onClick={()=> {setInputSwitcher(false); setNewMessage({...newMessage, message: ""})}} className="float-right cursor-pointer"><SlClose/></span>
+            </div>
+          )}
+          <textarea
+            value={newMessage.message}
+            onChange={(e) => {
+              setNewMessage({ ...newMessage, message: e.target.value }),
+                setpopUpChat({ ...popUpChat, message: e.target.value });
+            }}
+            className="input flex-grow input-bordered input-md w-full"
+            type="text"
+            placeholder="Type your message..."
+            disabled={showMedia}
+          />
+        </div>
         <button
           disabled={!newMessage.message}
           type="submit"
@@ -166,34 +180,3 @@ export default function FormSubmit() {
   );
 }
 
-// import { useRef } from "react";
-// import { postData } from "@/action";
-
-// export default function Form() {
-//   const formRef = useRef(null);
-//   return (
-//     <form
-//       action={async (formData) => {
-//         await postData(formData);
-//         formRef.current?.reset();
-//       }}
-//       ref={formRef}
-//       className="p-6 sticky bottom-[-150px] w-full bg-white"
-//     >
-//       <div className="flex">
-//         <input
-//           type="text"
-//           name="message"
-//           placeholder="Type your message..."
-//           className="flex-grow py-2 px-4 outline-none"
-//         />
-//         <button
-//           type="submit"
-//           className="bg-teal-500 hover:bg-teal-600 text-white py-2 px-4 rounded-full"
-//         >
-//           Send
-//         </button>
-//       </div>
-//     </form>
-//   );
-// }

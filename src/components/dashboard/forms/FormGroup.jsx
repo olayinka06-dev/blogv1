@@ -6,17 +6,22 @@ import { handleImageSaveToFireBase } from "@/lib/__hs";
 import { SlClose } from "react-icons/sl";
 import { Error, Success } from "@/lib/entities";
 
-export const FormSubmit = () => {
+const FormSubmit = () => {
   const { chatData } = useChatContext();
-  const { newMessage, setNewMessage, receiver } = chatData;
   const [imagePreviewUrl, setImagePreviewUrl] = useState("");
-  const [popUpChat, setpopUpChat] = useState({
-    media: null,
-    message: "",
-  });
+  const {
+    newMessage,
+    setNewMessage,
+    receiver,
+    popUpChat,
+    setpopUpChat,
+    inputSwitcher,
+    setInputSwitcher,
+    ept,
+    chatId,
+    setChatId,
+  } = chatData;
   const [showMedia, setShowMedia] = useState(false);
-
-
 
 
   const handleUploadMedia = async (e) => {
@@ -51,16 +56,43 @@ export const FormSubmit = () => {
   const handleSendMessage = async (e) => {
     e.preventDefault();
 
-    console.log("Message", imagePreviewUrl ? popUpChat : newMessage);
+    // console.log("Message", imagePreviewUrl ? popUpChat : newMessage);
     try {
-      const BASE_URL = "/api/chat/message";
+      let BASE_URL;
+      let params;
+
+      if (ept === "edit") {
+        BASE_URL  = "/api/chat/message";
+        params = {
+          messageId: chatId,
+          content: newMessage.message,
+        }
+        console.log("type edit", params);
+      }
+      else if (ept === "reply"){
+        BASE_URL  = "/api/chat/reply";
+        params = {
+
+        }
+        console.log("type reply", params);
+      }
+      else {
+        
+        BASE_URL  = "/api/chat/message";
+        params = { 
+          recipientId: receiver, 
+          content: imagePreviewUrl ? popUpChat.message : newMessage.message, 
+          media : imagePreviewUrl ? popUpChat.media : newMessage.media,
+        }
+        console.log("type post", params);
+      }
 
       const resp = await fetch(BASE_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(imagePreviewUrl ? {...popUpChat, receiver} : {...newMessage, receiver}),
+        body: JSON.stringify(params),
       });
       console.log("response", resp?.payload);
       const result = await resp.json();
@@ -69,6 +101,8 @@ export const FormSubmit = () => {
       if (resp.ok) {
         Success(message);
         setShowMedia(false);
+        setInputSwitcher(false);
+        setChatId("");
         setImagePreviewUrl("")
         setNewMessage({...newMessage, message: "", media: null})
         setpopUpChat({...popUpChat, message: "", media: null})
@@ -82,7 +116,8 @@ export const FormSubmit = () => {
     }
   };
   return (
-    <div className="fixed w-full md:w-[70%] py-5 mx-auto bottom-0">
+    <div className=" relative">
+      <div className="fixed left-0 md:left-[27%] shadow bg-[rgba(255,255,255,0.9)] backdrop:blur-sm z-[500] w-full md:w-[70%] py-5 mx-auto bottom-0">
       <form
         onSubmit={handleSendMessage}
         className="px-2  flex items-center gap-2"
@@ -92,7 +127,8 @@ export const FormSubmit = () => {
             <span
               className="flex justify-end cursor-pointer mb-2"
               onClick={() => {
-                setShowMedia(false); setImagePreviewUrl("");
+                setShowMedia(false);
+                setImagePreviewUrl("");
               }}
             >
               <SlClose />
@@ -149,184 +185,37 @@ export const FormSubmit = () => {
             multiple
           />
         </label>
-        <textarea
-          value={newMessage.message}
-          onChange={(e) => {
-            setNewMessage({ ...newMessage, message: e.target.value }),
-              setpopUpChat({ ...popUpChat, message: e.target.value });
-          }}
-          className="input flex-grow input-bordered input-md w-[90%] "
-          type="text"
-          placeholder="Type your message..."
-          disabled={showMedia}
-        />
+        <div className="relative w-[90%]">
+          {inputSwitcher && (
+            <div className="absolute top-[-45px] px-2 py-2 border w-full bg-white">
+              <span className="border-l-[4px] py-1 rounded pl-2 border-accent">{newMessage.message}</span>
+              <span onClick={()=> {setInputSwitcher(false); setNewMessage({...newMessage, message: ""})}} className="float-right cursor-pointer"><SlClose/></span>
+            </div>
+          )}
+          <textarea
+            value={newMessage.message}
+            onChange={(e) => {
+              setNewMessage({ ...newMessage, message: e.target.value }),
+                setpopUpChat({ ...popUpChat, message: e.target.value });
+            }}
+            className="input flex-grow input-bordered input-md w-full"
+            type="text"
+            placeholder="Type your message..."
+            disabled={showMedia}
+          />
+        </div>
         <button
           disabled={!newMessage.message}
           type="submit"
-          className={`w-[10%] disabled:btn-accent btn btn-accent text-white`}
+          className={` disabled:btn-accent btn h-[2rem] btn-accent text-white rounded-full px-4`}
         >
-          Send
+          <BiSend />
         </button>
       </form>
+    </div>
     </div>
   );
 };
 
-// import React, { useState } from "react";
-// import { BiPlus, BiSend } from "react-icons/bi";
-// import { SlClose } from "react-icons/sl";
-// import { Error, Success } from "@/lib/entities";
-// import { handleImageSaveToFireBase } from "@/lib/__hs"; // Import your handleImageSaveToFireBase function
+export default FormSubmit;
 
-// export const FormSubmit = () => {
-//   const [popUpChat, setPopUpChat] = useState({
-//     media: null,
-//     message: "",
-//   });
-//   const [imagePreviewUrl, setImagePreviewUrl] = useState("");
-//   const [showMedia, setShowMedia] = useState(false);
-
-//   const handleUploadMedia = (e) => {
-//     const file = e.target.files[0];
-
-//     if (!file) {
-//       return;
-//     } else {
-//       const reader = new FileReader();
-//       reader.onloadend = () => {
-//         setImagePreviewUrl(reader.result);
-//       };
-//       reader.readAsDataURL(file);
-//       setShowMedia(true);
-//     }
-//   };
-
-//   const saveToCloud = async () => {
-//     if (imagePreviewUrl) {
-//       const saveImageToFirebaseResult = await handleImageSaveToFireBase(imagePreviewUrl); // Replace with your actual function
-//       setPopUpChat((prevPopUpChat) => ({
-//         ...prevPopUpChat,
-//         media: saveImageToFirebaseResult,
-//       }));
-//     }
-//   };
-
-//   const handleSendMessage = async (e) => {
-//     e.preventDefault();
-//     await saveToCloud();
-
-//     console.log("Message", imagePreviewUrl ? popUpChat : newMessage);
-
-//     // You can now send the message with the updated media URL in popUpChat.media
-//     try {
-//       const BASE_URL = "/api/chat/comments";
-//       const resp = await fetch(BASE_URL, {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify(imagePreviewUrl ? popUpChat : newMessage),
-//       });
-
-//       const result = await resp.json();
-//       const { message, status } = result;
-
-//       if (resp.ok) {
-//         Success(message);
-//         setShowMedia(false);
-//       } else {
-//         Error(message);
-//       }
-//     } catch (error) {
-//       console.error(error);
-//       Error(error);
-//     }
-//   };
-
-//   return (
-//     <div>
-//       <form onSubmit={handleSendMessage}>
-//         {showMedia ? (
-//           <div>
-//             <span
-//               className="flex justify-end cursor-pointer mb-2"
-//               onClick={() => {
-//                 setShowMedia(false);
-//                 setImagePreviewUrl("");
-//               }}
-//             >
-//               <SlClose />
-//             </span>
-//             <label htmlFor="media">
-//               <figure className="max-w-full mb-2">
-//                 {imagePreviewUrl.includes("image") ? (
-//                   <img
-//                     className="max-h-[200px] max-w-full rounded-lg"
-//                     src={imagePreviewUrl}
-//                     alt="Image Preview"
-//                   />
-//                 ) : (
-//                   <video
-//                     className="max-h-[200px] max-w-full rounded-lg"
-//                     src={imagePreviewUrl}
-//                     controls
-//                   />
-//                 )}
-//               </figure>
-//               <div className="flex items-center gap-2">
-//                 <textarea
-//                   type="text"
-//                   placeholder="(optional caption)"
-//                   value={popUpChat.message}
-//                   onChange={(e) =>
-//                     setPopUpChat({ ...popUpChat, message: e.target.value })
-//                   }
-//                   className="w-[80%] input h-[2rem] resize-none leading-normal flex-grow input-bordered input-md"
-//                   name=""
-//                   id=""
-//                 />
-//                 <button
-//                   onClick={handleSendMessage}
-//                   className="btn h-[2rem] btn-accent text-white rounded-full px-4"
-//                 >
-//                   <BiSend />
-//                 </button>
-//               </div>
-//             </label>
-//           </div>
-//         ) : null}
-
-//         <label htmlFor="media">
-//           <span className="btn h-[2rem] btn-accent text-white rounded-full px-4">
-//             <BiPlus />
-//           </span>
-//           <input
-//             type="file"
-//             onChange={handleUploadMedia}
-//             className="hidden"
-//             name="media"
-//             id="media"
-//             multiple
-//           />
-//         </label>
-//         <textarea
-//           value={popUpChat.message}
-//           onChange={(e) =>
-//             setPopUpChat({ ...popUpChat, message: e.target.value })
-//           }
-//           className="input flex-grow input-bordered input-md w-[90%] "
-//           type="text"
-//           placeholder="Type your message..."
-//           disabled={showMedia}
-//         />
-//         <button
-//           disabled={!popUpChat.message}
-//           type="submit"
-//           className={`w-[10%] disabled:btn-accent btn btn-accent text-white`}
-//         >
-//           Send
-//         </button>
-//       </form>
-//     </div>
-//   );
-// };

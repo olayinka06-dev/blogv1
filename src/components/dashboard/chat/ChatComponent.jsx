@@ -4,6 +4,7 @@ import Pusher from "pusher-js";
 import { MessageContext, useChatContext } from "../provider/ChatProvider";
 import Form from "../forms/Form";
 import ChatMessages from "../chat/ChatMessages";
+import FormSubmit from "../forms/FormGroup";
 
 const ChatComponent = ({ session }) => {
   const { chatData } = useChatContext();
@@ -32,8 +33,8 @@ const ChatComponent = ({ session }) => {
       <MessageContext.Provider value={{ messages, session }}>
         <ChatMessages />
       </MessageContext.Provider>
-      <Form />
-      {/* <FormSubmit /> */}
+      {/* <Form /> */}
+      <FormSubmit />
     </div>
   );
 };
