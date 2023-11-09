@@ -73,8 +73,8 @@ export const useChatContext = () => useContext(ChatContext);
 export const MessageContext = createContext({
   messages: [{
     id: String,
-    content: String,
-    media: String,
+    content: "",
+    media: "",
     createdAt: Date,
     updatedAt: Date,
     senderId: String,

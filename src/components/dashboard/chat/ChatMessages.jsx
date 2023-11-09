@@ -138,11 +138,14 @@ const ChatMessages = () => {
               >
                 <BiChevronDown />
               </span>
-              {message?.content}
+              <div className="flex flex-col">
+                {message?.media && <img className={`max-w-[300px] ${message?.media&&"mt-2"}`} src={message?.media} alt="" />}
+                {message?.content && <span>{message?.content}</span>}
+              </div>
               {commentInfo === message.id && (
                 <div
                   ref={commentPopupRef}
-                  className="flex flex-col z-[100] bg-white w-[200px] shadow border  h-fit gap-2 absolute top-[-5rem] left-0 items-center mt-3"
+                  className={`flex  flex-col z-[100] bg-white w-[200px] shadow border  h-fit gap-2 absolute top-[-5rem] ${message?.sender?.id === session?.user?.id ? "right-6" : "left-0"} items-center mt-3`}
                 >
                   {message?.sender?.id === session?.user?.id && (
                     <span
@@ -157,7 +160,7 @@ const ChatMessages = () => {
                   )}
                   {message?.sender?.id === session?.user?.id && (
                     <button
-                      className="btn btn-sm w-full flex flex-row justify-start gap-1 bg-white border-none text-right"
+                      className="btn btn-sm w-full flex flex-row rounded-none justify-start gap-1 bg-white border-none text-right"
                       onClick={() => handleDeleteComment(message?.id)}
                     >
                       <span>
@@ -169,7 +172,7 @@ const ChatMessages = () => {
 
                   <button
                     onClick={() => handleCopy(message?.content)}
-                    className="btn btn-sm w-full flex flex-row justify-start bg-white border-none text-right"
+                    className="btn btn-sm w-full rounded-none flex flex-row justify-start bg-white border-none text-right"
                   >
                     <span>
                       <BiCopy />
@@ -178,7 +181,7 @@ const ChatMessages = () => {
                   </button>
                   <button
                     onClick={() => handleReplyComment(message)}
-                    className="btn btn-sm w-full flex flex-row justify-start bg-white border-none text-right"
+                    className="btn btn-sm w-full rounded-none flex flex-row justify-start bg-white border-none text-right"
                   >
                     <span>
                       <BsFillReplyAllFill />
