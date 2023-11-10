@@ -15,7 +15,7 @@ const ChatMessages = () => {
   const commentPopupRef = useRef(null);
   const { messages, session } = useMessageContext();
   const { chatData } = useChatContext();
-  const { setNewMessage, newMessage, setInputSwitcher, setEpt, setChatId } =
+  const { setNewMessage, newMessage, setInputSwitcher, setEpt, setChatId, setReplyPreview, replyPreview } =
     chatData;
 
   const [commentInfo, setCommentInfo] = useState(null);
@@ -50,7 +50,12 @@ const ChatMessages = () => {
   };
 
   const handleReplyComment = (message) => {
-    setNewMessage({ ...newMessage, message: message?.content });
+    setReplyPreview({
+      ...replyPreview,
+      media: message?.media,
+      content: message?.content,
+      username: message?.sender?.username
+    });
     setInputSwitcher(true);
     setCommentInfo(null);
     setChatId(message?.id);

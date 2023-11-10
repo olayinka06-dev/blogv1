@@ -24,7 +24,11 @@ const ChatWrapper = ({
   });
   const [receiver] = useState(friendId);
   const [inputSwitcher, setInputSwitcher] = useState(false);
-  const [replyPreview, setReplyPreview] = useState(null);
+  const [replyPreview, setReplyPreview] = useState({
+    username: "",
+    media: "",
+    content: "",
+  });
   const [ept, setEpt] = useState(null);
   const [chatId, setChatId] = useState(null);
 

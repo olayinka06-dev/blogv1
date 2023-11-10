@@ -32,9 +32,9 @@ const ChatComponent = ({ session }) => {
     <div className="p-6 flex-grow max-h-screen overflow-y-auto pt-10 pb-48">
       <MessageContext.Provider value={{ messages, session }}>
         <ChatMessages />
+        <FormSubmit />
       </MessageContext.Provider>
       {/* <Form /> */}
-      <FormSubmit />
     </div>
   );
 };

@@ -56,7 +56,11 @@ export const ChatContext = createContext({
       },
     ],
     inputSwitcher: false,
-    replyPreview: null,
+    replyPreview: {
+      username: String,
+      media: String,
+      content: String,
+    },
     ept: null,
     chatId: null, 
     setChatId: () => {}, 
