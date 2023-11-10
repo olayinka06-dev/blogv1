@@ -32,15 +32,20 @@ export async function POST(request) {
         content,
         media,
       },
+      include: {
+        sender: {
+          select: {
+            id: true,
+            username: true,
+            profile: {
+              select: {
+                profilePicture: true,
+              },
+            },
+          },
+        },
+      },
     });
-
-    // const pusher = new Pusher({
-    //   appId: process.env.PUSHER_APP_ID,
-    //   key: process.env.NEXT_PUBLIC_PUSHER_KEY,
-    //   secret: process.env.PUSHER_SECRET,
-    //   cluster: "mt1",
-    //   useTLS: true,
-    // });
 
     await pusher.trigger("chat", "hello", {
       message: `${JSON.stringify(chatMessages)}\n\n`,
@@ -172,6 +177,19 @@ export async function PATCH(request) {
       where: { id: messageId },
       data: {
         content,
+      },
+      include: {
+        sender: {
+          select: {
+            id: true,
+            username: true,
+            profile: {
+              select: {
+                profilePicture: true,
+              },
+            },
+          },
+        },
       },
     });
 
