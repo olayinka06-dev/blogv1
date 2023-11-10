@@ -3,7 +3,8 @@ import { NextResponse } from "next/server";
 import { db } from "../../../../lib/db";
 import { authOptions } from "../../../../lib/auth";
 import { getServerSession } from "next-auth";
-import Pusher from "pusher";
+// import Pusher from "pusher";
+import pusher from "../../../../lib/pusher";
 
 // POST /api/send-message
 export async function POST(request) {
@@ -33,19 +34,17 @@ export async function POST(request) {
       },
     });
 
-    const pusher = new Pusher({
-      appId: process.env.PUSHER_APP_ID,
-      key: process.env.NEXT_PUBLIC_PUSHER_KEY,
-      secret: process.env.PUSHER_SECRET,
-      cluster: "mt1",
-      useTLS: true,
-    });
+    // const pusher = new Pusher({
+    //   appId: process.env.PUSHER_APP_ID,
+    //   key: process.env.NEXT_PUBLIC_PUSHER_KEY,
+    //   secret: process.env.PUSHER_SECRET,
+    //   cluster: "mt1",
+    //   useTLS: true,
+    // });
 
     await pusher.trigger("chat", "hello", {
       message: `${JSON.stringify(chatMessages)}\n\n`,
     });
-
-    // console.log("message", chatMessages);
 
     if (chatMessages) {
       return NextResponse.json(
@@ -107,6 +106,10 @@ export async function DELETE(request) {
     if (message.senderId === session.user.id) {
       // Delete the comment
       await db.message.delete({ where: { id: messageId } });
+
+      // Trigger Pusher event for message deletion
+      await pusher.trigger("chat", "delete-message", messageId);
+
       return NextResponse.json(
         { message: "message deleted successfully" },
         { status: 200 }
@@ -138,7 +141,7 @@ export async function PATCH(request) {
   }
 
   try {
-    // First, check if the user making the request is the owner of the comment
+    // First, check if the user making the request is the owner of the message
     const message = await db.message.findUnique({
       where: { id: messageId },
       select: {
@@ -157,7 +160,7 @@ export async function PATCH(request) {
       );
     }
 
-    if (message.user.id !== session?.user?.id) {
+    if (message.sender.id !== session?.user?.id) {
       return NextResponse.json(
         { message: "Unauthorized, you can only edit your message" },
         { status: 403 }
@@ -165,11 +168,16 @@ export async function PATCH(request) {
     }
 
     // If the user is authorized, update the comment text
-    await db.message.update({
+    const updatedMessage = await db.message.update({
       where: { id: messageId },
       data: {
         content,
       },
+    });
+
+    // Trigger Pusher event for message update
+    await pusher.trigger("chat", "edit-message", {
+      message: `${JSON.stringify(updatedMessage)}\n\n`,
     });
 
     return NextResponse.json(

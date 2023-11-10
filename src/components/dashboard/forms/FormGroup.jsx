@@ -107,10 +107,10 @@ const FormSubmit = () => {
           content: imagePreviewUrl ? popUpChat.message : newMessage.message,
           media: imagePreviewUrl ? popUpChat.media : newMessage.media,
         };
-        // console.log("type post", params);
+        console.log("type post", params);
       }
       const resp = await fetch(BASE_URL, {
-        method: "POST",
+        method: ept === "edit" ? "PATCH" : ept === "reply" ? "POST" : "POST",
         headers: {
           "Content-Type": "application/json",
         },

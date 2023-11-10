@@ -75,10 +75,7 @@ const ChatMessages = () => {
 
       if (resp.ok) {
         Success(message);
-        router.refresh();
-        // // Remove the deleted comment from the local state
-        // const updatedComments = comments.filter((c) => c.id !== commentId);
-        // setComments(updatedComments);
+        // router.refresh();
       } else {
         Error(message);
       }
