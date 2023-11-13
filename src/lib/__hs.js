@@ -1,5 +1,6 @@
 "use client";
 import crypto from "crypto";
+import { getAuth } from 'firebase/auth';
 import { firebaseConfig } from "@/utils";
 import { initializeApp } from "firebase/app";
 import {
@@ -77,6 +78,62 @@ export const handleImageSaveToFireBase = async (file) => {
     );
   });
 }
+
+
+// const app = initializeApp(firebaseConfig);
+// const storage = getStorage(app, "gs://blog-website-a3ed3.appspot.com");
+// export const auth = getAuth(app); // Add this line to get the authentication instance
+
+
+// function createUniqueFileName(fileName) {
+//   const timeStamp = Date.now();
+//   const randomString = Math.random().toString(36).substring(2, 12);
+
+//   return `${fileName}-${timeStamp}-${randomString}`;
+// }
+
+// export const handleImageSaveToFireBase = async (file) => {
+//   const extractUniqueFileName = createUniqueFileName(file?.name);
+//   const storageRef = ref(storage, `blog/${extractUniqueFileName}`);
+//   const uploadImg = uploadBytesResumable(storageRef, file);
+
+//   // Get the current user
+//   const user = auth.currentUser;
+
+//   console.log("firebase token",user.getIdToken());
+
+//   return new Promise((resolve, reject) => {
+//     if (user) {
+//       // Get the authentication token
+//       user.getIdToken()
+//         .then((token) => {
+//           // Include the token in the request headers
+//           const headers = new Headers({
+//             'Authorization': 'Bearer ' + token,
+//           });
+
+//           // Set the headers in the upload request
+//           uploadImg.headers = headers;
+
+//           // Continue with the upload process
+//           uploadImg.on(
+//             "state_changed",
+//             (snapshot) => {},
+//             (error) => reject(error),
+//             () => {
+//               getDownloadURL(uploadImg.snapshot.ref)
+//                 .then((url) => resolve(url))
+//                 .catch((error) => reject(error));
+//             }
+//           );
+//         })
+//         .catch((error) => reject(error));
+//     } else {
+//       reject(new Error('User not authenticated'));
+//     }
+//   });
+// }
+
 
 export const formatDate = (timestamp) => {
   const now = new Date();

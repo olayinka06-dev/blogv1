@@ -25,6 +25,8 @@ model User {
   receivedMessages       Message[]       @relation("ReceivedMessages")
   sentNotifications      Notification[]  @relation("sender")
   receivedNotifications  Notification[]  @relation("recipient")
+  sentReplies            Reply[]         @relation("sentReplies")
+  receivedReplies        Reply[]         @relation("receivedReplies")
 }
 
 // Profile model for user profiles
@@ -138,6 +140,24 @@ model Message {
   recipient   User     @relation("ReceivedMessages", fields: [recipientId], references: [id])
   recipientId String
   isRead      Boolean  @default(false)
+  isEdit      Boolean  @default(false)
+  replies     Reply[]  @relation("MessageReplies")
+}
+
+model Reply {
+  id          String   @id @default(cuid())
+  content     String?
+  media       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  sender      User     @relation("sentReplies", fields: [senderId], references: [id])
+  senderId    String
+  recipient   User     @relation("receivedReplies", fields: [recipientId], references: [id])
+  recipientId String
+  message     Message  @relation("MessageReplies", fields: [messageId], references: [id])
+  messageId   String
+  isRead      Boolean  @default(false)
+  isEdit      Boolean  @default(false)
 }
 
 // Define the Notification model
