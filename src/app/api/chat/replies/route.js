@@ -5,60 +5,36 @@ import { authOptions } from "../../../../lib/auth";
 import { getServerSession } from "next-auth";
 import Pusher from "pusher";
 
-// POST /api/send-message
+// Send a reply to a reply
 export async function POST(request) {
   const session = await getServerSession(authOptions);
-  const senderId = session?.user?.id;
   const payload = await request.json();
-
-  const { receiver: recipientId, message: content, media } = payload;
-  console.log(payload);
+  const { content, replyId } = payload;
+  const senderId = session?.user?.id;
 
   if (!session) {
-    return NextResponse.json(
-      {
-        message: "Unauthorized!, please login to engage in a conversation",
-      },
-      { status: 401 }
-    );
+    return NextResponse.json({
+      message: "Unauthorized! Please log in to send a reply",
+    });
   }
 
   try {
-    const chatMessages = await db.message.create({
+    const reply = await db.reply.create({
       data: {
-        senderId,
-        recipientId,
         content,
-        media,
+        senderId,
+        replyId,
       },
     });
 
-    const pusher = new Pusher({
-      appId: process.env.PUSHER_APP_ID,
-      key: process.env.NEXT_PUBLIC_PUSHER_KEY,
-      secret: process.env.PUSHER_SECRET,
-      cluster: "mt1",
-      useTLS: true,
-    });
-
-    await pusher.trigger("chat", "hello", {
-      message: `${JSON.stringify(chatMessages)}\n\n`,
-    });
-
-    // console.log("message", chatMessages);
-
-    if (chatMessages) {
+    if (reply) {
       return NextResponse.json(
-        {
-          message: "sent successfully",
-        },
+        { message: "Reply sent successfully", data: reply },
         { status: 200 }
       );
     } else {
       return NextResponse.json(
-        {
-          message: "unable to send message",
-        },
+        { message: "Unable to send the reply" },
         { status: 400 }
       );
     }
@@ -70,4 +46,3 @@ export async function POST(request) {
     );
   }
 }
-export async function GET(request) {}

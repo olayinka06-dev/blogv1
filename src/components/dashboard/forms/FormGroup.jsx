@@ -97,7 +97,12 @@ const FormSubmit = () => {
         console.log("type edit", params);
       } else if (ept === "reply") {
         BASE_URL = "/api/chat/reply";
-        params = {};
+        params = {
+          content: imagePreviewUrl ? popUpChat.message : newMessage.message,
+          media: imagePreviewUrl ? popUpChat.media : newMessage.media,
+          messageId: chatId,
+          recipientId: receiver,
+        };
         console.log("type reply", params);
       } else {
         BASE_URL = "/api/chat/message";
@@ -210,8 +215,8 @@ const FormSubmit = () => {
           </label>
           <div className="relative w-[90%]">
             {inputSwitcher && (
-              <div className="absolute top-[-65px] flex justify-between items-center px-2 py-2 border w-full bg-white">
-                <div className="border-l-[4px] relative flex items-center justify-between py-1 rounded pl-2 border-accent">
+              <div className="absolute top-[-65px] flex flex-col px-2 py-2 border w-full bg-white">
+                <div className="border-l-[4px] w-full relative flex items-center justify-between py-1 rounded pl-2 border-accent">
                   <span className="text-[10px]">{replyPreview.username}</span>
                   <span
                     onClick={() => {
