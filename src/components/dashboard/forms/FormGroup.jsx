@@ -8,7 +8,6 @@ import { Error, Success } from "@/lib/entities";
 import Image from "next/image";
 
 const FormSubmit = () => {
-
   const { chatData } = useChatContext();
   const { messages: message, session } = useMessageContext();
   const [imagePreviewUrl, setImagePreviewUrl] = useState("");
@@ -128,8 +127,6 @@ const FormSubmit = () => {
         setImagePreviewUrl("");
         setNewMessage({ ...newMessage, message: "", media: null });
         setpopUpChat({ ...popUpChat, message: "", media: null });
-
-        
       } else {
         Error(message);
       }
@@ -158,9 +155,9 @@ const FormSubmit = () => {
               </span>
               <label htmlFor="media">
                 <figure className="max-w-full mb-2 relative">
-                  {
-                    loading&& <span className="loading absolute top-1/2 z-[1000] left-1/2 bg-white loading-spinner"></span>
-                  }
+                  {loading && (
+                    <span className="loading absolute top-1/2 z-[1000] left-1/2 bg-white loading-spinner"></span>
+                  )}
                   {imagePreviewUrl.includes("image") ? (
                     <img
                       className="max-h-[200px] max-w-full rounded-lg"
@@ -214,28 +211,31 @@ const FormSubmit = () => {
           <div className="relative w-[90%]">
             {inputSwitcher && (
               <div className="absolute top-[-65px] flex justify-between items-center px-2 py-2 border w-full bg-white">
-                <div className="border-l-[4px] relative flex flex-col py-1 rounded pl-2 border-accent">
+                <div className="border-l-[4px] relative flex items-center justify-between py-1 rounded pl-2 border-accent">
                   <span className="text-[10px]">{replyPreview.username}</span>
-                  <span className=" ">{replyPreview.content}</span>
                   <span
                     onClick={() => {
                       setInputSwitcher(false);
                       setNewMessage({ ...newMessage, message: "" });
                     }}
-                    className="absolute top-[-18px] right-[-680px] cursor-pointer"
+                    className=" cursor-pointer"
                   >
                     <SlClose />
                   </span>
                 </div>
-                {replyPreview.media && (
-                  <Image
-                    src={replyPreview.media}
-                    height={30}
-                    width={30}
-                    alt="logo"
-                    priority
-                  />
-                )}
+                <div className="flex w-full justify-between items-center">
+                  <span className=" ">{replyPreview.content}</span>
+
+                  {replyPreview.media && (
+                    <Image
+                      src={replyPreview.media}
+                      height={30}
+                      width={30}
+                      alt="logo"
+                      priority
+                    />
+                  )}
+                </div>
               </div>
             )}
             <textarea

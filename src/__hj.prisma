@@ -227,6 +227,8 @@ model User {
     friendOf               User[]          @relation("Friendship")
     sentMessages           Message[]       @relation("SentMessages")
     receivedMessages       Message[]       @relation("ReceivedMessages")
+    sentReply              Reply[]         @relation("SentReply")
+    receivedReply          Reply[]         @relation("ReceivedReply")
 }
 
 // Define the FriendRequest model
@@ -249,6 +251,22 @@ model Message {
     sender      User     @relation("SentMessages", fields: [senderId], references: [id])
     senderId    Int
     recipient   User     @relation("ReceivedMessages", fields: [recipientId], references: [id])
+    recipientId Int
+    replyTo     Reply?   @relation("Replies", fields: [replyToId], references: [id])
+    replyToId   Int?
+}
+
+// Define the Reply model
+model Reply {
+    id          Int      @id @default(autoincrement())
+    content     String
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+    sender      User     @relation("SentReply", fields: [senderId], references: [id])
+    senderId    Int
+    message     Message  @relation("Replies", fields: [messageId], references: [id])
+    messageId   Int
+    recipient   User     @relation("ReceivedReply", fields: [recipientId], references: [id])
     recipientId Int
 }
 

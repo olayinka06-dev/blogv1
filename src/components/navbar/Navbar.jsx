@@ -47,7 +47,7 @@ const Navbar = ({ session, profilePicture }) => {
 
   return pathname.includes("dashboard") ? null : (
     <header className="w-full p-4 z-[1000] shadow sticky top-0 bg-white">
-      <nav className="flex container items-center justify-between">
+      <nav className="flex  container items-center justify-between">
         <div className="w-1/2 flex justify-between">
           <div className="">
             <a className="btn btn-ghost normal-case text-xl">LOGO</a>
