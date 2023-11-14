@@ -131,6 +131,15 @@ export const ReplyContext = createContext({
       id: String,
     },
   },
+  message: {
+    content: null,
+    media: null,
+    sender: {
+      profile: {
+        profilePicture: String,
+      },
+    },
+  },
 });
 
 export const useReplyContext = () => useContext(ReplyContext);
