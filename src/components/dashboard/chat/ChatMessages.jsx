@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import { BiChevronDown, BiCopy } from "react-icons/bi";
+import { BiChevronDown, BiCopy, BiSelection } from "react-icons/bi";
 import {
   ReplyContext,
   useChatContext,
@@ -13,7 +13,6 @@ import { MdModeEditOutline } from "react-icons/md";
 import { formatDate } from "@/lib/__hs";
 import { CopyToClipBoard, Error, Success } from "@/lib/entities";
 import { NetworkError } from "@/components/NetworkError";
-import { postData } from "@/action";
 import ChatReply from "./ChatReply";
 
 const ChatMessages = () => {
@@ -31,6 +30,16 @@ const ChatMessages = () => {
   } = chatData;
 
   const [commentInfo, setCommentInfo] = useState(null);
+  const [selectedMessages, setSelectedMessages] = useState([]);
+  const [showCheckBox, setShowCheckBox] = useState(false);
+
+  const handleCheckboxChange = (messageId) => {
+    if (selectedMessages.includes(messageId)) {
+      setSelectedMessages(selectedMessages.filter((id) => id !== messageId));
+    } else {
+      setSelectedMessages([...selectedMessages, messageId]);
+    }
+  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -146,13 +155,25 @@ const ChatMessages = () => {
                 </time>
               </div>
               <div className="chat-bubble bg-gray-100 relative text-gray-700">
+                {/* {!message.isDeleted && ( */}
                 <span
                   onClick={() => handleShowMessageInfo(message.id)}
                   className=" absolute cursor-pointer top-0 right-0"
                 >
                   <BiChevronDown />
                 </span>
-                <div className="">
+                {/* )} */}
+
+                <div className="relative">
+                  {
+                    showCheckBox&&<input
+                    type="checkbox"
+                    className="absolute"
+                    checked={selectedMessages.includes(message.id)}
+                    onChange={() => handleCheckboxChange(message.id)}
+                  />
+                  }
+                  
                   {message.isDeleted ? (
                     <span>This Message Was Deleted!</span>
                   ) : (
@@ -170,7 +191,7 @@ const ChatMessages = () => {
                     </div>
                   )}
                 </div>
-                {commentInfo === message.id && (
+                {commentInfo === message.id && !message.isDeleted && (
                   <div
                     ref={commentPopupRef}
                     className={`flex  flex-col z-[100] bg-white w-[200px] shadow border  h-fit gap-2 absolute top-[-5rem] ${
@@ -220,6 +241,48 @@ const ChatMessages = () => {
                       </span>
                       <span>Reply</span>
                     </button>
+                    <button
+                      onClick={() => {setShowCheckBox(true); setCommentInfo(null)}}
+                      className="btn btn-sm w-full rounded-none flex flex-row justify-start bg-white border-none text-right"
+                    >
+                      <span>
+                        <BiSelection />
+                      </span>
+                      <span>Select</span>
+                    </button>
+                  </div>
+                )}
+                {commentInfo === message.id && message.isDeleted && (
+                  <div
+                    ref={commentPopupRef}
+                    className={`flex  flex-col z-[100] bg-white w-[200px] shadow border  h-fit gap-2 absolute top-[-5rem] ${
+                      message?.sender?.id === session?.user?.id
+                        ? "right-6"
+                        : "left-0"
+                    } items-center mt-3`}
+                  >
+                    {message?.sender?.id === session?.user?.id && (
+                      <span
+                        className="btn flex flex-row justify-start gap-1 btn-sm w-full rounded-none bg-white border-none text-right"
+                        onClick={() => handleEditComment(message)}
+                      >
+                        <span>
+                          <MdModeEditOutline />
+                        </span>
+                        <span>Restore</span>
+                      </span>
+                    )}
+                    {message?.sender?.id === session?.user?.id && (
+                      <button
+                        className="btn btn-sm w-full flex flex-row rounded-none justify-start gap-1 bg-white border-none text-right"
+                        onClick={() => handleDeleteComment(message?.id)}
+                      >
+                        <span>
+                          <RiDeleteBin5Line />
+                        </span>
+                        <span>Remove</span>
+                      </button>
+                    )}
                   </div>
                 )}
               </div>
