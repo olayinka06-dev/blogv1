@@ -63,3 +63,62 @@ export async function POST(request) {
   }
 }
 
+
+// Function to delete Reply
+export async function DELETE(request) {
+  const { searchParams } = new URL(request.url);
+  const messageId = searchParams.get("id");
+  console.log("messageId", messageId)
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    if (!messageId) {
+      return NextResponse.json(
+        { message: "Reply Id is required" },
+        { status: 401 }
+      );
+    }
+    // Find the reply in the database
+    const reply = await db.reply.findUnique({
+      where: { id: messageId },
+      select: { senderId: true },
+    });
+
+    if (!reply) {
+      return NextResponse.json(
+        { message: "Reply not found" },
+        { status: 404 }
+      );
+    }
+
+    // Check if the authenticated user is the owner of the reply
+    if (reply.senderId === session?.user?.id) {
+      // Delete the Reply
+      await db.reply.delete({ where: { id: messageId } });
+
+      // Trigger Pusher event for message deletion
+      // await pusher.trigger("chat", "delete-message", messageId);
+
+      return NextResponse.json(
+        { message: "Reply deleted successfully" },
+        { status: 200 }
+      );
+    } else {
+      return NextResponse.json(
+        { message: "Unauthorized, you can only delete your message" },
+        { status: 403 }
+      );
+    }
+  } catch (error) {
+    console.log(error);
+    return NextResponse.json(
+      { message: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}
+
