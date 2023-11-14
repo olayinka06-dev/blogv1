@@ -28,6 +28,19 @@ export async function POST(request) {
         senderId,
         messageId,
       },
+      include: {
+        sender: {
+          select: {
+            id: true,
+            username: true,
+            profile: {
+              select: {
+                profilePicture: true,
+              },
+            },
+          },
+        },
+      },
     });
 
     if (reply) {

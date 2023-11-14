@@ -62,11 +62,11 @@ export const ChatContext = createContext({
       content: String,
     },
     ept: null,
-    chatId: null, 
-    setChatId: () => {}, 
+    chatId: null,
+    setChatId: () => {},
     setEpt: () => {},
     setReplyPreview: () => {},
-    setInputSwitcher: () => {}, 
+    setInputSwitcher: () => {},
     setNewMessage: () => {},
     setpopUpChat: () => {},
   },
@@ -75,23 +75,26 @@ export const ChatContext = createContext({
 export const useChatContext = () => useContext(ChatContext);
 
 export const MessageContext = createContext({
-  messages: [{
-    id: String,
-    content: "",
-    media: "",
-    createdAt: Date,
-    updatedAt: Date,
-    senderId: String,
-    recipientId: String,
-    isRead: Boolean,
-    sender: {
+  messages: [
+    {
       id: String,
-      username: String,
-      profile: {
-        profilePicture: String,
+      content: "",
+      media: "",
+      createdAt: Date,
+      updatedAt: Date,
+      senderId: String,
+      recipientId: String,
+      isRead: Boolean,
+      sender: {
+        id: String,
+        username: String,
+        profile: {
+          profilePicture: String,
+        },
       },
+      replies: [{}],
     },
-  }],
+  ],
   session: {
     user: {
       id: String,
@@ -100,3 +103,34 @@ export const MessageContext = createContext({
 });
 
 export const useMessageContext = () => useContext(MessageContext);
+
+export const ReplyContext = createContext({
+  replies: [
+    {
+      id: String,
+      content: null,
+      media: null,
+      createdAt: Date,
+      updatedAt: Date,
+      senderId: String,
+      recipientId: String,
+      messageId: String,
+      isRead: Boolean,
+      isEdit: Boolean,
+      sender: {
+        id: String,
+        username: String,
+        profile: {
+          profilePicture: String,
+        },
+      },
+    },
+  ],
+  session: {
+    user: {
+      id: String,
+    },
+  },
+});
+
+export const useReplyContext = () => useContext(ReplyContext);

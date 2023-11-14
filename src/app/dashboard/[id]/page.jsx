@@ -50,6 +50,21 @@ async function getConversation(recipientId, senderId) {
             },
           },
         },
+        replies: {
+          include: {
+            sender: {
+              select: {
+                id: true,
+                username: true,
+                profile: {
+                  select: {
+                    profilePicture: true,
+                  },
+                },
+              },
+            },
+          },
+        },
       },
     });
 
