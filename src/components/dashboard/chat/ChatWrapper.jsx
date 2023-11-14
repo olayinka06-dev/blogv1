@@ -31,6 +31,16 @@ const ChatWrapper = ({
   });
   const [ept, setEpt] = useState(null);
   const [chatId, setChatId] = useState(null);
+  const [selectedMessages, setSelectedMessages] = useState([]);
+  const [showCheckBox, setShowCheckBox] = useState(false);
+
+  const handleCheckboxChange = (messageId) => {
+    if (selectedMessages.includes(messageId)) {
+      setSelectedMessages(selectedMessages.filter((id) => id !== messageId));
+    } else {
+      setSelectedMessages([...selectedMessages, messageId]);
+    }
+  };
 
   const chatData = {
     setNewMessage,

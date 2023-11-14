@@ -41,6 +41,31 @@ const ChatMessages = () => {
     }
   };
 
+  const handleDeleteSelected = async () => {
+    
+    // try {
+    //   // Make an API call to delete selected messages
+    //   const response = await fetch('/api/messages/delete', {
+    //     method: 'DELETE',
+    //     body: JSON.stringify({ messageIds: selectedMessages }),
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //     },
+    //   });
+
+    //   if (response.ok) {
+    //     // Handle successful deletion
+    //     console.log('Messages deleted successfully');
+    //     // Update UI or fetch updated message list
+    //   } else {
+    //     // Handle deletion failure
+    //     console.error('Failed to delete messages');
+    //   }
+    // } catch (error) {
+    //   console.error('Error deleting messages:', error);
+    // }
+  };
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -168,7 +193,7 @@ const ChatMessages = () => {
                   {
                     showCheckBox&&<input
                     type="checkbox"
-                    className="absolute"
+                    className="absolute checkbox h-[1rem] w-[1rem] bg-white text-white checkbox-accent"
                     checked={selectedMessages.includes(message.id)}
                     onChange={() => handleCheckboxChange(message.id)}
                   />
