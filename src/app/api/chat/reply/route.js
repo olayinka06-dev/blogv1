@@ -63,7 +63,6 @@ export async function POST(request) {
   }
 }
 
-
 // Function to delete Reply
 export async function DELETE(request) {
   const { searchParams } = new URL(request.url);
@@ -121,4 +120,81 @@ export async function DELETE(request) {
     );
   }
 }
+
+export async function PATCH(request) {
+  const payload = await request.json();
+  const session = await getServerSession(authOptions);
+  const { messageId, content } = payload;
+
+  console.log("type edit", payload);
+  
+  if (!session) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    // First, check if the user making the request is the owner of the reply
+    const reply = await db.reply.findUnique({
+      where: { id: messageId },
+      select: {
+        sender: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    });
+
+    if (!reply) {
+      return NextResponse.json(
+        { message: "Reply not found" },
+        { status: 404 }
+      );
+    }
+
+    if (reply.sender.id !== session?.user?.id) {
+      return NextResponse.json(
+        { message: "Unauthorized, you can only edit your replies" },
+        { status: 403 }
+      );
+    }
+
+    // If the user is authorized, update the comment text
+    const updatedMessage = await db.reply.update({
+      where: { id: messageId },
+      data: {
+        content,
+      },
+      include: {
+        sender: {
+          select: {
+            id: true,
+            username: true,
+            profile: {
+              select: {
+                profilePicture: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    // // Trigger Pusher event for message update
+    // await pusher.trigger("chat", "edit-message", {
+    //   message: `${JSON.stringify(updatedMessage)}\n\n`,
+    // });
+
+    return NextResponse.json(
+      { message: "Reply updated successfully" },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json(
+      { message: "Internal server error" },
+      { status: 500 }
+    );
+  }
+};
 
