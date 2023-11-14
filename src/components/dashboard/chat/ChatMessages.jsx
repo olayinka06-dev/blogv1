@@ -152,15 +152,23 @@ const ChatMessages = () => {
                 >
                   <BiChevronDown />
                 </span>
-                <div className="flex flex-col">
-                  {message?.media && (
-                    <img
-                      className={`max-w-[300px] ${message?.media && "mt-2"}`}
-                      src={message?.media}
-                      alt=""
-                    />
+                <div className="">
+                  {message.isDeleted ? (
+                    <span>This Message Was Deleted!</span>
+                  ) : (
+                    <div className="flex flex-col">
+                      {message?.media && (
+                        <img
+                          className={`max-w-[300px] ${
+                            message?.media && "mt-2"
+                          }`}
+                          src={message?.media}
+                          alt=""
+                        />
+                      )}
+                      {message?.content && <span>{message?.content}</span>}
+                    </div>
                   )}
-                  {message?.content && <span>{message?.content}</span>}
                 </div>
                 {commentInfo === message.id && (
                   <div
@@ -217,7 +225,9 @@ const ChatMessages = () => {
               </div>
               <div className="chat-footer opacity-50">Delivered</div>
             </div>
-            <ReplyContext.Provider value={{ replies: message.replies, session, message }}>
+            <ReplyContext.Provider
+              value={{ replies: message.replies, session, message }}
+            >
               <ChatReply />
             </ReplyContext.Provider>
           </div>

@@ -32,33 +32,22 @@ const ChatComponent = ({ session }) => {
       );
     });
 
-    channel.bind("delete-message", function (messageId) {
+    channel.bind("delete-message", function (data) {
+      const deletedMessage = JSON.parse(data.message);
       setMessages((prevMessages) =>
-        prevMessages.filter((message) => message.id !== messageId)
+        prevMessages.map((message) =>
+          message.id === deletedMessage.id ? deletedMessage : message
+        )
       );
+      // setMessages((prevMessages) =>
+      //   prevMessages.filter((message) => message.id !== messageId)
+      // );
     });
 
     return () => {
       pusher.unsubscribe("chat");
     };
   }, [messages]);
-
-  // useEffect(() => {
-  //   var pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY, {
-  //     cluster: "mt1",
-  //   });
-
-  //   var channel = pusher.subscribe("chat");
-  //   channel.bind("hello", function (data) {
-  //     const parsedComments = JSON.parse(data.message);
-
-  //     setmessages((prev) => [...prev, parsedComments]);
-  //   });
-
-  //   return () => {
-  //     pusher.unsubscribe("chat");
-  //   };
-  // }, []);
 
   return (
     <div className="p-6 flex-grow max-h-screen overflow-y-auto pt-10 pb-48">

@@ -75,12 +75,11 @@ export async function POST(request) {
   }
 }
 
-
 // Function to delete Message
 export async function DELETE(request) {
   const { searchParams } = new URL(request.url);
   const messageId = searchParams.get("id");
-  console.log("messageId", messageId)
+  console.log("messageId", messageId);
   const session = await getServerSession(authOptions);
 
   if (!session) {
@@ -110,10 +109,33 @@ export async function DELETE(request) {
     // Check if the authenticated user is the owner of the comment
     if (message.senderId === session.user.id) {
       // Delete the comment
-      await db.message.delete({ where: { id: messageId } });
+      // Update the message's status to indicate it's deleted
+      const deletedMessage = await db.message.update({
+        where: { id: messageId },
+        data: { isDeleted: true },
+        include: {
+          sender: {
+            select: {
+              id: true,
+              username: true,
+              profile: {
+                select: {
+                  profilePicture: true,
+                },
+              },
+            },
+          },
+        },
+      });
+      // await db.message.delete({ where: { id: messageId } });
 
       // Trigger Pusher event for message deletion
-      await pusher.trigger("chat", "delete-message", messageId);
+      // await pusher.trigger("chat", "delete-message", messageId);
+
+      // Trigger Pusher event for message update
+    await pusher.trigger("chat", "delete-message", {
+      message: `${JSON.stringify(deletedMessage)}\n\n`,
+    });
 
       return NextResponse.json(
         { message: "message deleted successfully" },
@@ -140,7 +162,7 @@ export async function PATCH(request) {
   const { messageId, content } = payload;
 
   console.log("type edit", payload);
-  
+
   if (!session) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
@@ -209,4 +231,4 @@ export async function PATCH(request) {
       { status: 500 }
     );
   }
-};
+}

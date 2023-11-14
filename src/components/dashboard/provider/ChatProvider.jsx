@@ -85,6 +85,7 @@ export const MessageContext = createContext({
       senderId: String,
       recipientId: String,
       isRead: Boolean,
+      isDeleted: Boolean,
       sender: {
         id: String,
         username: String,
