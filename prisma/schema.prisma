@@ -141,6 +141,7 @@ model Message {
   recipientId String
   isRead      Boolean  @default(false)
   isEdit      Boolean  @default(false)
+  isDeleted      Boolean  @default(false)
   replies     Reply[]  @relation("MessageReplies")
 }
 
@@ -158,6 +159,7 @@ model Reply {
   messageId   String
   isRead      Boolean  @default(false)
   isEdit      Boolean  @default(false)
+  isDeleted      Boolean  @default(false)
 }
 
 // Define the Notification model
