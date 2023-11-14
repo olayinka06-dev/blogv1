@@ -217,7 +217,7 @@ const ChatMessages = () => {
               </div>
               <div className="chat-footer opacity-50">Delivered</div>
             </div>
-            <ReplyContext.Provider value={{ replies: message.replies, message }}>
+            <ReplyContext.Provider value={{ replies: message.replies, session, message }}>
               <ChatReply />
             </ReplyContext.Provider>
           </div>

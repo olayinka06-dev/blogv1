@@ -104,6 +104,13 @@ const FormSubmit = () => {
           recipientId: receiver,
         };
         console.log("type reply", params);
+      } else if (ept === "edit_reply") {
+        BASE_URL = "/api/chat/reply";
+        params = {
+          messageId: chatId,
+          content: newMessage.message,
+        };
+        console.log("type reply", params);
       } else {
         BASE_URL = "/api/chat/message";
         params = {
@@ -114,7 +121,16 @@ const FormSubmit = () => {
         console.log("type post", params);
       }
       const resp = await fetch(BASE_URL, {
-        method: ept === "edit" ? "PATCH" : ept === "reply" ? "POST" : "POST",
+        method:
+          ept === "edit"
+            ? "PATCH"
+            : ept === "edit_reply"
+            ? "PATCH"
+            : ept === "reply"
+            ? "POST"
+            : ept === "reply_replies"
+            ? "POST"
+            : "POST",
         headers: {
           "Content-Type": "application/json",
         },
@@ -215,31 +231,33 @@ const FormSubmit = () => {
           </label>
           <div className="relative w-[90%]">
             {inputSwitcher && (
-              <div className="absolute top-[-65px] flex flex-col px-2 py-2 border w-full bg-white">
-                <div className="border-l-[4px] w-full relative flex items-center justify-between py-1 rounded pl-2 border-accent">
-                  <span className="text-[10px]">{replyPreview.username}</span>
-                  <span
-                    onClick={() => {
-                      setInputSwitcher(false);
-                      setNewMessage({ ...newMessage, message: "" });
-                    }}
-                    className=" cursor-pointer"
-                  >
-                    <SlClose />
-                  </span>
-                </div>
-                <div className="flex w-full justify-between items-center">
-                  <span className=" ">{replyPreview.content}</span>
+              <div className="absolute top-[-65px]  px-2 py-2 border w-full bg-white">
+                <div className="flex flex-col border-l-[4px] py-1 rounded pl-2 border-accent">
+                  <div className=" w-full relative flex items-center justify-between ">
+                    <span className="text-[10px]">{replyPreview.username}</span>
+                    <span
+                      onClick={() => {
+                        setInputSwitcher(false);
+                        setNewMessage({ ...newMessage, message: "" });
+                      }}
+                      className=" cursor-pointer"
+                    >
+                      <SlClose />
+                    </span>
+                  </div>
+                  <div className="flex w-full justify-between items-center">
+                    <span className=" ">{replyPreview.content}</span>
 
-                  {replyPreview.media && (
-                    <Image
-                      src={replyPreview.media}
-                      height={30}
-                      width={30}
-                      alt="logo"
-                      priority
-                    />
-                  )}
+                    {replyPreview.media && (
+                      <Image
+                        src={replyPreview.media}
+                        height={30}
+                        width={30}
+                        alt="logo"
+                        priority
+                      />
+                    )}
+                  </div>
                 </div>
               </div>
             )}

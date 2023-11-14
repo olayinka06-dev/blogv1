@@ -12,6 +12,7 @@ import { CopyToClipBoard, Error, Success } from "@/lib/entities";
 const ChatReply = () => {
   const { replies, session, message } = useReplyContext();
   const { chatData } = useChatContext();
+  const replyPopupRef = useRef(null);
   const {
     setNewMessage,
     newMessage,
@@ -26,8 +27,8 @@ const ChatReply = () => {
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
-        commentPopupRef.current &&
-        !commentPopupRef.current.contains(event.target)
+        replyPopupRef.current &&
+        !replyPopupRef.current.contains(event.target)
       ) {
         // Clicked outside the message popup, close it.
         setReplyInfo(null); // Set commentInfo to null or perform any action to hide the popup
@@ -43,38 +44,38 @@ const ChatReply = () => {
     };
   }, [replyInfo]);
 
-  const handleShowMessageInfo = (messageId) => {
-    if (commentInfo === messageId) {
-      setCommentInfo(null);
+  const handleShowReplyInfo = (replyId) => {
+    if (replyInfo === replyId) {
+      setReplyInfo(null);
       // Close the message info if it's already open
     } else {
-      setCommentInfo(messageId); // Open the message info if it's closed
+      setReplyInfo(replyId); // Open the message info if it's closed
     }
   };
 
-  const handleReplyComment = (message) => {
+  const handleReplyReplies = (reply) => {
     setReplyPreview({
       ...replyPreview,
-      media: message?.media,
-      content: message?.content,
-      username: message?.sender?.username,
+      media: reply?.media,
+      content: reply?.content,
+      username: reply?.sender?.username,
     });
     setInputSwitcher(true);
-    setCommentInfo(null);
+    setReplyInfo(null);
     setChatId(message?.id);
-    setEpt("reply");
+    setEpt("reply_replies");
   };
 
-  const handleDeleteComment = async (messageId) => {
+  const handleDeleteReply = async (replyId) => {
     try {
-      const BASE_URL = `/api/chat/message?id=${messageId}`;
+      const BASE_URL = `/api/chat/reply?id=${replyId}`;
       const resp = await fetch(BASE_URL, {
         method: "DELETE",
       });
 
       const result = await resp.json();
       const { message } = result;
-      setCommentInfo(null);
+      setReplyInfo(null);
 
       if (resp.ok) {
         Success(message);
@@ -88,16 +89,16 @@ const ChatReply = () => {
     }
   };
 
-  const handleEditComment = (message) => {
-    setNewMessage({ ...newMessage, message: message?.content });
-    setCommentInfo(null);
-    setChatId(message?.id);
-    setEpt("edit");
+  const handleEditReply = (reply) => {
+    setNewMessage({ ...newMessage, message: reply?.content });
+    setReplyInfo(null);
+    setChatId(reply?.id);
+    setEpt("edit_reply");
   };
 
-  const handleCopy = async (message) => {
-    await CopyToClipBoard(message);
-    setCommentInfo(null);
+  const handleCopy = async (reply) => {
+    await CopyToClipBoard(reply);
+    setReplyInfo(null);
   };
 
   return (
@@ -137,7 +138,7 @@ const ChatReply = () => {
                     src={message?.sender?.profile?.profilePicture}
                     height={20}
                     width={20}
-                    className="rounded-full "
+                    className="rounded-full w-4 h-4"
                     priority
                   />
                 </div>
@@ -165,7 +166,7 @@ const ChatReply = () => {
             </div>
             {replyInfo === reply.id && (
               <div
-                ref={commentPopupRef}
+                ref={replyPopupRef}
                 className={`flex  flex-col z-[100] bg-white w-[200px] shadow border  h-fit gap-2 absolute top-[-5rem] ${
                   reply?.sender?.id === session?.user?.id
                     ? "right-6"
