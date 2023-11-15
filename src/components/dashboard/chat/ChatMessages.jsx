@@ -27,22 +27,13 @@ const ChatMessages = () => {
     setChatId,
     setReplyPreview,
     replyPreview,
+    showCheckBox,
+    setShowCheckBox,
   } = chatData;
 
   const [commentInfo, setCommentInfo] = useState(null);
-  const [selectedMessages, setSelectedMessages] = useState([]);
-  const [showCheckBox, setShowCheckBox] = useState(false);
-
-  const handleCheckboxChange = (messageId) => {
-    if (selectedMessages.includes(messageId)) {
-      setSelectedMessages(selectedMessages.filter((id) => id !== messageId));
-    } else {
-      setSelectedMessages([...selectedMessages, messageId]);
-    }
-  };
 
   const handleDeleteSelected = async () => {
-    
     // try {
     //   // Make an API call to delete selected messages
     //   const response = await fetch('/api/messages/delete', {
@@ -52,7 +43,6 @@ const ChatMessages = () => {
     //       'Content-Type': 'application/json',
     //     },
     //   });
-
     //   if (response.ok) {
     //     // Handle successful deletion
     //     console.log('Messages deleted successfully');
@@ -143,6 +133,49 @@ const ChatMessages = () => {
     setCommentInfo(null);
   };
 
+  const handleRestoreMessage = async (messageId) => {
+    try {
+      const BASE_URL = `/api/chat?id=${messageId}&t=restore`;
+      const resp = await fetch(BASE_URL, {
+        method: "DELETE",
+      });
+
+      const result = await resp.json();
+      const { message } = result;
+      setCommentInfo(null);
+
+      if (resp.ok) {
+        Success(message);
+      } else {
+        Error(message);
+      }
+    } catch (error) {
+      console.log(error);
+      Error(error);
+    }
+  };
+  const handleRemoveMessage = async (messageId) => {
+    try {
+      const BASE_URL = `/api/chat?id=${messageId}&t=remove`;
+      const resp = await fetch(BASE_URL, {
+        method: "DELETE",
+      });
+
+      const result = await resp.json();
+      const { message } = result;
+      setCommentInfo(null);
+
+      if (resp.ok) {
+        Success(message);
+      } else {
+        Error(message);
+      }
+    } catch (error) {
+      console.log(error);
+      Error(error);
+    }
+  };
+
   return (
     <section>
       {messages?.length === 0 ? (
@@ -180,25 +213,23 @@ const ChatMessages = () => {
                 </time>
               </div>
               <div className="chat-bubble bg-gray-100 relative text-gray-700">
-                {/* {!message.isDeleted && ( */}
                 <span
                   onClick={() => handleShowMessageInfo(message.id)}
                   className=" absolute cursor-pointer top-0 right-0"
                 >
                   <BiChevronDown />
                 </span>
-                {/* )} */}
 
                 <div className="relative">
-                  {
-                    showCheckBox&&<input
-                    type="checkbox"
-                    className="absolute checkbox h-[1rem] w-[1rem] bg-white text-white checkbox-accent"
-                    checked={selectedMessages.includes(message.id)}
-                    onChange={() => handleCheckboxChange(message.id)}
-                  />
-                  }
-                  
+                  {showCheckBox && (
+                    <input
+                      type="checkbox"
+                      className="absolute checkbox h-[1rem] w-[1rem] bg-white text-white checkbox-accent"
+                      checked={selectedMessages.includes(message.id)}
+                      onChange={() => handleCheckboxChange(message.id)}
+                    />
+                  )}
+
                   {message.isDeleted ? (
                     <span>This Message Was Deleted!</span>
                   ) : (
@@ -213,6 +244,11 @@ const ChatMessages = () => {
                         />
                       )}
                       {message?.content && <span>{message?.content}</span>}
+                      {message?.isEdit && (
+                        <span className="text-[10px] flex justify-end">
+                          Edited
+                        </span>
+                      )}
                     </div>
                   )}
                 </div>
@@ -267,7 +303,10 @@ const ChatMessages = () => {
                       <span>Reply</span>
                     </button>
                     <button
-                      onClick={() => {setShowCheckBox(true); setCommentInfo(null)}}
+                      onClick={() => {
+                        setShowCheckBox(true);
+                        setCommentInfo(null);
+                      }}
                       className="btn btn-sm w-full rounded-none flex flex-row justify-start bg-white border-none text-right"
                     >
                       <span>
@@ -289,7 +328,7 @@ const ChatMessages = () => {
                     {message?.sender?.id === session?.user?.id && (
                       <span
                         className="btn flex flex-row justify-start gap-1 btn-sm w-full rounded-none bg-white border-none text-right"
-                        onClick={() => handleEditComment(message)}
+                        onClick={() => handleRestoreMessage(message?.id)}
                       >
                         <span>
                           <MdModeEditOutline />
@@ -300,7 +339,7 @@ const ChatMessages = () => {
                     {message?.sender?.id === session?.user?.id && (
                       <button
                         className="btn btn-sm w-full flex flex-row rounded-none justify-start gap-1 bg-white border-none text-right"
-                        onClick={() => handleDeleteComment(message?.id)}
+                        onClick={() => handleRemoveMessage(message?.id)}
                       >
                         <span>
                           <RiDeleteBin5Line />

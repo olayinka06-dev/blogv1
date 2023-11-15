@@ -198,6 +198,7 @@ export async function PATCH(request) {
       where: { id: messageId },
       data: {
         content,
+        isEdit: true,
       },
       include: {
         sender: {

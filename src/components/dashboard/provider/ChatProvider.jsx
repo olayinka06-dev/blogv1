@@ -63,6 +63,8 @@ export const ChatContext = createContext({
     },
     ept: null,
     chatId: null,
+    showCheckBox: false,
+    setShowCheckBox: () => {},
     setChatId: () => {},
     setEpt: () => {},
     setReplyPreview: () => {},
@@ -86,6 +88,7 @@ export const MessageContext = createContext({
       recipientId: String,
       isRead: Boolean,
       isDeleted: Boolean,
+      isEdit: Boolean,
       sender: {
         id: String,
         username: String,

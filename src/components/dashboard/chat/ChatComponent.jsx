@@ -39,9 +39,11 @@ const ChatComponent = ({ session }) => {
           message.id === deletedMessage.id ? deletedMessage : message
         )
       );
-      // setMessages((prevMessages) =>
-      //   prevMessages.filter((message) => message.id !== messageId)
-      // );
+    });
+    channel.bind("remove-message", function (messageId) {
+      setMessages((prevMessages) =>
+        prevMessages.filter((message) => message.id !== messageId)
+      );
     });
 
     return () => {

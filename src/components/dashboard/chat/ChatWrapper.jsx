@@ -49,6 +49,8 @@ const ChatWrapper = ({
     setReplyPreview,
     setEpt,
     setChatId,
+    setShowCheckBox,
+    showCheckBox, 
     chatId, 
     ept, 
     replyPreview,
