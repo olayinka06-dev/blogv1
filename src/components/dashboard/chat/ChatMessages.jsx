@@ -29,6 +29,7 @@ const ChatMessages = () => {
     replyPreview,
     showCheckBox,
     setShowCheckBox,
+    selectedMessages,
   } = chatData;
 
   const [commentInfo, setCommentInfo] = useState(null);

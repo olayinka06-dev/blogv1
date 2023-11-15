@@ -3,13 +3,16 @@ import Image from "next/image";
 import React from "react";
 import { useChatContext } from "../provider/ChatProvider";
 import Link from "next/link";
+import { LuForward } from "react-icons/lu";
 import { BsArrowLeft } from "react-icons/bs";
+import { MdOutlineContentCopy } from "react-icons/md";
 import { BiSearch } from "react-icons/bi";
+import { RiDeleteBin6Line } from "react-icons/ri";
 import { MdCall } from "react-icons/md";
 
 export const Navbar = () => {
   const { chatData } = useChatContext();
-  const { receipant_info } = chatData;
+  const { receipant_info, showCheckBox, setShowCheckBox } = chatData;
 
   return (
     <nav className="shadow py-4 flex bg-[rgba(255,255,255,0.9)] backdrop:blur-sm z-[500] sticky top-0  justify-between items-center px-3">
@@ -34,9 +37,30 @@ export const Navbar = () => {
           <span></span>
         </div>
       </div>
-      <div className="flex items-center gap-2">
-        <span><BiSearch/></span>
-        <span><MdCall/></span>
+      <div className="">
+        {showCheckBox ? (
+          <div className="flex items-center gap-2">
+            <span className="cursor-pointer p-2">
+            <MdOutlineContentCopy />
+            </span>
+            <span className="cursor-pointer p-2">
+            <LuForward />
+            </span>
+            <span className="cursor-pointer p-2">
+            <RiDeleteBin6Line />
+            </span>
+            <button onClick={()=> setShowCheckBox(false)} className="btn">Cancel</button>
+          </div>
+        ) : (
+          <div className="flex items-center gap-2">
+            <span>
+              <BiSearch />
+            </span>
+            <span>
+              <MdCall />
+            </span>
+          </div>
+        )}
       </div>
     </nav>
   );

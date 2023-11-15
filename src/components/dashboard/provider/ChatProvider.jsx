@@ -64,6 +64,8 @@ export const ChatContext = createContext({
     ept: null,
     chatId: null,
     showCheckBox: false,
+    selectedMessages: [],
+    setSelectedMessages: () => {},
     setShowCheckBox: () => {},
     setChatId: () => {},
     setEpt: () => {},

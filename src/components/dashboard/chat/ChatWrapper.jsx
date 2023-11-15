@@ -50,6 +50,8 @@ const ChatWrapper = ({
     setEpt,
     setChatId,
     setShowCheckBox,
+    setSelectedMessages,
+    selectedMessages,
     showCheckBox, 
     chatId, 
     ept, 
