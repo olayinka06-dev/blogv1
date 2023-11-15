@@ -1,6 +1,5 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
-import Image from "next/image";
 import { BiChevronDown, BiCopy, BiSelection } from "react-icons/bi";
 import {
   ReplyContext,
@@ -29,10 +28,12 @@ const ChatMessages = () => {
     replyPreview,
     showCheckBox,
     setShowCheckBox,
+    handleCheckboxChange,
     selectedMessages,
   } = chatData;
 
   const [commentInfo, setCommentInfo] = useState(null);
+  const [checkMessage, setCheckMessage] = useState(null);
 
   const handleDeleteSelected = async () => {
     // try {

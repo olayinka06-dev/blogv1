@@ -41,6 +41,7 @@ const ChatWrapper = ({
       setSelectedMessages([...selectedMessages, messageId]);
     }
   };
+  // console.log("selectedMessages", selectedMessages);
 
   const chatData = {
     setNewMessage,
@@ -51,6 +52,7 @@ const ChatWrapper = ({
     setChatId,
     setShowCheckBox,
     setSelectedMessages,
+    handleCheckboxChange,
     selectedMessages,
     showCheckBox, 
     chatId, 

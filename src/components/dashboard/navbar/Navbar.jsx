@@ -9,10 +9,39 @@ import { MdOutlineContentCopy } from "react-icons/md";
 import { BiSearch } from "react-icons/bi";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { MdCall } from "react-icons/md";
+import { Error, Success } from "../../../lib/entities";
 
 export const Navbar = () => {
   const { chatData } = useChatContext();
-  const { receipant_info, showCheckBox, setShowCheckBox } = chatData;
+  const {
+    receipant_info,
+    showCheckBox,
+    setShowCheckBox,
+    selectedMessages,
+    chatComments: messages,
+    setSelectedMessages,
+  } = chatData;
+
+  const handleCopySelected = () => {
+    const selectedMessageContent = messages
+      .filter((message) => selectedMessages.includes(message.id))
+      .map((message) => message.content)
+      .join("\n");
+
+    // Copy selected message content to clipboard
+    navigator.clipboard
+      .writeText(selectedMessageContent)
+      .then(() => {
+        Success("Successfully copied to clipboard!"),
+          console.log("Text copied to clipboard:", selectedMessageContent),
+          setShowCheckBox(false),
+          setSelectedMessages([""]);
+      })
+      .catch((error) => {
+        console.error("Clipboard Copy Error:", error),
+          Error("Error copying to clipboard");
+      });
+  };
 
   return (
     <nav className="shadow py-4 flex bg-[rgba(255,255,255,0.9)] backdrop:blur-sm z-[500] sticky top-0  justify-between items-center px-3">
@@ -40,16 +69,18 @@ export const Navbar = () => {
       <div className="">
         {showCheckBox ? (
           <div className="flex items-center gap-2">
-            <span className="cursor-pointer p-2">
-            <MdOutlineContentCopy />
+            <span onClick={handleCopySelected} className="cursor-pointer p-2">
+              <MdOutlineContentCopy />
             </span>
             <span className="cursor-pointer p-2">
-            <LuForward />
+              <LuForward />
             </span>
             <span className="cursor-pointer p-2">
-            <RiDeleteBin6Line />
+              <RiDeleteBin6Line />
             </span>
-            <button onClick={()=> setShowCheckBox(false)} className="btn">Cancel</button>
+            <button onClick={() => setShowCheckBox(false)} className="btn">
+              Cancel
+            </button>
           </div>
         ) : (
           <div className="flex items-center gap-2">
