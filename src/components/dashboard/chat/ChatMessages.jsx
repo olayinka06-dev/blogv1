@@ -16,6 +16,7 @@ import ChatReply from "./ChatReply";
 
 const ChatMessages = () => {
   const commentPopupRef = useRef(null);
+  const messageEndRef = useRef(null);
   const { messages, session } = useMessageContext();
   const { chatData } = useChatContext();
   const {
@@ -177,6 +178,14 @@ const ChatMessages = () => {
       Error(error);
     }
   };
+
+  const scrollTobottom = () => {
+    messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollTobottom();
+  }, [messages]);
 
   return (
     <section>
@@ -362,6 +371,7 @@ const ChatMessages = () => {
           </div>
         ))
       )}
+      <div ref={messageEndRef}></div>
     </section>
   );
 };

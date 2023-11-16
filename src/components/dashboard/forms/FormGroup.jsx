@@ -25,7 +25,7 @@ const FormSubmit = () => {
     chatId,
     setChatId,
     replyPreview,
-    setReplyPreview,
+    setEpt,
   } = chatData;
   const [showMedia, setShowMedia] = useState(false);
 
@@ -94,7 +94,7 @@ const FormSubmit = () => {
           messageId: chatId,
           content: newMessage.message,
         };
-        console.log("type edit", params);
+        console.log("type edit a message", params);
       } else if (ept === "reply") {
         BASE_URL = "/api/chat/reply";
         params = {
@@ -103,14 +103,21 @@ const FormSubmit = () => {
           messageId: chatId,
           recipientId: receiver,
         };
-        console.log("type reply", params);
+        console.log("type reply to a message", params);
       } else if (ept === "edit_reply") {
         BASE_URL = "/api/chat/reply";
         params = {
           messageId: chatId,
           content: newMessage.message,
         };
-        console.log("type reply", params);
+        console.log("type edit a reply", params);
+      } else if (ept === "reply_replies") {
+        BASE_URL = "/api/chat/reply";
+        params = {
+          messageId: chatId,
+          content: newMessage.message,
+        };
+        console.log("type reply to a reply", params);
       } else {
         BASE_URL = "/api/chat/message";
         params = {
@@ -118,19 +125,11 @@ const FormSubmit = () => {
           content: imagePreviewUrl ? popUpChat.message : newMessage.message,
           media: imagePreviewUrl ? popUpChat.media : newMessage.media,
         };
-        console.log("type post", params);
+        console.log("type posta message", params);
       }
       const resp = await fetch(BASE_URL, {
         method:
-          ept === "edit"
-            ? "PATCH"
-            : ept === "edit_reply"
-            ? "PATCH"
-            : ept === "reply"
-            ? "POST"
-            : ept === "reply_replies"
-            ? "POST"
-            : "POST",
+          ept === "edit" ? "PATCH" : ept === "edit_reply" ? "PATCH" : ept === "reply" ? "POST" : ept === "reply_replies" ? "POST" : "POST",
         headers: {
           "Content-Type": "application/json",
         },
@@ -148,6 +147,7 @@ const FormSubmit = () => {
         setImagePreviewUrl("");
         setNewMessage({ ...newMessage, message: "", media: null });
         setpopUpChat({ ...popUpChat, message: "", media: null });
+        setEpt("")
       } else {
         Error(message);
       }

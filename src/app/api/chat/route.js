@@ -6,7 +6,6 @@ import pusher from "../../../lib/pusher";
 
 export async function DELETE(request) {
   const session = await getServerSession(authOptions);
-  console.log("session", session);
   const { searchParams } = new URL(request.url);
   const type = searchParams.get("t");
   const messageId = searchParams.get("id");
@@ -25,7 +24,10 @@ export async function DELETE(request) {
   // Find the comment in the database
   const message = await db.message.findUnique({
     where: { id: messageId },
-    select: { senderId: true },
+    select: { 
+      senderId: true,
+      replies: true,
+     },
   });
 
   if (!message) {
@@ -36,7 +38,15 @@ export async function DELETE(request) {
     if (type === "remove") {
       // Check if the authenticated user is the owner of the comment
       if (message.senderId === session.user.id) {
-        // Delete the comment
+
+        // Delete associated replies first
+        await Promise.all(
+          message.replies.map(async (reply) => {
+            await db.reply.delete({ where: { id: reply.id } });
+          })
+        );
+
+        // Then delete the message after its associated replies are deleted
         await db.message.delete({ where: { id: messageId } });
 
         //   Trigger Pusher event for message deletion

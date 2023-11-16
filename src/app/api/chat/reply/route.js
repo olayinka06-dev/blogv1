@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { db } from "../../../../lib/db";
 import { authOptions } from "../../../../lib/auth";
 import { getServerSession } from "next-auth";
+import pusher from "../../../../lib/pusher";
 // import Pusher from "pusher";
 
 // Send a reply to a message
@@ -10,7 +11,7 @@ export async function POST(request) {
   const session = await getServerSession(authOptions);
   const payload = await request.json();
   const { content, media, messageId, recipientId } = payload;
-  console.log("payload type is post", payload);
+  console.log("payload type is post a reply", payload);
   const senderId = session?.user?.id;
 
   if (!session) {
@@ -43,9 +44,13 @@ export async function POST(request) {
       },
     });
 
+    await pusher.trigger("reply", "new-reply", {
+      message: `${JSON.stringify(reply)}\n\n`,
+    });
+
     if (reply) {
       return NextResponse.json(
-        { message: "Reply sent successfully", data: reply },
+        { message: "Reply sent successfully" },
         { status: 200 }
       );
     } else {
@@ -100,7 +105,7 @@ export async function DELETE(request) {
       await db.reply.delete({ where: { id: messageId } });
 
       // Trigger Pusher event for message deletion
-      // await pusher.trigger("chat", "delete-message", messageId);
+      await pusher.trigger("reply", "forward", messageId);
 
       return NextResponse.json(
         { message: "Reply deleted successfully" },
@@ -126,7 +131,7 @@ export async function PATCH(request) {
   const session = await getServerSession(authOptions);
   const { messageId, content } = payload;
 
-  console.log("type edit", payload);
+  console.log("type edit a reply", payload);
   
   if (!session) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
@@ -164,6 +169,7 @@ export async function PATCH(request) {
       where: { id: messageId },
       data: {
         content,
+        isEdit: true,
       },
       include: {
         sender: {
@@ -180,10 +186,10 @@ export async function PATCH(request) {
       },
     });
 
-    // // Trigger Pusher event for message update
-    // await pusher.trigger("chat", "edit-message", {
-    //   message: `${JSON.stringify(updatedMessage)}\n\n`,
-    // });
+    // Trigger Pusher event for message update
+    await pusher.trigger("reply", "edit-reply", {
+      message: `${JSON.stringify(updatedMessage)}\n\n`,
+    });
 
     return NextResponse.json(
       { message: "Reply updated successfully" },

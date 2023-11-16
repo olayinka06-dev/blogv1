@@ -8,11 +8,13 @@ import { BsFillReplyAllFill, BsReplyFill } from "react-icons/bs";
 import { MdModeEditOutline } from "react-icons/md";
 import { formatDate } from "@/lib/__hs";
 import { CopyToClipBoard, Error, Success } from "@/lib/entities";
+import Pusher from "pusher-js";
 
 const ChatReply = () => {
-  const { replies, session, message } = useReplyContext();
+  const { replies: reply, session, message } = useReplyContext();
   const { chatData } = useChatContext();
   const replyPopupRef = useRef(null);
+  const [replies, setReplies] = useState(reply);
   const {
     setNewMessage,
     newMessage,
@@ -23,6 +25,61 @@ const ChatReply = () => {
     replyPreview,
   } = chatData;
   const [replyInfo, setReplyInfo] = useState(null);
+
+  useEffect(() => {
+    var pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY, {
+      cluster: "mt1",
+    });
+
+    var channel = pusher.subscribe("reply");
+    // channel.bind("forward", function (data) {
+    //   const parsedComments = JSON.parse(data.message);
+    //   setReplies((prev) => [...prev, parsedComments]);
+    // });
+
+    channel.bind("new-reply", function (data) {
+      const newReply = JSON.parse(data.message);
+      // Update the corresponding message with the new reply
+      setReplies((prevMessages) =>
+        prevMessages.map((message) => {
+          if (message.id === newReply.messageId) {
+            return {
+              ...message,
+              replies: [...message.replies, newReply],
+            };
+          }
+          return message;
+        })
+      );
+    });
+
+    channel.bind("edit-reply", function (data) {
+      const updatedMessage = JSON.parse(data.message);
+      setReplies((prevMessages) =>
+        prevMessages?.map((message) =>
+          message.id === updatedMessage.id ? updatedMessage : message
+        )
+      );
+    });
+
+    // channel.bind("delete-message", function (data) {
+    //   const deletedMessage = JSON.parse(data.message);
+    //   setMessages((prevMessages) =>
+    //     prevMessages.map((message) =>
+    //       message.id === deletedMessage.id ? deletedMessage : message
+    //     )
+    //   );
+    // });
+    // channel.bind("remove-message", function (messageId) {
+    //   setMessages((prevMessages) =>
+    //     prevMessages.filter((message) => message.id !== messageId)
+    //   );
+    // });
+
+    return () => {
+      pusher.unsubscribe("reply");
+    };
+  }, [replies]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -107,9 +164,7 @@ const ChatReply = () => {
         <div
           key={reply?.id}
           className={`chat  ${
-            reply?.sender?.id === session?.user?.id
-              ? " chat-end"
-              : "chat-start"
+            reply?.sender?.id === session?.user?.id ? " chat-end" : "chat-start"
           }`}
         >
           <div className="chat-image avatar">
@@ -163,14 +218,15 @@ const ChatReply = () => {
                 />
               )}
               {reply?.content && <span>{reply?.content}</span>}
+              {reply?.isEdit && (
+                <span className="text-[10px] flex justify-end">Edited</span>
+              )}
             </div>
             {replyInfo === reply.id && (
               <div
                 ref={replyPopupRef}
                 className={`flex  flex-col z-[100] bg-white w-[200px] shadow border  h-fit gap-2 absolute top-[-5rem] ${
-                  reply?.sender?.id === session?.user?.id
-                    ? "right-6"
-                    : "left-0"
+                  reply?.sender?.id === session?.user?.id ? "right-6" : "left-0"
                 } items-center mt-3`}
               >
                 {reply?.sender?.id === session?.user?.id && (

@@ -12,7 +12,7 @@ export async function POST(request) {
   const payload = await request.json();
 
   const { recipientId, content, media } = payload;
-  console.log("type post", payload);
+  console.log("type post a message", payload);
 
   if (!session) {
     return NextResponse.json(
@@ -160,7 +160,7 @@ export async function PATCH(request) {
   const session = await getServerSession(authOptions);
   const { messageId, content } = payload;
 
-  console.log("type edit", payload);
+  console.log("type edit a message", payload);
 
   if (!session) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });

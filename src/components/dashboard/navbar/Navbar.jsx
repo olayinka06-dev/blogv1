@@ -24,9 +24,9 @@ export const Navbar = () => {
 
   const handleCopySelected = () => {
     const selectedMessageContent = messages
-      .filter((message) => selectedMessages.includes(message.id))
-      .map((message) => message.content)
-      .join("\n");
+      ?.filter((message) => selectedMessages.includes(message.id))
+      ?.map((message) => message.content)
+      ?.join("\n");
 
     // Copy selected message content to clipboard
     navigator.clipboard
@@ -78,7 +78,7 @@ export const Navbar = () => {
             <span className="cursor-pointer p-2">
               <RiDeleteBin6Line />
             </span>
-            <button onClick={() => setShowCheckBox(false)} className="btn">
+            <button onClick={() => {setShowCheckBox(false),setSelectedMessages([""]);}} className="btn">
               Cancel
             </button>
           </div>
